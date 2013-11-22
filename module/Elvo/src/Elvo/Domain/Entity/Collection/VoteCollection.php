@@ -23,6 +23,6 @@ class VoteCollection extends AbstractCollection
             $this->throwInvalidItemException($vote);
         }
         
-        $this->items->append($vote);
+        parent::append($vote);
     }
 }
