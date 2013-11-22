@@ -9,28 +9,14 @@ class ChamberTest extends \PHPUnit_Framework_Testcase
 {
 
 
-    public function testConstructorWithInvalidCode()
+    public function testConstructStudent()
     {
-        $this->setExpectedException('Elvo\Domain\Entity\Exception\InvalidArgumentException');
-        
-        $code = 'invalid';
-        
-        $chamber = new Chamber($code);
+        $this->assertSame(Chamber::STUDENT, (string) Chamber::student());
     }
 
 
-    public function testConstructorWithStudentCode()
+    public function testConstructAcademic()
     {
-        $code = 'student';
-        $chamber = new Chamber($code);
-        $this->assertSame($code, (string) $chamber);
-    }
-
-
-    public function testConstructorWithAcademicCode()
-    {
-        $code = 'academic';
-        $chamber = new Chamber($code);
-        $this->assertSame($code, (string) $chamber);
+        $this->assertSame(Chamber::ACADEMIC, (string) Chamber::academic());
     }
 }

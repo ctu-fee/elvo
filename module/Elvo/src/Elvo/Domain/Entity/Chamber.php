@@ -35,12 +35,34 @@ class Chamber
      * @param string $code
      * @throws Exception\InvalidArgumentException
      */
-    public function __construct($code)
+    private function __construct($code)
     {
         if (! $this->isValid($code)) {
             throw new Exception\InvalidArgumentException(sprintf("Invalid chamber code '%s'", $code));
         }
         $this->code = $code;
+    }
+
+
+    /**
+     * Creates a "student" chamber.
+     * 
+     * @return Chamber
+     */
+    static public function student()
+    {
+        return new self(self::STUDENT);
+    }
+
+
+    /**
+     * Returns an "academic" chamber.
+     * 
+     * @return Chamber
+     */
+    static public function academic()
+    {
+        return new self(self::ACADEMIC);
     }
 
 
