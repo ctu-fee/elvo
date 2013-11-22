@@ -7,7 +7,10 @@ use Zend\Stdlib\Hydrator\ClassMethods;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 
 
-class CandidateFactory
+/**
+ * Factory for creating "candidate" entities.
+ */
+class CandidateFactory implements CandidateFactoryInterface
 {
 
     /**
@@ -37,6 +40,10 @@ class CandidateFactory
     }
 
 
+    /**
+     * {@inhertidoc}
+     * @see \Elvo\Domain\Entity\Factory\CandidateFactoryInterface::createCandidate()
+     */
     public function createCandidate(array $data)
     {
         $candidate = new Candidate();
