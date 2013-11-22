@@ -1,15 +1,21 @@
 {
-    "name": "ivan-novakov/elvo",
-    "description": "Online election system",
-    "license": "BSD-3-Clause",
-    
-    "keywords": [
-        "election",
-        "zf2"
+    "name" : "ivan-novakov/elvo",
+    "description" : "Online election system",
+    "license" : "BSD-3-Clause",
+
+    "keywords" : [
+        "election", "zf2"
     ],
-    
-    "require": {
-        "php": ">=5.3.3",
-        "zendframework/zendframework": "2.2.*"
+
+    "authors" : [
+        {
+            "name" : "Ivan Novakov",
+            "homepage" : "http://novakov.cz"
+        }
+    ],
+
+    "require" : {
+        "php" : ">=5.3.3",
+        "zendframework/zendframework" : "2.2.*"
     }
 }
