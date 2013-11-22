@@ -2,6 +2,8 @@
 
 namespace Elvo\Domain\Entity\Collection;
 
+use Zend\Stdlib\ArrayObject;
+
 
 /**
  * Abstract base class for all entity collections.
@@ -22,7 +24,7 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable
      */
     public function __construct(array $data = array())
     {
-        $this->items = new \ArrayObject();
+        $this->items = new ArrayObject();
         foreach ($data as $item) {
             $this->append($item);
         }
@@ -74,6 +76,6 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable
             $type = gettype($item);
         }
         
-        throw new Exception\InvalidItemException(sprintf("Trying to add invalid item of type '%s' to the collection '%s'", get_class($this)));
+        throw new Exception\InvalidItemException(sprintf("Trying to add invalid item of type '%s' to the collection '%s'", $type, get_class($this)));
     }
 }
