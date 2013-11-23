@@ -12,7 +12,9 @@ class EncryptedVoteTest extends \PHPUnit_Framework_Testcase
     public function testConstructor()
     {
         $data = 'qwerty';
-        $eVote = new EncryptedVote($data);
-        $this->assertSame($data, (string) $eVote);
+        $key = 'secret';
+        $eVote = new EncryptedVote($data, $key);
+        $this->assertSame($data, $eVote->getData());
+        $this->assertSame($key, $eVote->getKey());
     }
 }

@@ -15,15 +15,23 @@ class EncryptedVote
      */
     protected $data;
 
+    /**
+     * The encrypted "envelope" key used to encrypt the vote data. 
+     * @var string
+     */
+    protected $key;
+
 
     /**
      * Constructor.
      * 
      * @param string $data
+     * @param string $key
      */
-    public function __construct($data)
+    public function __construct($data, $key)
     {
         $this->data = $data;
+        $this->key = $key;
     }
 
 
@@ -32,19 +40,19 @@ class EncryptedVote
      * 
      * @return string
      */
-    public function getValue()
+    public function getData()
     {
         return $this->data;
     }
 
 
     /**
-     * Returns the encrypted vote as a string.
+     * Returns the encrypted "envelope" key.
      * 
      * @return string
      */
-    public function __toString()
+    public function getKey()
     {
-        return $this->getValue();
+        return $this->key;
     }
 }
