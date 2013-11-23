@@ -3,6 +3,9 @@ require __DIR__ . '/../../../vendor/autoload.php';
 
 use Zend\Loader\AutoloaderFactory;
 
+define('ELVO_TESTS_DIR', __DIR__);
+define('ELVO_TESTS_DATA_DIR', ELVO_TESTS_DIR . '/data');
+
 AutoloaderFactory::factory(array(
     'Zend\Loader\StandardAutoloader' => array(
         'namespaces' => array(
