@@ -63,6 +63,17 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable
 
 
     /**
+     * Returns the list of candidates as an array.
+     * 
+     * @return array
+     */
+    public function getArrayCopy()
+    {
+        return $this->items->getArrayCopy();
+    }
+
+
+    /**
      * Throws an exception indicating that the item is invalid for the current collection.
      * 
      * @param mixed $item
