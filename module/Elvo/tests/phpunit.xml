@@ -5,6 +5,7 @@
     <testsuites>
         <testsuite name="Test Suite">
             <directory>./unit/</directory>
+            <directory>./functional/</directory>
         </testsuite>
     </testsuites>
 
