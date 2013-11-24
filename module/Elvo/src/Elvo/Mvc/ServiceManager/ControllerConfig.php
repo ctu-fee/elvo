@@ -1,6 +1,6 @@
 <?php
 
-namespace Elvo\ServiceManager;
+namespace Elvo\Mvc\ServiceManager;
 
 use Zend\ServiceManager\Config;
 
@@ -12,7 +12,7 @@ class ControllerConfig extends Config
     public function getInvokables()
     {
         return array(
-            'Elvo\Controller\IndexController' => 'Elvo\Controller\IndexController'
+            'Elvo\Controller\IndexController' => 'Elvo\Mvc\Controller\IndexController'
         );
     }
 

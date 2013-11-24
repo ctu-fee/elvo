@@ -1,6 +1,6 @@
 <?php
 
-namespace Elvo\Controller;
+namespace Elvo\Mvc\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;

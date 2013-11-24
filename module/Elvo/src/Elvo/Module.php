@@ -32,13 +32,13 @@ class Module implements ServiceProviderInterface, ControllerProviderInterface
 
     public function getServiceConfig()
     {
-        return new ServiceManager\ServiceConfig();
+        return new Mvc\ServiceManager\ServiceConfig();
     }
 
 
     public function getControllerConfig()
     {
-        return new ServiceManager\ControllerConfig();
+        return new Mvc\ServiceManager\ControllerConfig();
     }
 
 
@@ -51,10 +51,11 @@ class Module implements ServiceProviderInterface, ControllerProviderInterface
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($events);
         
-        $events->attach('dispatch.error', function (MvcEvent $e)
-        {
-            // $e->stopPropagation(true);
-            // _dump($e->getError());
-        }, 1000);
+        $events->attach('dispatch.error', 
+            function (MvcEvent $e)
+            {
+                // $e->stopPropagation(true);
+                // _dump($e->getError());
+            }, 1000);
     }
 }

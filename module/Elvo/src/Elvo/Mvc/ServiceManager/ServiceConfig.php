@@ -1,6 +1,6 @@
 <?php
 
-namespace Elvo\ServiceManager;
+namespace Elvo\Mvc\ServiceManager;
 
 use Zend\ServiceManager\Config;
 
