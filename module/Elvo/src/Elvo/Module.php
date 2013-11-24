@@ -55,7 +55,7 @@ class Module implements ServiceProviderInterface, ControllerProviderInterface
             function (MvcEvent $e)
             {
                 // $e->stopPropagation(true);
-                // _dump($e->getError());
+                _dump('ERROR: ' . $e->getError());
             }, 1000);
     }
 }
