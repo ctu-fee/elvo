@@ -22,16 +22,10 @@ class VoteCollectionTest extends \PHPUnit_Framework_Testcase
     {
         $vote = $this->getVoteMock();
         $this->collection->append($vote);
-        
-        $data = array();
-        foreach ($this->collection as $item) {
-            $data[] = $item;
-        }
-        
-        $this->assertEquals($vote, $data[0]);
+        $this->assertEquals($vote, $this->collection->offsetGet(0));
     }
-    
-    
+
+
     public function testAppendWithInvalidItem()
     {
         $this->setExpectedException('Elvo\Domain\Entity\Collection\Exception\InvalidItemException');
