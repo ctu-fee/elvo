@@ -1,0 +1,3 @@
+DELETE FROM voter;
+DELETE FROM vote;
+DELETE FROM votetime;
