@@ -2,6 +2,8 @@
 
 namespace ElvoTest\Domain\Entity\Collection;
 
+use Elvo\Domain\Entity\Collection\Exception\InvalidItemException;
+
 
 class AbstractCollectionTest extends \PHPUnit_Framework_Testcase
 {
@@ -64,13 +66,36 @@ class AbstractCollectionTest extends \PHPUnit_Framework_Testcase
         
         $collection->append($item1);
         $this->assertSame(1, $collection->count());
+        $this->assertSame($item1, $collection->offsetGet(0));
         
         $collection->append($item2);
         $this->assertSame(2, $collection->count());
+        $this->assertSame($item2, $collection->offsetGet(1));
+    }
+
+
+    public function testOffsetSetWithInvalidValue()
+    {
+        $this->setExpectedException('Elvo\Domain\Entity\Collection\Exception\InvalidItemException', 'invalid_item');
+        
+        $exception = new InvalidItemException('invalid_item');
+        $item = new \stdClass();
+        
+        $collection = $this->getCollectionMock();
+        $collection->expects($this->once())
+            ->method('validate')
+            ->with($item)
+            ->will($this->throwException($exception));
+        
+        $collection->append($item);
     }
     
     /*
      * 
+     */
+    /**
+     * @param array $data
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
     protected function getCollectionMock(array $data = array())
     {
