@@ -20,6 +20,10 @@ class CandidateCountValidator extends AbstractValidator
     const OPT_CHAMBER_COUNT = 'chamber_count';
 
 
+    /**
+     * {@inhertidoc}
+     * @see \Elvo\Domain\Vote\Validator\ValidatorInterface::validate()
+     */
     public function validate(Vote $vote)
     {
         $chamberCountValue = $this->getChamberCountValue();
