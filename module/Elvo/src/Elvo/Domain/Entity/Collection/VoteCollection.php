@@ -13,16 +13,13 @@ class VoteCollection extends AbstractCollection
 
 
     /**
-     * Appends a "vote" entity to the collection.
-     * 
-     * @param Vote $vote
+     * {@inhertidoc}
+     * @see \Elvo\Domain\Entity\Collection\AbstractCollection::validate()
      */
-    public function append($vote)
+    protected function validate($vote)
     {
         if (! $vote instanceof Vote) {
             $this->throwInvalidItemException($vote);
         }
-        
-        parent::append($vote);
     }
 }

@@ -41,10 +41,9 @@ class VoteEncryptorTest extends \PHPUnit_Framework_Testcase
         $this->assertSame((string) $voterRole, (string) $decryptedVote->getVoterRole());
         
         $expectedCandidates = $decryptedVote->getCandidates();
-        $this->assertSame(1, $expectedCandidates->count());
-        $candidatesArray = $expectedCandidates->getArrayCopy();
         
-        $this->assertSame($candidateId, $candidatesArray[0]->getId());
+        $this->assertSame(1, $expectedCandidates->count());
+        $this->assertSame($candidateId, $expectedCandidates[0]->getId());
     }
 
 

@@ -13,16 +13,13 @@ class CandidateCollection extends AbstractCollection
 
 
     /**
-     * Appends a candidate entity to the collection.
-     * 
-     * @param Candidate $candidate
+     * {@inhertidoc}
+     * @see \Elvo\Domain\Entity\Collection\AbstractCollection::validate()
      */
-    public function append($candidate)
+    protected function validate($candidate)
     {
         if (! $candidate instanceof Candidate) {
             $this->throwInvalidItemException($candidate);
         }
-        
-        parent::append($candidate);
     }
 }

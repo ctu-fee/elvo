@@ -8,7 +8,7 @@ use Zend\Stdlib\ArrayObject;
 /**
  * Abstract base class for all entity collections.
  */
-abstract class AbstractCollection implements \IteratorAggregate, \Countable
+abstract class AbstractCollection implements \IteratorAggregate, \Countable, \ArrayAccess
 {
 
     /**
@@ -28,6 +28,18 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable
         foreach ($data as $item) {
             $this->append($item);
         }
+    }
+
+
+    /**
+     * Appends an item to the collection.
+     *
+     * @param mixed $item
+     */
+    public function append($item)
+    {
+        $this->validate($item);
+        $this->items->append($item);
     }
 
 
@@ -52,13 +64,42 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable
 
 
     /**
-     * Appends an item to the collection.
-     * 
+     * @param mixed $offset
+     * @return boolean
+     */
+    public function offsetExists($offset)
+    {
+        return $this->items->offsetExists($offset);
+    }
+
+
+    /**
+     * @param mixed $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->items->offsetGet($offset);
+    }
+
+
+    /**
+     * @param mixed $offset
      * @param mixed $item
      */
-    public function append($item)
+    public function offsetSet($offset, $item)
     {
-        $this->items->append($item);
+        $this->validate($item);
+        $this->items->offsetSet($offset, $item);
+    }
+
+
+    /**
+     * @param mixed $offset
+     */
+    public function offsetUnset($offset)
+    {
+        $this->items->offsetUnset($offset);
     }
 
 
@@ -71,6 +112,15 @@ abstract class AbstractCollection implements \IteratorAggregate, \Countable
     {
         return $this->items->getArrayCopy();
     }
+
+
+    /**
+     * Validates the item, if it can be added to the collection.
+     * 
+     * @param mixed $item
+     * @throws Exception\InvalidItemException
+     */
+    abstract protected function validate($item);
 
 
     /**
