@@ -4,6 +4,7 @@ namespace Elvo\Mvc\Controller;
 
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\I18n\Translator\Translator;
 use Zend\Mvc\MvcEvent;
 use Zend\Authentication\AuthenticationService;
 use Elvo\Mvc\Authentication\Identity;
@@ -24,11 +25,17 @@ class VoteController extends AbstractActionController
      */
     protected $candidateService;
 
+    /**
+     * @var Translator
+     */
+    protected $translator;
 
-    public function __construct(AuthenticationService $authService, CandidateService $candidateService)
+
+    public function __construct(AuthenticationService $authService, CandidateService $candidateService, Translator $translator)
     {
         $this->setAuthService($authService);
         $this->setCandidateService($candidateService);
+        $this->setTranslator($translator);
     }
 
 
@@ -68,6 +75,28 @@ class VoteController extends AbstractActionController
     }
 
 
+    /**
+     * @return Translator
+     */
+    public function getTranslator()
+    {
+        return $this->translator;
+    }
+
+
+    /**
+     * @param Translator $translator
+     */
+    public function setTranslator(Translator $translator)
+    {
+        $this->translator = $translator;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     * @see \Zend\Mvc\Controller\AbstractActionController::onDispatch()
+     */
     public function onDispatch(MvcEvent $event)
     {
         $authService = $this->getAuthService();
@@ -120,9 +149,12 @@ class VoteController extends AbstractActionController
             return $this->redirect()->toRoute('role');
         }
         
-        _dump($this->getCandidateService()->getCandidatesForIdentity($identity));
+        $candidates = $this->getCandidateService()->getCandidatesForIdentity($identity);
         
-        $view = new ViewModel();
+        $view = new ViewModel(array(
+            'candidates' => $candidates,
+            'role' => $identity->getPrimaryRole()
+        ));
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
         return $view;
@@ -131,20 +163,40 @@ class VoteController extends AbstractActionController
 
     public function confirmAction()
     {
-        $view = new ViewModel();
+        $identity = $this->getIdentity();
+        
+        $submittedCandidateIds = $this->params()->fromPost('candidates');
+        $submittedRole = $this->params()->fromPost('role');
+        
+        return $this->errorPage();
+        
+        _dump($candidates);
+        _dump($role);
+        
+        $candidates = $this->getCandidateService()->getCandidatesForIdentity($identity);
+        
+        $view = new ViewModel(array(
+            'candidates' => $candidates,
+            'role' => $role
+        ));
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
         return $view;
     }
 
 
-    public function errorAction()
+    protected function errorPage($title = null, $message = null)
     {
+        if (null === $title) {
+            $title = $this->translate('error_title_generic');
+        }
+        
         $view = new ViewModel(array(
-            'heading' => 'Chyba',
+            'heading' => $title,
             'infoText' => 'Detail chyby...'
         ));
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
+        $view->setTemplate('elvo/vote/error');
         
         return $view;
     }
@@ -169,5 +221,11 @@ class VoteController extends AbstractActionController
     protected function getIdentity()
     {
         return $this->getAuthService()->getIdentity();
+    }
+
+
+    protected function translate($message, $textDomain = null, $locale = null)
+    {
+        return $this->getTranslator()->translate($message, $textDomain, $locale);
     }
 }
