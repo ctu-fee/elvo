@@ -100,6 +100,8 @@ class VoteController extends AbstractActionController
      */
     public function onDispatch(MvcEvent $event)
     {
+        // check if the voting is active, if not - redirect to index
+        
         $authService = $this->getAuthService();
         if (! $authService->hasIdentity()) {
             $authService->authenticate();
