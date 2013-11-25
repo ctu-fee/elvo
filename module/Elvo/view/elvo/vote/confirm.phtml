@@ -7,6 +7,18 @@
     </div>
     <p class="lead"><?php echo $this->translate('confirm_info_text'); ?></p>
 
+    <form method="post" action="/submit">
 
+        <?php foreach ($this->candidates as $candidate) { ?>
+        <div class="checkbox">
+            <label>
+            <?php printf("%s %s", $candidate->getFirstName(), $candidate->getLastName()); ?>
+            </label> <input type="hidden" name="candidates[]" value="<?php echo $candidate->getId(); ?>">
+        </div>
+        <?php } ?>
+
+        <input type="hidden" name="role" value="<?php echo $this->role; ?>"> <input type="submit" name="submit"
+            value="<?php echo $this->translate('form_button_submit'); ?>" class="btn btn-primary">
+    </form>
 
 </div>

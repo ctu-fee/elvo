@@ -59,13 +59,13 @@ return array(
                 )
             ),
             
-            'result' => array(
+            'status' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
-                    'route' => '/result',
+                    'route' => '/status',
                     'defaults' => array(
                         'controller' => 'Elvo\Controller\VoteController',
-                        'action' => 'result'
+                        'action' => 'status'
                     )
                 )
             ),

@@ -10,6 +10,7 @@ use Zend\Authentication\AuthenticationService;
 use Elvo\Mvc\Authentication\Identity;
 use Elvo\Mvc\Candidate\CandidateService;
 use Elvo\Domain\Entity\Chamber;
+use Elvo\Domain\Entity\Collection\CandidateCollection;
 
 
 class VoteController extends AbstractActionController
@@ -165,15 +166,19 @@ class VoteController extends AbstractActionController
     {
         $identity = $this->getIdentity();
         
-        $submittedCandidateIds = $this->params()->fromPost('candidates');
+        /*
+         * Get and validate the submitted voter role.
+         */
         $submittedRole = $this->params()->fromPost('role');
+        if (! $identity->isValidRole($submittedRole)) {
+            return $this->errorPage('error_title_invalid_data', 'error_message_invalid_voter_role');
+        }
+        $role = $submittedRole;
         
-        return $this->errorPage();
-        
-        _dump($candidates);
-        _dump($role);
-        
-        $candidates = $this->getCandidateService()->getCandidatesForIdentity($identity);
+        /*
+         * Get and validate submitted candidates.
+         */
+        $candidates = $this->getSubmittedCandidates();
         
         $view = new ViewModel(array(
             'candidates' => $candidates,
@@ -181,6 +186,43 @@ class VoteController extends AbstractActionController
         ));
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
+        return $view;
+    }
+
+
+    public function submitAction()
+    {
+        $identity = $this->getIdentity();
+        
+        /*
+         * Get and validate the submitted voter role.
+        */
+        $submittedRole = $this->params()->fromPost('role');
+        if (! $identity->isValidRole($submittedRole)) {
+            return $this->errorPage('error_title_invalid_data', 'error_message_invalid_voter_role');
+        }
+        $role = $submittedRole;
+        
+        /*
+         * Get and validate submitted candidates.
+        */
+        $candidates = $this->getSubmittedCandidates();
+        
+        // save the vote
+        // redirect
+        return $this->redirect()->toRoute('status');
+    }
+
+
+    public function statusAction()
+    {
+        // check if the user has voted
+        // - if voted - show status page
+        // - else - redirect to start
+        
+        $view = new ViewModel();
+        
+        $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         return $view;
     }
 
@@ -215,6 +257,24 @@ class VoteController extends AbstractActionController
         $navbarView->setTemplate('component/main-navbar');
         
         return $navbarView;
+    }
+
+
+    /**
+     * Retrieves and validates the candidates submitted by the voter.
+     * 
+     * @return CandidateCollection
+     */
+    protected function getSubmittedCandidates()
+    {
+        $identity = $this->getIdentity();
+        $submittedCandidateIds = $this->params()->fromPost('candidates');
+        if (! is_array($submittedCandidateIds)) {
+            $submittedCandidateIds = array();
+        }
+        $candidates = $this->getCandidateService()->getCandidatesForIdentityFilteredByIds($identity, $submittedCandidateIds);
+        
+        return $candidates;
     }
 
 

@@ -132,6 +132,35 @@ class CandidateService
 
 
     /**
+     * Returns selected candidates from the candidates relevant for the voter.
+     * 
+     * @param Identity $identity
+     * @param array $candidateIds
+     * @return CandidateCollection
+     */
+    public function getCandidatesForIdentityFilteredByIds(Identity $identity, array $candidateIds)
+    {
+        $filteredCandidates = new CandidateCollection();
+        if (empty($candidateIds)) {
+            return $filteredCandidates;
+        }
+        
+        $candidates = $this->getCandidatesForIdentity($identity);
+        
+        // FIXME - get rid of double foreach
+        foreach ($candidates as $candidate) {
+            foreach ($candidateIds as $id) {
+                if ($candidate->getId() === intval($id)) {
+                    $filteredCandidates->append($candidate);
+                }
+            }
+        }
+        
+        return $filteredCandidates;
+    }
+
+
+    /**
      * Validates the list of candidates.
      * 
      * @todo Move to a separate class.
