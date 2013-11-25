@@ -100,5 +100,17 @@ return array(
         'template_path_stack' => array(
             __DIR__ . '/../view'
         )
+    ),
+    
+    'translator' => array(
+        'locale' => 'cs',
+        'translation_file_patterns' => array(
+            array(
+                'type' => 'PhpArray',
+                'base_dir' => __DIR__ . '/../language',
+                'pattern' => '%s.php'
+            )
+        )
     )
+    
 );

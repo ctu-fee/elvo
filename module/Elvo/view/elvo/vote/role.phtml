@@ -4,15 +4,15 @@
 <!-- Begin page content -->
 <div class="container container-page">
     <div class="page-header">
-        <h1><?php echo $this->heading; ?></h1>
+        <h1><?php echo $this->translate('role_title'); ?></h1>
     </div>
-    <p class="lead"><?php echo $this->infoText; ?></p>
+    <p class="lead"><?php echo $this->translate('role_info_text'); ?></p>
 
     <form method="post" action="/submit">
 
         <select class="form-control" name="role">
-            <option>student</option>
-            <option>ucitel</option>
+            <option><?php $this->translate('role_student'); ?></option>
+            <option><?php $this->translate('role_academic'); ?></option>
         </select> <br>
         <div>
             <input type="submit" name="submit" value="Submit" class="btn btn-primary">

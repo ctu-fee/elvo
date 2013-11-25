@@ -15,18 +15,12 @@ class IndexController extends AbstractActionController
         /*
          * Main view
          */
-        $view = new ViewModel(
-            array(
-                'heading' => 'Vitejte u voleb',
-                'buttonVoteText' => 'Prejit k volbam'
-            ));
+        $view = new ViewModel();
         
         /*
          * Navbar view
          */
-        $navbarView = new ViewModel(array(
-            'title' => 'Volby'
-        ));
+        $navbarView = new ViewModel();
         $navbarView->setTemplate('component/main-navbar');
         $view->addChild($navbarView, 'mainNavbar');
         

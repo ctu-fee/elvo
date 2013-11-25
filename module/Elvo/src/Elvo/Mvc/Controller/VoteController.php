@@ -12,11 +12,7 @@ class VoteController extends AbstractActionController
 
     public function roleAction()
     {
-        $view = new ViewModel(
-            array(
-                'heading' => 'Volba volicske role',
-                'infoText' => 'Je potreba zvolit roli...'
-            ));
+        $view = new ViewModel();
         
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
@@ -26,11 +22,7 @@ class VoteController extends AbstractActionController
 
     public function formAction()
     {
-        $view = new ViewModel(
-            array(
-                'heading' => 'Volebni formular',
-                'infoText' => 'Nejake informace ohledne vyplnovani formulare'
-            ));
+        $view = new ViewModel();
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
         return $view;
@@ -39,11 +31,7 @@ class VoteController extends AbstractActionController
 
     public function confirmAction()
     {
-        $view = new ViewModel(
-            array(
-                'heading' => 'Potvrzeni volby',
-                'infoText' => 'Je potreba potvrdit volbu...'
-            ));
+        $view = new ViewModel();
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
         return $view;
@@ -52,11 +40,10 @@ class VoteController extends AbstractActionController
 
     public function errorAction()
     {
-        $view = new ViewModel(
-            array(
-                'heading' => 'Chyba',
-                'infoText' => 'Detail chyby...'
-            ));
+        $view = new ViewModel(array(
+            'heading' => 'Chyba',
+            'infoText' => 'Detail chyby...'
+        ));
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
         return $view;
@@ -67,9 +54,7 @@ class VoteController extends AbstractActionController
      */
     protected function createNavbarViewModel()
     {
-        $navbarView = new ViewModel(array(
-            'title' => 'Volby'
-        ));
+        $navbarView = new ViewModel();
         $navbarView->setTemplate('component/main-navbar');
         
         return $navbarView;
