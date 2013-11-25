@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" ID="_58eedf12b92a219aa932fda63190061b62bdce90" entityID="https://volby.fel.cvut.cz/shibboleth">
+
+  <md:SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <md:Extensions>
+      <init:RequestInitiator xmlns:init="urn:oasis:names:tc:SAML:profiles:SSO:request-init" Binding="urn:oasis:names:tc:SAML:profiles:SSO:request-init" Location="https://volby.fel.cvut.cz/Shibboleth.sso/Login"/>
+    </md:Extensions>
+    <md:KeyDescriptor>
+      <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        <ds:KeyName>volby.fel.cvut.cz</ds:KeyName>
+        <ds:X509Data>
+          <ds:X509SubjectName>CN=volby.fel.cvut.cz,O=Czech Technical University in Prague,C=CZ</ds:X509SubjectName>
+          <ds:X509Certificate>MIIEfjCCA2agAwIBAgIQFRBlRw2Ijw59x7HzOQncGDANBgkqhkiG9w0BAQUFADA2
+MQswCQYDVQQGEwJOTDEPMA0GA1UEChMGVEVSRU5BMRYwFAYDVQQDEw1URVJFTkEg
+U1NMIENBMB4XDTEwMTEwNDAwMDAwMFoXDTEzMTEwMzIzNTk1OVowWDELMAkGA1UE
+BhMCQ1oxLTArBgNVBAoTJEN6ZWNoIFRlY2huaWNhbCBVbml2ZXJzaXR5IGluIFBy
+YWd1ZTEaMBgGA1UEAxMRdm9sYnkuZmVsLmN2dXQuY3owggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQCo7RnY5JcMeQagal81uFvUoYcI2zHu9/Jl4NHsqO7r
+5O3vyD/WrceCT7fCm1EXOK8t+aQPf7CAdHBSqttpYzllM9c4MTb2Aomni6VHzi2V
+MC1qf4QJaOhL1eeIq3AtRqMbCBKaBsT85sxSM3JaIqDYFvjzyM82E73pexZJpW1m
+dll7KKTscvGrpTopJjy/3SaJTWrggvQTeDjlE5maNq89OWH5BJ0NELUSFuQeuyQC
+tEQ+Y2xwFOWUMdBt2YJlV12A47mEgjnMxiK2GLr8pafxjbbyxyPSQ1oMTYBzChG0
+S1cgmXdbkP1DaBerSWXPkVNzoNkt39xXubpe9a5FfsxdAgMBAAGjggFkMIIBYDAf
+BgNVHSMEGDAWgBQMvZNoDPPeq6NJays3V0fqkOO57TAdBgNVHQ4EFgQUcYWCQxB/
+7NVColGZNXbPvcbw63wwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBgGA1UdIAQRMA8wDQYLKwYBBAGy
+MQECAh0wOgYDVR0fBDMwMTAvoC2gK4YpaHR0cDovL2NybC50Y3MudGVyZW5hLm9y
+Zy9URVJFTkFTU0xDQS5jcmwwbQYIKwYBBQUHAQEEYTBfMDUGCCsGAQUFBzAChilo
+dHRwOi8vY3J0LnRjcy50ZXJlbmEub3JnL1RFUkVOQVNTTENBLmNydDAmBggrBgEF
+BQcwAYYaaHR0cDovL29jc3AudGNzLnRlcmVuYS5vcmcwHAYDVR0RBBUwE4IRdm9s
+YnkuZmVsLmN2dXQuY3owDQYJKoZIhvcNAQEFBQADggEBAC0k++DH/uRjiR90X2Oy
+I6knERYlHijaNsGImzrVcLV7t33xW/qodT9TeLz+gFpKG3iFrjEo2yF41z3yM7HP
+pdZfs/3dbOlbdHJqzpOviJRZ7Qu9H9mRjhn+NymJl2fhn5nlHrf07PnUIvhlgGOu
+MH7SY0DoHcuRRgg78yk+W8RgzCJB111mykegSjRJwR5jsL80wrZ5OOLvIK8Gz4HN
+AHw+8JLMxFYQXuC39VHWiBqdm7xF0ndxz7JqtERU5tRI81YrF7ynS4MnQoSgMlFN
+Xn0buFdmy6sAZ40tlBwdvNrdSMqBi3MwqkZAjDZqcEzHPxTu6EKeavqCEulcNyEZ
+z0o=
+</ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://volby.fel.cvut.cz/Shibboleth.sso/Artifact/SOAP" index="0"/>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://volby.fel.cvut.cz/Shibboleth.sso/SLO/SOAP"/>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://volby.fel.cvut.cz/Shibboleth.sso/SLO/Redirect"/>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://volby.fel.cvut.cz/Shibboleth.sso/SLO/POST"/>
+    <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" Location="https://volby.fel.cvut.cz/Shibboleth.sso/SLO/Artifact"/>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://volby.fel.cvut.cz/Shibboleth.sso/SAML2/POST" index="0"/>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="https://volby.fel.cvut.cz/Shibboleth.sso/SAML2/POST-SimpleSign" index="1"/>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" Location="https://volby.fel.cvut.cz/Shibboleth.sso/SAML2/Artifact" index="2"/>
+    <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS" Location="https://volby.fel.cvut.cz/Shibboleth.sso/SAML2/ECP" index="3"/>
+  </md:SPSSODescriptor>
+
+  <Organization>
+      <OrganizationName xml:lang="en">SVTI FEL ČVUT</OrganizationName>   
+      <OrganizationDisplayName xml:lang="en">SVTI FEL ČVUT</OrganizationDisplayName>
+      <OrganizationURL xml:lang="en">https://www.feld.cvut.cz/</OrganizationURL>
+  </Organization>
+
+  <ContactPerson contactType="technical">
+      <GivenName>Ivan</GivenName>
+      <SurName>Novakov</SurName>
+      <EmailAddress>ivan.novakov@fel.cvut.cz</EmailAddress>
+  </ContactPerson>
+  
+  <ContactPerson contactType="technical">
+      <GivenName>Jíří</GivenName>
+      <SurName>Cejp</SurName>
+      <EmailAddress>cejp@fel.cvut.cz</EmailAddress>
+  </ContactPerson>
+
+</md:EntityDescriptor>
