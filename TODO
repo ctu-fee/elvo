@@ -1,7 +1,9 @@
-- text translations
-- authentication - Shibboleth, registration at CVUT IdP, attribute relase
-- error handling
++ text translations
++ authentication - Shibboleth, registration at CVUT IdP, attribute relase
 - UI - forms, CSRF protection
 - service layer
+- error handling
+- logging 
 - security - HTTP headers, PHP configuration
+
 
