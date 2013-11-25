@@ -1,8 +1,9 @@
+- UI - forms, CSRF protection
+- kontrola vicenasobneho hlasovani
 + text translations
 + authentication - Shibboleth, registration at CVUT IdP, attribute relase
-- UI - forms, CSRF protection
-- service layer
-- error handling
++ service layer
++ error handling
 - logging 
 - security - HTTP headers, PHP configuration
 - candidates validator (check for required fields, duplicate IDs etc.)
