@@ -188,13 +188,18 @@ class VoteController extends AbstractActionController
     protected function errorPage($title = null, $message = null)
     {
         if (null === $title) {
-            $title = $this->translate('error_title_generic');
+            $title = 'error_title_generic';
+        }
+        
+        if (null === $message) {
+            $message = 'error_message_generic';
         }
         
         $view = new ViewModel(array(
-            'heading' => $title,
-            'infoText' => 'Detail chyby...'
+            'errorTitle' => $title,
+            'errorMessage' => $message
         ));
+        
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         $view->setTemplate('elvo/vote/error');
         

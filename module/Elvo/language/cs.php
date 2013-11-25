@@ -8,6 +8,13 @@ return array(
     'role_academic' => 'Zaměstnanec',
     
     /*
+     * error page
+     */
+    'error_title_generic' => 'Chyba',
+    'error_message_generic' => 'Vyskytla se chyba během zpracování dotazu. Pokud se to opakuje, kontaktujte správce anebo volební komisi.',
+    'button_start_over' => 'Začít znovu', 
+    
+    /*
      * component/main-navbar
      */
     'navbar_title' => 'Volby do Senátu ČVUT 2013',

@@ -3,9 +3,9 @@
 <!-- Begin page content -->
 <div class="container container-page">
     <div class="page-header">
-        <h1><?php echo $this->heading; ?></h1>
+        <h1><?php echo $this->translate($this->errorTitle); ?></h1>
     </div>
-    <p class="lead"><?php echo $this->infoText; ?></p>
+    <p class="lead"><?php echo $this->translate($this->errorMessage); ?></p>
 
-    <a type="button" class="btn btn-danger" href="/"><?php echo $this->translate('start_over'); ?></a>
+    <a type="button" class="btn btn-danger" href="/"><?php echo $this->translate('button_start_over'); ?></a>
 </div>
