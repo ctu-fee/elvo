@@ -111,6 +111,23 @@ return array(
                 'pattern' => '%s.php'
             )
         )
-    )
+    ),
     
-);
+    'elvo' => array(
+        
+        'authentication' => array(
+            'adapter' => 'ZfcShib\Authentication\Adapter\Dummy',
+            'options' => array(
+                'user_data' => array(
+                    'voter_id' => '123456',
+                    'voter_roles' => array(
+                        'student',
+                        'academic'
+                    )
+                )
+            )
+        )
+        
+    )
+)
+;
