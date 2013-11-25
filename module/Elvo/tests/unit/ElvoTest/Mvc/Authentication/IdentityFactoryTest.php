@@ -41,8 +41,8 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $id = 'abc';
         $roles = array(
-            'foo',
-            'bar'
+            'student',
+            'academic'
         );
         
         $identity = $this->factory->createIdentity(array(

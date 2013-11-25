@@ -2,6 +2,12 @@
 return array(
     
     /*
+     * general
+     */
+    'role_student' => 'Student',
+    'role_academic' => 'Zaměstnanec',
+    
+    /*
      * component/main-navbar
      */
     'navbar_title' => 'Volby do Senátu ČVUT 2013',

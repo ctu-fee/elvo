@@ -35,10 +35,10 @@ class Chamber
      * @param string $code
      * @throws Exception\InvalidArgumentException
      */
-    private function __construct($code)
+    public function __construct($code)
     {
         if (! $this->isValid($code)) {
-            throw new Exception\InvalidArgumentException(sprintf("Invalid chamber code '%s'", $code));
+            throw new Exception\InvalidChamberCodeException(sprintf("Invalid chamber code '%s'", $code));
         }
         $this->code = $code;
     }

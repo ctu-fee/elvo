@@ -2,9 +2,10 @@
 
 namespace Elvo\Domain\Entity\Factory;
 
-use Elvo\Domain\Entity\Candidate;
 use Zend\Stdlib\Hydrator\ClassMethods;
 use Zend\Stdlib\Hydrator\HydratorInterface;
+use Elvo\Domain\Entity\Chamber;
+use Elvo\Domain\Entity\Candidate;
 
 
 /**
@@ -46,6 +47,10 @@ class CandidateFactory implements CandidateFactoryInterface
      */
     public function createCandidate(array $data)
     {
+        if (isset($data['chamber']) && (! $data['chamber'] instanceof Chamber)) {
+            $data['chamber'] = new Chamber($data['chamber']);
+        }
+        
         $candidate = new Candidate();
         $candidate = $this->getHydrator()->hydrate($data, $candidate);
         return $candidate;

@@ -7,12 +7,7 @@
     </div>
     <p class="lead"><?php echo $this->translate('form_info_text'); ?></p>
 
-    <form method="post" action="/submit">
-
-        <select class="form-control" name="role">
-            <option><?php $this->translate('role_student'); ?></option>
-            <option><?php $this->translate('role_academic'); ?></option>
-        </select>
+    <form method="post" action="/confirm">
 
         <div class="checkbox">
             <label> <input type="checkbox" name="candidates" value="1">Candidate1

@@ -126,8 +126,11 @@ return array(
                     )
                 )
             )
-        )
+        ),
         
+        'candidates' => array(
+            'file' => __DIR__ . '/../data/candidates.php'
+        )
     )
-)
-;
+    
+);

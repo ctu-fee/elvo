@@ -67,4 +67,37 @@ class CandidateFactoryTest extends \PHPUnit_Framework_Testcase
         $this->assertSame($profileUrl, $candidate->getProfileUrl());
         $this->assertSame($candidateUrl, $candidate->getCandidateUrl());
     }
+
+
+    public function testCreateCandidateWithInvalidChamberValue()
+    {
+        $this->setExpectedException('Elvo\Domain\Entity\Exception\InvalidChamberCodeException');
+        
+        $id = 123;
+        $chamber = 'foo';
+    
+        $data = array(
+            'id' => $id,
+            'chamber' => $chamber
+        );
+    
+        $candidate = $this->factory->createCandidate($data);
+    }
+    
+    public function testCreateCandidateWithTextChamberValue()
+    {
+        $id = 123;
+        $chamber = 'student';
+        
+        $data = array(
+            'id' => $id,
+            'chamber' => $chamber
+        );
+        
+        $candidate = $this->factory->createCandidate($data);
+        $this->assertInstanceOf('Elvo\Domain\Entity\Candidate', $candidate);
+        $this->assertSame($id, $candidate->getId());
+        $this->assertSame($chamber, $candidate->getChamber()
+            ->getCode());
+    }
 }

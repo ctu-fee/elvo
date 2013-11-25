@@ -5,5 +5,6 @@
 - error handling
 - logging 
 - security - HTTP headers, PHP configuration
+- candidates validator (check for required fields, duplicate IDs etc.)
 
 

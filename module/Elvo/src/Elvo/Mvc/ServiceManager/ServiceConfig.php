@@ -6,6 +6,8 @@ use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Authentication\AuthenticationService;
 use Elvo\Mvc\Authentication\IdentityFactory;
+use Elvo\Domain\Entity\Factory\CandidateFactory;
+use Elvo\Mvc\Candidate\CandidateService;
 
 
 class ServiceConfig extends Config
@@ -41,6 +43,24 @@ class ServiceConfig extends Config
                 $authService->setAdapter($adapter);
                 
                 return $authService;
+            },
+            
+            'Elvo\CandidateService' => function (ServiceManager $sm)
+            {
+                $config = $sm->get('Config');
+                if (! isset($config['elvo']['candidates']['file'])) {
+                    throw new Exception\MissingConfigException("Missing config 'elvo/candidates/file'");
+                }
+                
+                $candidateFile = $config['elvo']['candidates']['file'];
+                
+                $candidateService = new CandidateService($sm->get('Elvo\Domain\CandidateFactory'), $candidateFile);
+                return $candidateService;
+            },
+            
+            'Elvo\Domain\CandidateFactory' => function (ServiceManager $sm)
+            {
+                return new CandidateFactory();
             }
         );
     }

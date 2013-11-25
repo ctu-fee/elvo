@@ -1,0 +1,14 @@
+<?php
+return array(
+    
+    array(
+        'id' => 1,
+        'first_name' => '',
+        'last_name' => '',
+        'chamber' => '',
+        'email' => '',
+        'profile_url' => '',
+        'candidate_url' => ''
+    )
+    
+);
