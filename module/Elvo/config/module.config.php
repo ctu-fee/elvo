@@ -115,7 +115,7 @@ return array(
     
     'elvo' => array(
         
-        'env' => array(
+        'environment' => array(
             'mode' => 'devel'
         ),
         

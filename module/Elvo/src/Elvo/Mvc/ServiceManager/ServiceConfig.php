@@ -2,6 +2,7 @@
 
 namespace Elvo\Mvc\ServiceManager;
 
+use Elvo\Util\Environment;
 use Zend\Db;
 use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ServiceManager;
@@ -21,11 +22,24 @@ class ServiceConfig extends Config
     public function getFactories()
     {
         return array(
+        
             /*
              * ------------------
              * MVC layer services
              * ------------------
              */
+            'Elvo\Environment' => function (ServiceManager $sm)
+            {
+                $config = $sm->get('Config');
+                $options = array();
+                if (isset($config['elvo']['environment']) && is_array($config['elvo']['environment'])) {
+                    $options = $config['elvo']['environment'];
+                }
+                
+                $environment = new Environment($options);
+                return $environment;
+            },
+            
             'Elvo\DispatchListener' => function (ServiceManager $sm)
             {
                 $dispatchListener = new DispatchListener();
