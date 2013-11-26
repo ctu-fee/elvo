@@ -119,6 +119,14 @@ return array(
             'mode' => 'devel'
         ),
         
+        'vote_manager' => array(
+            'options' => array(
+                'enabled' => true,
+                'start_time' => '2013-11-27 08:00:00',
+                'end_time' => '2013-11-28 14:00:00'
+            )
+        ),
+        
         'db' => array(
             'driver' => 'Pdo_Sqlite',
             'database' => '/tmp/elvo.sqlite'
@@ -173,4 +181,5 @@ return array(
             )
         )
     )
-);
+)
+;

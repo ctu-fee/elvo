@@ -155,6 +155,7 @@ class VoteController extends AbstractActionController
                 $this->redirect()->toRoute('form');
             } catch (InvalidRoleException $e) {
                 _dump("$e");
+                return $this->errorPage();
             }
         }
         
@@ -259,6 +260,20 @@ class VoteController extends AbstractActionController
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         return $view;
     }
+    
+    /*
+     * -----------------------------------------------------------------
+     */
+    protected function checkVotingActive()
+    {}
+
+
+    protected function votingNotStartedPage()
+    {}
+
+
+    protected function votingFinishedPage()
+    {}
 
 
     /**

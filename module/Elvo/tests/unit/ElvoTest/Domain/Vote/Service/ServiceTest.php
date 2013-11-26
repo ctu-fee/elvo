@@ -14,23 +14,53 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->service = new Service($this->getFactoryMock(), $this->getValidatorMock(), $this->getEncryptorMock(), $this->getStorageMock());
+        $this->service = new Service($this->getManagerMock(), $this->getFactoryMock(), $this->getValidatorMock(), $this->getEncryptorMock(), $this->getStorageMock());
     }
 
 
     public function testConstructor()
     {
+        $manager = $this->getManagerMock();
         $factory = $this->getFactoryMock();
         $validator = $this->getValidatorMock();
         $encryptor = $this->getEncryptorMock();
         $storage = $this->getStorageMock();
         
-        $service = new Service($factory, $validator, $encryptor, $storage);
+        $service = new Service($manager, $factory, $validator, $encryptor, $storage);
         
+        $this->assertSame($manager, $service->getManager());
         $this->assertSame($factory, $service->getFactory());
         $this->assertSame($validator, $service->getValidator());
         $this->assertSame($encryptor, $service->getEncryptor());
         $this->assertSame($storage, $service->getStorage());
+    }
+
+
+    public function testIsVotingActive()
+    {
+        $result = true;
+        
+        $manager = $this->getManagerMock();
+        $manager->expects($this->once())
+            ->method('isVotingActive')
+            ->will($this->returnValue($result));
+        $this->service->setManager($manager);
+        
+        $this->assertSame($result, $this->service->isVotingActive());
+    }
+
+
+    public function testCheckVotingActive()
+    {
+        $this->setExpectedException('Elvo\Domain\Vote\Service\Exception\VotingInactiveException');
+        
+        $manager = $this->getManagerMock();
+        $manager->expects($this->once())
+            ->method('isVotingActive')
+            ->will($this->returnValue(false));
+        $this->service->setManager($manager);
+        
+        $this->service->checkVotingActive();
     }
 
 
@@ -178,12 +208,16 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $service = $this->getMockBuilder('Elvo\Domain\Vote\Service\Service')
             ->disableOriginalConstructor()
             ->setMethods(array(
+            'checkVotingActive',
             'createVote',
             'validateVote',
             'encryptVote',
             'storeEncryptedVote'
         ))
             ->getMock();
+        
+        $service->expects($this->once())
+            ->method('checkVotingActive');
         
         $service->expects($this->once())
             ->method('createVote')
@@ -314,7 +348,13 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
     /*
      * 
      */
-    
+    protected function getManagerMock()
+    {
+        $manager = $this->getMock('Elvo\Domain\Vote\VoteManager');
+        return $manager;
+    }
+
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */

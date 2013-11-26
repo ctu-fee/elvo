@@ -16,6 +16,11 @@ class Service implements ServiceInterface
 {
 
     /**
+     * @var Vote\VoteManager
+     */
+    protected $manager;
+
+    /**
      * @var VoteFactoryInterface
      */
     protected $factory;
@@ -44,12 +49,31 @@ class Service implements ServiceInterface
      * @param Vote\EncryptorInterface $encryptor
      * @param Vote\Storage\StorageInterface $storage
      */
-    public function __construct(VoteFactoryInterface $factory, Vote\Validator\ValidatorInterface $validator, Vote\EncryptorInterface $encryptor, Vote\Storage\StorageInterface $storage)
+    public function __construct(Vote\VoteManager $manager, VoteFactoryInterface $factory, Vote\Validator\ValidatorInterface $validator, Vote\EncryptorInterface $encryptor, Vote\Storage\StorageInterface $storage)
     {
+        $this->setManager($manager);
         $this->setFactory($factory);
         $this->setValidator($validator);
         $this->setEncryptor($encryptor);
         $this->setStorage($storage);
+    }
+
+
+    /**
+     * @return Vote\VoteManager
+     */
+    public function getManager()
+    {
+        return $this->manager;
+    }
+
+
+    /**
+     * @param Vote\VoteManager $manager
+     */
+    public function setManager(Vote\VoteManager $manager)
+    {
+        $this->manager = $manager;
     }
 
 
@@ -125,12 +149,20 @@ class Service implements ServiceInterface
     }
 
 
+    public function isVotingActive()
+    {
+        return $this->getManager()->isVotingActive();
+    }
+
+
     /**
      * {@inheritdoc}
      * @see \Elvo\Domain\Vote\Service\ServiceInterface::saveVote()
      */
     public function saveVote(Entity\Voter $voter, CandidateCollection $candidates)
     {
+        $this->checkVotingActive();
+        
         $vote = $this->createVote($voter, $candidates);
         $this->validateVote($vote);
         
@@ -153,6 +185,20 @@ class Service implements ServiceInterface
         }
         
         return $voteCollection;
+    }
+
+
+    /**
+     * Checks if the voting is active. If not, throws an exception.
+     * 
+     * @throws Exception\VotingInactiveException
+     */
+    public function checkVotingActive()
+    {
+        _dump($this->manager);
+        if (! $this->isVotingActive()) {
+            throw new Exception\VotingInactiveException('Voting is currently inactive');
+        }
     }
 
 

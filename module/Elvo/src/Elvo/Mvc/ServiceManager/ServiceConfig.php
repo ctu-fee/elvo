@@ -11,6 +11,7 @@ use Elvo\Mvc\Authentication\IdentityFactory;
 use Elvo\Mvc\Candidate\CandidateService;
 use Elvo\Util\Options;
 use Elvo\Mvc\Listener\DispatchListener;
+use Elvo\Domain\Vote\VoteManager;
 
 
 class ServiceConfig extends Config
@@ -79,13 +80,26 @@ class ServiceConfig extends Config
              */
             'Elvo\Domain\VoteService' => function (ServiceManager $sm)
             {
+                $voteManager = $sm->get('Elvo\Domain\VoteManager');
                 $voteFactory = $sm->get('Elvo\Domain\VoteFactory');
                 $voteValidator = $sm->get('Elvo\Domain\VoteValidator');
                 $voteEncryptor = $sm->get('Elvo\Domain\VoteEncryptor');
                 $voteStorage = $sm->get('Elvo\Domain\VoteStorage');
                 
-                $voteService = new Domain\Vote\Service\Service($voteFactory, $voteValidator, $voteEncryptor, $voteStorage);
+                $voteService = new Domain\Vote\Service\Service($voteManager, $voteFactory, $voteValidator, $voteEncryptor, $voteStorage);
                 return $voteService;
+            },
+            
+            'Elvo\Domain\VoteManager' => function (ServiceManager $sm)
+            {
+                $config = $sm->get('Config');
+                if (! isset($config['elvo']['vote_manager']['options']) || ! is_array($config['elvo']['vote_manager']['options'])) {
+                    throw new Exception\MissingConfigException("Missing config 'elvo/vote_manager/options'");
+                }
+                
+                $options = new Options($config['elvo']['vote_manager']['options']);
+                $voteManager = new VoteManager($options);
+                return $voteManager;
             },
             
             'Elvo\Domain\VoteFactory' => function (ServiceManager $sm)

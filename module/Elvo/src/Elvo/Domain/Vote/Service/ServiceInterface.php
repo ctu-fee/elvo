@@ -14,6 +14,14 @@ interface ServiceInterface
 
 
     /**
+     * Returns true, if the voting is active.
+     * 
+     * @return boolean
+     */
+    public function isVotingActive();
+
+
+    /**
      * Creates and saves a vote.
      * 
      * @param Voter $voter The identity which is voting.
