@@ -1,12 +1,13 @@
 - UI - forms, messages
-- CSRF protection
++ CSRF protection
 + kontrola vicenasobneho hlasovani
 - implementace casoveho omezeni
 + text translations
 + authentication - Shibboleth, registration at CVUT IdP, attribute relase
 + service layer
 + error handling
-- logging 
+- logging
+    - unique string in the log
 - testy vote validatoru na tento konkretni pripad voleb
 - security - HTTP headers, PHP configuration
 - candidates validator (check for required fields, duplicate IDs etc.)
