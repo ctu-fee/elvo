@@ -80,20 +80,21 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         
         $this->assertSame($result, $this->service->hasAlreadyVoted($voter));
     }
-    
+
+
     public function testHasAlreadyVotedById()
     {
         $result = true;
-    
+        
         $voterId = '123';
-    
+        
         $storage = $this->getStorageMock();
         $storage->expects($this->once())
-        ->method('existsVoterId')
-        ->with($voterId)
-        ->will($this->returnValue($result));
+            ->method('existsVoterId')
+            ->with($voterId)
+            ->will($this->returnValue($result));
         $this->service->setStorage($storage);
-    
+        
         $this->assertSame($result, $this->service->hasAlreadyVotedById($voterId));
     }
 
