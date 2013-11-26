@@ -15,9 +15,9 @@
 
         <?php foreach ($this->candidates as $candidate) { ?>
         <div class="checkbox">
-            <label> <input type="checkbox" name="candidates[]" value="<?php echo $candidate->getId(); ?>"><?php 
-            printf("<strong><a href=\"mailto:%s\">%s %s</a></strong>", $candidate->getEmail(),$candidate->getFirstName(), $candidate->getLastName());
-            printf(" (<a href=\"%s\" target=\"_blank\">%s</a>)",  $candidate->getCandidateUrl(), $this->translate('candidate_url')); 
+            <label> <input type="checkbox" name="candidates[]" value="<?php echo $candidate->getId(); ?>"><?php
+            printf("<strong>%s %s</strong>", $candidate->getFirstName(), $candidate->getLastName());
+            printf(" (<a href=\"%s\" target=\"_blank\">%s</a>)", $candidate->getCandidateUrl(), $this->translate('candidate_url'));
             ?></label>
         </div>
         <?php } ?>
