@@ -17,6 +17,12 @@ class VoteManager
 
     const OPT_END_TIME = 'end_time';
 
+    const STATUS_NOT_STARTED = 'not_started';
+
+    const STATUS_FINISHED = 'finished';
+
+    const STATUS_RUNNING = 'running';
+
     /**
      * @var Options
      */
@@ -30,9 +36,10 @@ class VoteManager
      */
     public function __construct(Options $options = null)
     {
-        if (null !== $options) {
-            $this->setOptions($options);
+        if (null === $options) {
+            $options = new Options();
         }
+        $this->setOptions($options);
     }
 
 
@@ -100,6 +107,18 @@ class VoteManager
             return false;
         }
         
+        return ($this->getVotingStatus($currentTime) == self::STATUS_RUNNING);
+    }
+
+
+    /**
+     * Returns the status of the voting (not started, running, finished).
+     * 
+     * @param \DateTime $currentTime
+     * @return string
+     */
+    public function getVotingStatus(\DateTime $currentTime = null)
+    {
         if (null === $currentTime) {
             $currentTime = new \DateTime();
         }
@@ -107,10 +126,14 @@ class VoteManager
         $startTime = $this->getStartTime();
         $endTime = $this->getEndTime();
         
-        if ($currentTime < $startTime || $currentTime > $endTime) {
-            return false;
+        if ($currentTime < $startTime) {
+            return self::STATUS_NOT_STARTED;
         }
         
-        return true;
+        if ($currentTime > $endTime) {
+            return self::STATUS_FINISHED;
+        }
+        
+        return self::STATUS_RUNNING;
     }
 }

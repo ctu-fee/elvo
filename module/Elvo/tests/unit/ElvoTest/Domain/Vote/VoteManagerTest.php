@@ -78,8 +78,25 @@ class VoteManagerTest extends \PHPUnit_Framework_TestCase
             'start_time' => $startTime,
             'end_time' => $endTime
         ));
+        
         $this->manager->setOptions($options);
         $this->assertSame($expected, $this->manager->isVotingActive($currentTime));
+    }
+
+
+    /**
+     * @dataProvider getVotingStatusProvider
+     */
+    public function testGetVotingStatus($currentTime, $startTime, $endTime, $expected)
+    {
+        $currentTime = new \DateTime($currentTime);
+        $options = new Options(array(
+            'start_time' => $startTime,
+            'end_time' => $endTime
+        ));
+        
+        $this->manager->setOptions($options);
+        $this->assertSame($expected, $this->manager->getVotingStatus($currentTime));
     }
     
     /*
@@ -115,6 +132,31 @@ class VoteManagerTest extends \PHPUnit_Framework_TestCase
                 'startTime' => '2013-11-23 10:00:00',
                 'endTime' => '2013-11-28 10:00:00',
                 'expected' => false
+            )
+        );
+    }
+
+
+    public function getVotingStatusProvider()
+    {
+        return array(
+            array(
+                'currentTime' => '2013-11-25 10:00:00',
+                'startTime' => '2013-11-23 10:00:00',
+                'endTime' => '2013-11-28 10:00:00',
+                'expected' => VoteManager::STATUS_RUNNING
+            ),
+            array(
+                'currentTime' => '2013-11-23 10:00:00',
+                'startTime' => '2013-11-25 10:00:00',
+                'endTime' => '2013-11-28 10:00:00',
+                'expected' => VoteManager::STATUS_NOT_STARTED
+            ),
+            array(
+                'currentTime' => '2013-11-30 10:00:00',
+                'startTime' => '2013-11-23 10:00:00',
+                'endTime' => '2013-11-28 10:00:00',
+                'expected' => VoteManager::STATUS_FINISHED
             )
         );
     }
