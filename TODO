@@ -1,7 +1,8 @@
+- ukladani kdo hlasoval
 - UI - forms, messages
 + CSRF protection
 + kontrola vicenasobneho hlasovani
-- implementace casoveho omezeni
++ implementace casoveho omezeni
 + text translations
 + authentication - Shibboleth, registration at CVUT IdP, attribute relase
 + service layer

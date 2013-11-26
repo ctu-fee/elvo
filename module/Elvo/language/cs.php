@@ -4,7 +4,7 @@ return array(
     /*
      * general
      */
-    'title_global' => 'Volby do Senátu ČVUT 2013',
+    'title_global' => 'Akademický senát ČVUT',
     
     'role_student' => 'Student',
     'role_academic' => 'Zaměstnanec',
@@ -27,27 +27,32 @@ return array(
     /*
      * component/main-navbar
      */
-    'navbar_title' => 'Volby do Senátu ČVUT 2013',
+    'navbar_title' => 'Akademický senát ČVUT',
     
     /*
      * index/index
      */
-    'index_title' => 'Volby do senátu ČVUT',
-    'index_info_text' => 'Vítejte u voleb do senátu ČVUT, ... Nunc feugiat nisl libero, vitae ullamcorper mi feugiat et. Fusce eu urna urna. Mauris ac arcu at elit facilisis accumsan sit amet quis leo. Sed eget lorem orci. Pellentesque tincidunt mauris massa, condimentum bibendum nibh mollis sit amet. Integer ornare quam fringilla felis elementum iaculis. Aenean vel ante ante.',
+    'index_title' => 'Vítejte u voleb do Akademického senátu ČVUT',
+    'index_info_text' => 'Ve volebním obvodu FEL probíhají volby elektronickou formou, a to v termínu 
+    <strong>od středy 27.11.2013 (začátek v 8:00) do čtvrtka 28.11.2013 (konec ve 13:00)</strong>.
+Za volební obvod FEL budou do AS ČVUT voleni <strong>3 akademičtí pracovníci a 2 studenti.</strong>',
     'button_vote_start' => 'Zahájit volbu',
     
     /*
      * vote/role
      */
     'role_title' => 'Volba role',
-    'role_info_text' => 'Pokud se Vám zobrazila tato stránka, jste současně veden(-a) jako student(-ka) FEL i jako akademický(-á) pracovník(-ce). Volit můžete pouze jednou, musíte si tedy vybrat svoji roli. Volba je zcela na Vás, doporučujeme vzít v úvahu míru Vaší angažovanosti v obou rolích.',
+    'role_info_text' => 'Pokud se Vám zobrazila tato stránka, jste současně veden(-a) jako student(-ka) FEL 
+    i jako akademický(-á) pracovník(-ce). Volit můžete pouze jednou, musíte si tedy vybrat svoji roli. 
+    Volba je zcela na Vás, doporučujeme vzít v úvahu míru Vaší angažovanosti v obou rolích.',
     'role_submit' => 'Zvolit',
     
     /*
      * vote/form
      */
     'form_title' => 'Volební lístek',
-    'form_info_text' => 'Volbu provedete zaškrtnutím polí u kandidátů, kterým chcete dát svůj hlas. Platný je i prázdný volební lístek (účastníte se voleb, ale nedáváte hlas žádnému kandidátovi).',
+    'form_info_text' => 'Na volebním lístku zaškrtněte ty kandidáty, kterým chcete dát svůj hlas. Platný je i prázdný 
+    volební lístek (tj. účastníte se voleb, ale nedáváte hlas žádnému kandidátovi).',
     'form_vote_count_restriction' => 'Maximální počet hlasů',
     'form_vote_submit' => 'Odeslat',
     
@@ -55,7 +60,7 @@ return array(
      * vote/confirm
      */
     'confirm_title' => 'Potvrzení volby',
-    'confirm_info_text' => 'Nyní máte poslední možnost upravit Vaši volbu. Po odeslání již nelze Vaše rozhodnutí změnit.',
+    'confirm_info_text' => 'Zkontrolujte si jména Vámi vybraných kandidátů. Po odeslání již nelze Vaše rozhodnutí změnit.',
     'no_candidates_selected' => 'Žádný kandidát',
     'confirm_vote_submit' => 'Potvrdit',
     
@@ -63,8 +68,8 @@ return array(
     /*
      * vote/status
      */
-    'status_title' => 'Volba byla odeslána',
-    'status_info_text' => 'Výsledky voleb budou k dispozici... (informacni text)',
+    'status_title' => 'Vaše volba byla odeslána, děkujeme za Vaši účast.',
+    'status_info_text' => 'Výsledky voleb budou k dispozici ve čtvrtek v odpoledních hodinách.',
     
     /*
      * vote/disabled

@@ -1,5 +1,11 @@
 @CHARSET "UTF-8";
 
+.jumbotron  h1 {
+    font-size: 42px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
 .container-page {
 	padding-top: 60px;
 }
