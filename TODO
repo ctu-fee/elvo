@@ -1,4 +1,5 @@
 - osetreni - kdyz nekdo uz hlasoval, rovnou mu ukazat status page
+- osetreni moznych exceptions - presmerovani na chybovou stranku
 + ukladani kdo hlasoval
 - UI - forms, messages
 + CSRF protection
