@@ -35,13 +35,38 @@ class CandidateCollectionTest extends \PHPUnit_Framework_Testcase
         $candidate = new \stdClass();
         $this->collection->append($candidate);
     }
+
+
+    public function testFindByIdNotFound()
+    {
+        $this->collection->append($this->getCandidateMock(123));
+        $this->collection->append($this->getCandidateMock(456));
+        
+        $this->assertNull($this->collection->findById(789));
+    }
+
+
+    public function testFindById()
+    {
+        $this->collection->append($this->getCandidateMock(123));
+        $candidate = $this->getCandidateMock(456);
+        $this->collection->append($candidate);
+        $this->collection->append($this->getCandidateMock(789));
+        
+        $this->assertSame($candidate, $this->collection->findById(456));
+    }
     
     /*
      * 
      */
-    protected function getCandidateMock()
+    protected function getCandidateMock($id = null)
     {
         $candidate = $this->getMockBuilder('Elvo\Domain\Entity\Candidate')->getMock();
+        if ($id) {
+            $candidate->expects($this->any())
+                ->method('getId')
+                ->will($this->returnValue($id));
+        }
         
         return $candidate;
     }

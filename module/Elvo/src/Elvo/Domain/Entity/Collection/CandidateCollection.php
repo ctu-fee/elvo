@@ -13,6 +13,23 @@ class CandidateCollection extends AbstractCollection
 
 
     /**
+     * Finds the candidate with the provided ID.
+     * 
+     * @param mixed $id
+     * @return Candidate|null
+     */
+    public function findById($id)
+    {
+        foreach ($this as $candidate) {
+            if ($candidate->getId() == $id) {
+                return $candidate;
+            }
+        }
+        return null;
+    }
+
+
+    /**
      * {@inhertidoc}
      * @see \Elvo\Domain\Entity\Collection\AbstractCollection::validate()
      */
