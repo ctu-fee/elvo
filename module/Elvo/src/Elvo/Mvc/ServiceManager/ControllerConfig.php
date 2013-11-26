@@ -25,7 +25,13 @@ class ControllerConfig extends Config
             'Elvo\Controller\VoteController' => function (ControllerManager $cm)
             {
                 $sm = $cm->getServiceLocator();
-                $controller = new VoteController($sm->get('Elvo\AuthenticationService'), $sm->get('Elvo\CandidateService'), $sm->get('Elvo\Translator'));
+                
+                $voteService = $sm->get('Elvo\Domain\VoteService');
+                $authService = $sm->get('Elvo\AuthenticationService');
+                $candidateService = $sm->get('Elvo\CandidateService');
+                $translator = $sm->get('Elvo\Translator');
+                
+                $controller = new VoteController($voteService, $authService, $candidateService, $translator);
                 return $controller;
             }
         );

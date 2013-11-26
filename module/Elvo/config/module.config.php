@@ -115,6 +115,11 @@ return array(
     
     'elvo' => array(
         
+        'db' => array(
+            'driver' => 'Pdo_Sqlite',
+            'database' => '/tmp/elvo.sqlite'
+        ),
+        
         'authentication' => array(
             'adapter' => 'ZfcShib\Authentication\Adapter\Dummy',
             'options' => array(
@@ -130,7 +135,32 @@ return array(
         
         'candidates' => array(
             'file' => __DIR__ . '/../data/candidates.php'
+        ),
+        
+        'vote_validator' => array(
+            'validators' => array(
+                'candidate_count' => array(
+                    'validator' => 'Elvo\Domain\Vote\Validator\CandidateCountValidator',
+                    'options' => array(
+                        'chamber_count' => array(
+                            'academic' => 3,
+                            'student' => 2
+                        )
+                    )
+                ),
+                'voter_role' => array(
+                    'validator' => 'Elvo\Domain\Vote\Validator\VoterRoleValidator',
+                    'options' => array()
+                )
+            )
+        ),
+        
+        'vote_encryptor' => array(
+            'encryptor' => 'Elvo\Domain\Vote\OpensslEncryptor',
+            'options' => array(
+                'certificate' => __DIR__ . '/../../../data/ssl/crypt.crt',
+                'private_key' => __DIR__ . '/../../../data/ssl/crypt.key'
+            )
         )
     )
-    
 );

@@ -3,18 +3,23 @@
 namespace Elvo\Mvc\Controller;
 
 use Zend\View\Model\ViewModel;
+use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\I18n\Translator\Translator;
-use Zend\Mvc\MvcEvent;
 use Zend\Authentication\AuthenticationService;
 use Elvo\Mvc\Authentication\Identity;
 use Elvo\Mvc\Candidate\CandidateService;
-use Elvo\Domain\Entity\Chamber;
+use Elvo\Domain\Vote;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
 
 
 class VoteController extends AbstractActionController
 {
+
+    /**
+     * @var Vote\Service\Service
+     */
+    protected $voteService;
 
     /**
      * @var AuthenticationService
@@ -32,11 +37,29 @@ class VoteController extends AbstractActionController
     protected $translator;
 
 
-    public function __construct(AuthenticationService $authService, CandidateService $candidateService, Translator $translator)
+    public function __construct(Vote\Service\Service $voteService, AuthenticationService $authService, CandidateService $candidateService, Translator $translator)
     {
         $this->setAuthService($authService);
         $this->setCandidateService($candidateService);
         $this->setTranslator($translator);
+    }
+
+
+    /**
+     * @return Vote\Service\Service
+     */
+    public function getVoteService()
+    {
+        return $this->voteService;
+    }
+
+
+    /**
+     * @param Vote\Service\Service $voteService
+     */
+    public function setVoteService(Vote\Service\Service $voteService)
+    {
+        $this->voteService = $voteService;
     }
 
 
@@ -101,7 +124,6 @@ class VoteController extends AbstractActionController
     public function onDispatch(MvcEvent $event)
     {
         // check if the voting is active, if not - redirect to index
-        
         $authService = $this->getAuthService();
         if (! $authService->hasIdentity()) {
             $authService->authenticate();
@@ -221,7 +243,6 @@ class VoteController extends AbstractActionController
         // check if the user has voted
         // - if voted - show status page
         // - else - redirect to start
-        
         $view = new ViewModel();
         
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');

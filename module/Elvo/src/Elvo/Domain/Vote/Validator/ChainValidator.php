@@ -22,7 +22,7 @@ class ChainValidator implements ValidatorInterface
      * 
      * @param array $validators
      */
-    public function __construct(array $validators)
+    public function __construct(array $validators = array())
     {
         foreach ($validators as $validator) {
             $this->addValidator($validator);
