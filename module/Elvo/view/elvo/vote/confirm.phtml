@@ -14,9 +14,9 @@
         <?php } ?>
         <?php foreach ($this->candidates as $candidate) { ?>
         <div class="checkbox">
-            <label>
-            <?php printf("%s %s", $candidate->getFirstName(), $candidate->getLastName()); ?>
-            </label> <input type="hidden" name="candidates[]" value="<?php echo $candidate->getId(); ?>">
+            <label><?php 
+            printf("<strong><a href=\"mailto:%s\">%s %s</a></strong>", $candidate->getEmail(),$candidate->getFirstName(), $candidate->getLastName());
+            ?></label> <input type="hidden" name="candidates[]" value="<?php echo $candidate->getId(); ?>">
         </div>
         <?php } ?>
 

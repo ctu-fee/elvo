@@ -12,6 +12,8 @@ return array(
     'chamber_student' => 'Studenti',
     'chamber_academic' => 'Akademičtí pracovníci',
     
+    'candidate_url' => 'kandidátka',
+    
     /*
      * error page
      */
