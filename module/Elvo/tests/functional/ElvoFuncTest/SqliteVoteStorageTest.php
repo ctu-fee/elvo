@@ -20,8 +20,10 @@ class SqliteVoteStorageTest extends \PHPUnit_Framework_Testcase
             'database' => ':memory:'
         ));
         
-        $initQuery = file_get_contents(ELVO_DB_SCRIPTS_DIR . '/sqlite/init_tables.sql');
-        $this->dbAdapter->query($initQuery, Db\Adapter\Adapter::QUERY_MODE_EXECUTE);
+        // $initQuery = file_get_contents(ELVO_DB_SCRIPTS_DIR . '/sqlite/init_tables.sql');
+        // $this->dbAdapter->query($initQuery, Db\Adapter\Adapter::QUERY_MODE_EXECUTE);
+        $this->dbAdapter->query('CREATE TABLE vote ( id INTEGER PRIMARY KEY, data TEXT NOT NULL, key TEXT NOT NULL );', Db\Adapter\Adapter::QUERY_MODE_EXECUTE);
+        $this->dbAdapter->query('CREATE TABLE voter (  voter_id VARCHAR(64) PRIMARY KEY );', Db\Adapter\Adapter::QUERY_MODE_EXECUTE);
     }
 
 
@@ -29,7 +31,7 @@ class SqliteVoteStorageTest extends \PHPUnit_Framework_Testcase
     {}
 
 
-    public function testStoreFetch()
+    public function testStoreFetchVote()
     {
         $encryptedVoteData = $this->getEncryptedVoteData();
         
@@ -53,6 +55,31 @@ class SqliteVoteStorageTest extends \PHPUnit_Framework_Testcase
     }
 
 
+    public function testStoreFetchVoterId()
+    {
+        $voterIds = array(
+            '111',
+            '222',
+            '333',
+            '444'
+        );
+        
+        $storage = new Storage\GenericDb($this->dbAdapter);
+        
+        foreach ($voterIds as $id) {
+            $storage->saveVoterId($id);
+        }
+        
+        foreach ($voterIds as $id) {
+            $this->assertTrue($storage->existsVoterId($id));
+        }
+        
+        $this->assertFalse($storage->existsVoterId('555'));
+    }
+    
+    /*
+     * 
+     */
     protected function getEncryptedVoteData()
     {
         return array(

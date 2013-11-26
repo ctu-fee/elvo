@@ -149,9 +149,23 @@ class Service implements ServiceInterface
     }
 
 
+    /**
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Vote\Service\ServiceInterface::isVotingActive()
+     */
     public function isVotingActive()
     {
         return $this->getManager()->isVotingActive();
+    }
+
+
+    /**
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Vote\Service\ServiceInterface::hasAlreadyVoted()
+     */
+    public function hasAlreadyVoted(Entity\Voter $voter)
+    {
+        return $this->getStorage()->existsVoterId($voter->getId());
     }
 
 
@@ -162,6 +176,7 @@ class Service implements ServiceInterface
     public function saveVote(Entity\Voter $voter, CandidateCollection $candidates)
     {
         $this->checkVotingActive();
+        // check for multiple vote
         
         $vote = $this->createVote($voter, $candidates);
         $this->validateVote($vote);
@@ -197,6 +212,20 @@ class Service implements ServiceInterface
     {
         if (! $this->isVotingActive()) {
             throw new Exception\VotingInactiveException('Voting is currently inactive');
+        }
+    }
+
+
+    /**
+     * Checks if the voter has already voted.
+     * 
+     * @param Entity\Voter $voter
+     * @throws Exception\VoterAlreadyVotedException
+     */
+    public function checkHasAlreadyVoted(Entity\Voter $voter)
+    {
+        if ($this->hasAlreadyVoted($voter)) {
+            throw new Exception\VoterAlreadyVotedException(sprintf("Voter with ID '%s' has already voted", $voter->getId()));
         }
     }
 

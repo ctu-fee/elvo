@@ -22,6 +22,15 @@ interface ServiceInterface
 
 
     /**
+     * Returns true, if the voter has already voted.
+     *
+     * @param Entity\Voter $voter
+     * @return boolean
+     */
+    public function hasAlreadyVoted(Voter $voter);
+
+
+    /**
      * Creates and saves a vote.
      * 
      * @param Voter $voter The identity which is voting.

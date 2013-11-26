@@ -15,11 +15,15 @@ class GenericDb implements StorageInterface
 
     const TABLE_VOTE = 'vote';
 
+    const TABLE_VOTER = 'voter';
+
     const FIELD_ID = 'id';
 
     const FIELD_ENCRYPTED_VOTE = 'data';
 
     const FIELD_ENVELOPE_KEY = 'key';
+
+    const FIELD_VOTER_ID = 'voter_id';
 
     /**
      * @var Db\Adapter\Adapter
@@ -71,6 +75,51 @@ class GenericDb implements StorageInterface
     public function setSql(Db\Sql\Sql $sql)
     {
         $this->sql = $sql;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Vote\Storage\StorageInterface::saveVoterId()
+     */
+    public function saveVoterId($voterId)
+    {
+        $sql = $this->getSql();
+        $insert = $sql->insert($this->getVoterTableName());
+        
+        $insert->values(array(
+            self::FIELD_VOTER_ID => $voterId
+        ));
+        
+        $statement = $sql->prepareStatementForSqlObject($insert);
+        $statement->execute();
+    }
+
+
+    /**
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Vote\Storage\StorageInterface::existsVoterId()
+     */
+    public function existsVoterId($voterId)
+    {
+        $sql = $this->getSql();
+        $select = $sql->select($this->getVoterTableName());
+        
+        $select->columns(array(
+            self::FIELD_VOTER_ID
+        ));
+        $select->where(array(
+            self::FIELD_VOTER_ID => $voterId
+        ));
+        
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $results = $statement->execute();
+        
+        if ($results->count() == 0) {
+            return false;
+        }
+        
+        return true;
     }
 
 
@@ -157,6 +206,12 @@ class GenericDb implements StorageInterface
     protected function getVoteTableName()
     {
         return self::TABLE_VOTE;
+    }
+
+
+    protected function getVoterTableName()
+    {
+        return self::TABLE_VOTER;
     }
 
 

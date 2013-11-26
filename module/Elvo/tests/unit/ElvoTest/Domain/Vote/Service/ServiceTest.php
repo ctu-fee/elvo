@@ -64,6 +64,42 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    public function testHasAlreadyVoted()
+    {
+        $result = true;
+        
+        $voterId = '123';
+        $voter = $this->getVoterMock($voterId);
+        
+        $storage = $this->getStorageMock();
+        $storage->expects($this->once())
+            ->method('existsVoterId')
+            ->with($voterId)
+            ->will($this->returnValue($result));
+        $this->service->setStorage($storage);
+        
+        $this->assertSame($result, $this->service->hasAlreadyVoted($voter));
+    }
+
+
+    public function testCheckHasAlreadyVoted()
+    {
+        $this->setExpectedException('Elvo\Domain\Vote\Service\Exception\VoterAlreadyVotedException');
+        
+        $voterId = '123';
+        $voter = $this->getVoterMock($voterId);
+        
+        $storage = $this->getStorageMock();
+        $storage->expects($this->once())
+            ->method('existsVoterId')
+            ->with($voterId)
+            ->will($this->returnValue(true));
+        $this->service->setStorage($storage);
+        
+        $this->service->checkHasAlreadyVoted($voter);
+    }
+
+
     public function testCreateVoteWithException()
     {
         $this->setExpectedException('Elvo\Domain\Vote\Service\Exception\VoteCreationException');
@@ -386,11 +422,17 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    protected function getVoterMock()
+    protected function getVoterMock($id = null)
     {
         $voter = $this->getMockBuilder('Elvo\Domain\Entity\Voter')
             ->disableOriginalConstructor()
             ->getMock();
+        if ($id) {
+            $voter->expects($this->any())
+                ->method('getId')
+                ->will($this->returnValue($id));
+        }
+        
         return $voter;
     }
 

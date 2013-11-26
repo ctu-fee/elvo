@@ -252,6 +252,7 @@ class VoteController extends AbstractActionController
             $voter = new Entity\Voter($identity->getId(), new Entity\VoterRole($role));
             $this->getVoteService()->saveVote($voter, $candidates);
         } catch (\Exception $e) {
+            // FIXME
             throw $e;
         }
         
