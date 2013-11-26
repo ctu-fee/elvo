@@ -202,6 +202,42 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    public function testStoreVoterWithException()
+    {
+        $this->setExpectedException('Elvo\Domain\Vote\Service\Exception\VoteStorageException');
+        
+        $voterId = '123';
+        $voter = $this->getVoterMock($voterId);
+        $exception = new \Exception('vote_storage');
+        
+        $storage = $this->getStorageMock();
+        $storage->expects($this->once())
+            ->method('saveVoterId')
+            ->with($voterId)
+            ->will($this->throwException($exception));
+        $this->service->setStorage($storage);
+        
+        $this->service->storeVoter($voter);
+    }
+
+
+    public function testStoreVoterOk()
+    {
+        $voterId = '123';
+        $voter = $this->getVoterMock($voterId);
+        $exception = new \Exception('vote_storage');
+        
+        $storage = $this->getStorageMock();
+        $storage->expects($this->once())
+            ->method('saveVoterId')
+            ->with($voterId);
+        
+        $this->service->setStorage($storage);
+        
+        $this->service->storeVoter($voter);
+    }
+
+
     public function testStoreEncryptedVoteWithException()
     {
         $this->setExpectedException('Elvo\Domain\Vote\Service\Exception\VoteStorageException');
@@ -245,15 +281,21 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(array(
             'checkVotingActive',
+            'checkHasAlreadyVoted',
             'createVote',
             'validateVote',
             'encryptVote',
-            'storeEncryptedVote'
+            'storeEncryptedVote',
+            'storeVoter'
         ))
             ->getMock();
         
         $service->expects($this->once())
             ->method('checkVotingActive');
+        
+        $service->expects($this->once())
+            ->method('checkHasAlreadyVoted')
+            ->with($voter);
         
         $service->expects($this->once())
             ->method('createVote')
@@ -272,6 +314,10 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $service->expects($this->once())
             ->method('storeEncryptedVote')
             ->with($encryptedVote);
+        
+        $service->expects($this->once())
+            ->method('storeVoter')
+            ->with($voter);
         
         $service->saveVote($voter, $candidates);
     }

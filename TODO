@@ -1,4 +1,5 @@
-- ukladani kdo hlasoval
+- osetreni - kdyz nekdo uz hlasoval, rovnou mu ukazat status page
++ ukladani kdo hlasoval
 - UI - forms, messages
 + CSRF protection
 + kontrola vicenasobneho hlasovani

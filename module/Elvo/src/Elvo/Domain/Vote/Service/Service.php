@@ -176,12 +176,15 @@ class Service implements ServiceInterface
     public function saveVote(Entity\Voter $voter, CandidateCollection $candidates)
     {
         $this->checkVotingActive();
-        // check for multiple vote
+        $this->checkHasAlreadyVoted($voter);
         
         $vote = $this->createVote($voter, $candidates);
         $this->validateVote($vote);
         
         $encryptedVote = $this->encryptVote($vote);
+        
+        // FIXME - should be done in transaction
+        $this->storeVoter($voter);
         $this->storeEncryptedVote($encryptedVote);
     }
 
@@ -301,6 +304,22 @@ class Service implements ServiceInterface
         }
         
         return $vote;
+    }
+
+
+    /**
+     * Saves the voter ID to the storage.
+     * 
+     * @param Entity\Voter $voter
+     * @throws Exception\VoteStorageException
+     */
+    public function storeVoter(Entity\Voter $voter)
+    {
+        try {
+            $this->getStorage()->saveVoterId($voter->getId());
+        } catch (\Exception $e) {
+            throw new Exception\VoteStorageException($this->formatExceptionMessage($e, 'Exception while storing voter ID'), null, $e);
+        }
     }
 
 
