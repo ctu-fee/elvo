@@ -5,20 +5,11 @@ namespace ElvoFuncTest;
 use Elvo\Mvc\Candidate\CandidateService;
 use Elvo\Domain\Entity\Factory\CandidateFactory;
 use Elvo\Domain\Entity\Chamber;
+use Elvo\Util\Options;
 
 
 class CandidateServiceTest extends \PHPUnit_Framework_TestCase
 {
-
-
-    public function testSetCandidatesWithInvalidArgument()
-    {
-        $this->setExpectedException('Elvo\Mvc\Candidate\Exception\InvalidCandidateDataException', 'Expected CandidateCollection or array');
-        
-        $candidates = 'scalar';
-        $candidateFactory = new CandidateFactory();
-        $service = new CandidateService($candidateFactory, $candidates);
-    }
 
 
     public function testSetCandidatesWithInvalidArray()
@@ -30,8 +21,13 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
                 'foo' => 'bar'
             )
         );
+        
+        $options = new Options(array(
+            'candidates' => $candidates
+        ));
+        
         $candidateFactory = new CandidateFactory();
-        $service = new CandidateService($candidateFactory, $candidates);
+        $service = new CandidateService($candidateFactory, $options);
     }
 
 
@@ -49,8 +45,13 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
                 'chamber' => 'bar'
             )
         );
+        
+        $options = new Options(array(
+            'candidates' => $candidates
+        ));
+        
         $candidateFactory = new CandidateFactory();
-        $service = new CandidateService($candidateFactory, $candidates);
+        $service = new CandidateService($candidateFactory, $options);
     }
 
 
@@ -66,8 +67,13 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
                 'chamber' => 'academic'
             )
         );
+        
+        $options = new Options(array(
+            'candidates' => $candidates
+        ));
+        
         $candidateFactory = new CandidateFactory();
-        $service = new CandidateService($candidateFactory, $candidates);
+        $service = new CandidateService($candidateFactory, $options);
         
         $candidates = $service->getCandidates();
         
@@ -100,8 +106,13 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
                 'chamber' => 'academic'
             )
         );
+        
+        $options = new Options(array(
+            'candidates' => $candidates
+        ));
+        
         $candidateFactory = new CandidateFactory();
-        $service = new CandidateService($candidateFactory, $candidates);
+        $service = new CandidateService($candidateFactory, $options);
         
         $studentCandidates = $service->getCandidatesForChamber(Chamber::student());
         $this->assertInstanceOf('Elvo\Domain\Entity\Collection\CandidateCollection', $studentCandidates);
@@ -115,10 +126,12 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testLoadCandidatesFromFile()
     {
-        $file = ELVO_TESTS_DATA_DIR . '/candidates.php';
+        $options = new Options(array(
+            'candidates' => ELVO_TESTS_DATA_DIR . '/candidates.php'
+        ));
         
         $candidateFactory = new CandidateFactory();
-        $service = new CandidateService($candidateFactory, $file);
+        $service = new CandidateService($candidateFactory, $options);
         $candidates = $service->getCandidates();
         
         $this->assertInstanceOf('Elvo\Domain\Entity\Collection\CandidateCollection', $candidates);
