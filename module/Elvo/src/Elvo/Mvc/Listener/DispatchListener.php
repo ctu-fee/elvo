@@ -42,7 +42,6 @@ class DispatchListener extends AbstractListenerAggregate
     {
         /* @var $application \Zend\Mvc\Application */
         $application = $event->getApplication();
-        
         $sm = $application->getServiceManager();
         
         /* @var $request \Zend\Http\PhpEnvironment\Request */
@@ -59,11 +58,12 @@ class DispatchListener extends AbstractListenerAggregate
     {
         /* @var $application \Zend\Mvc\Application */
         $application = $event->getApplication();
+        $sm = $application->getServiceManager();
         
         /* @var $request \Zend\Http\PhpEnvironment\Request */
         $request = $application->getRequest();
         
-        // $e->stopPropagation(true);
+        $env = $sm->get('Elvo\Environment');
         $uniqueId = $this->getUniqueId($application);
         
         _dump($this->formatLogDispatchMessage($uniqueId, $request, sprintf("ERROR: %s", $event->getError())));
@@ -72,7 +72,14 @@ class DispatchListener extends AbstractListenerAggregate
             _dump($this->formatLogDispatchMessage($uniqueId, $request, sprintf("[%s] %s", get_class($exception), $exception->getMessage())));
         }
         
-        // $e->setError(false);
+        if (! $env->isModeDevel()) {
+            $event->stopPropagation(true);
+            $event->setError(false);
+            
+            $response = $event->getResponse();
+            $response->setStatusCode(400);
+            return $response;
+        }
     }
 
 

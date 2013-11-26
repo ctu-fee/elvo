@@ -210,9 +210,7 @@ class VoteController extends AbstractActionController
             }
         }
         
-        $view = new ViewModel();
-        
-        $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
+        $view = new $this->initView();
         
         return $view;
     }
@@ -234,13 +232,12 @@ class VoteController extends AbstractActionController
         $candidates = $candidateService->getCandidatesForIdentity($identity);
         $countRestriction = $candidateService->getCountRestrictionForIdentity($identity);
         
-        $view = new ViewModel(array(
+        $view = $this->initView(array(
             'candidates' => $candidates,
             'role' => $identity->getPrimaryRole(),
             'countRestriction' => $countRestriction,
             'csrfToken' => $this->calculateCsrfToken()
         ));
-        $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
         return $view;
     }
@@ -264,6 +261,7 @@ class VoteController extends AbstractActionController
             $role = $this->resolveVoterRole();
             $candidates = $this->getSubmittedCandidates();
         } catch (ApplicationErrorException $e) {
+            _dump("$e");
             return $this->errorPageFromException($e);
         }
         
@@ -271,12 +269,11 @@ class VoteController extends AbstractActionController
             return $this->errorPage('error_title_data', 'error_title_invalid_candidate_count');
         }
         
-        $view = new ViewModel(array(
+        $view = $this->initView(array(
             'candidates' => $candidates,
             'role' => $role,
             'csrfToken' => $this->calculateCsrfToken()
         ));
-        $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
         return $view;
     }
@@ -300,16 +297,17 @@ class VoteController extends AbstractActionController
             $role = $this->resolveVoterRole();
             $candidates = $this->getSubmittedCandidates();
         } catch (ApplicationErrorException $e) {
+            _dump("$e");
             return $this->errorPageFromException($e);
         }
         
         try {
-            // $voter = new Entity\Voter($identity->getId(), new Entity\VoterRole($role));
             $voter = $this->getVoterFactory()->createVoter($identity->getId(), $role);
             $this->getVoteService()->saveVote($voter, $candidates);
         } catch (\Exception $e) {
             // FIXME
-            throw $e;
+            _dump("$e");
+            return $this->errorPage();
         }
         
         return $this->redirectToStatusPage();
@@ -324,9 +322,7 @@ class VoteController extends AbstractActionController
             return $this->redirect()->toRoute('index');
         }
         
-        $view = new ViewModel();
-        
-        $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
+        $view = $this->initView();
         return $view;
     }
 
@@ -396,12 +392,11 @@ class VoteController extends AbstractActionController
             $message = 'error_message_generic';
         }
         
-        $view = new ViewModel(array(
+        $view = $this->initView(array(
             'errorTitle' => $title,
             'errorMessage' => $message
         ));
         
-        $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         $view->setTemplate('elvo/vote/error');
         
         return $view;
@@ -458,7 +453,8 @@ class VoteController extends AbstractActionController
         try {
             $candidates = $this->getCandidateService()->getCandidatesForIdentityFilteredByIds($identity, $submittedCandidateIds);
         } catch (\Exception $e) {
-            throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
+            _dump("$e");
+            throw new ApplicationErrorException('error_title_generic', 'error_message_generic', $e);
         }
         
         return $candidates;
@@ -475,7 +471,8 @@ class VoteController extends AbstractActionController
     {
         $identity = $this->getIdentity();
         if (! $identity->getPrimaryRole()) {
-            throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
+            _dump('Error: no primary role');
+            throw new ApplicationErrorException('error_title_generic', 'error_message_generic', $e);
         }
         
         /*
@@ -483,7 +480,8 @@ class VoteController extends AbstractActionController
         */
         $submittedRole = $this->params()->fromPost('role');
         if (! $identity->isValidRole($submittedRole)) {
-            throw new ApplicationErrorException('error_title_invalid_data', 'error_message_invalid_voter_role');
+            _dump(sprintf("Invalid role '%s'", $submittedRole));
+            throw new ApplicationErrorException('error_title_invalid_data', 'error_message_invalid_voter_role', $e);
         }
         
         return $submittedRole;
@@ -534,7 +532,9 @@ class VoteController extends AbstractActionController
     protected function checkCsrfToken()
     {
         $token = $this->params()->fromPost('fuu');
-        if (! $token || $token !== $this->calculateCsrfToken()) {
+        $expectedToken = $this->calculateCsrfToken();
+        if (! $token || $token !== $expectedToken) {
+            _dump(sprintf("Invalid CSRF token [%s], expected [%s]", $token, $expectedToken));
             throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
         }
     }

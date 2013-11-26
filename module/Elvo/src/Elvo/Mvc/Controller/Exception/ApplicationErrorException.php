@@ -23,12 +23,12 @@ class ApplicationErrorException extends \RuntimeException
      * @param string $errorTitle
      * @param string $errorMessage
      */
-    public function __construct($errorTitle, $errorMessage = '')
+    public function __construct($errorTitle, $errorMessage = '', \Exception $previous = null)
     {
         $this->setErrorTitle($errorTitle);
         $this->setErrorMessage($errorMessage);
         
-        parent::__construct(sprintf("Application error [%s]: %s", $errorTitle, $errorMessage));
+        parent::__construct(sprintf("Application error [%s]: %s", $errorTitle, $errorMessage), null, $previous);
     }
 
 
