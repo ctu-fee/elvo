@@ -36,7 +36,7 @@ class VoterRole
      * @param string $role
      * @throws Exception\InvalidArgumentException
      */
-    private function __construct($role)
+    public function __construct($role)
     {
         if (! $this->isValid($role)) {
             throw new Exception\InvalidArgumentException(sprintf("Invalid voter role '%s'", $role));

@@ -114,7 +114,12 @@ class OpensslEncryptor implements EncryptorInterface
         $algorithm->setPublicKey($this->getCertificate());
         $encryptedData = $algorithm->encrypt($serializedVote);
         
-        return new EncryptedVote($encryptedData, $algorithm->getEnvelopeKey());
+        $envelopeKey = $algorithm->getEnvelopeKey();
+        if (is_array($envelopeKey)) {
+            $envelopeKey = $envelopeKey[0];
+        }
+        
+        return new EncryptedVote($encryptedData, $envelopeKey);
     }
 
 

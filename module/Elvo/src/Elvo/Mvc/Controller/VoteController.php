@@ -10,6 +10,7 @@ use Zend\Authentication\AuthenticationService;
 use Elvo\Mvc\Authentication\Identity;
 use Elvo\Mvc\Candidate\CandidateService;
 use Elvo\Domain\Vote;
+use Elvo\Domain\Entity;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
 
 
@@ -39,6 +40,7 @@ class VoteController extends AbstractActionController
 
     public function __construct(Vote\Service\Service $voteService, AuthenticationService $authService, CandidateService $candidateService, Translator $translator)
     {
+        $this->setVoteService($voteService);
         $this->setAuthService($authService);
         $this->setCandidateService($candidateService);
         $this->setTranslator($translator);
@@ -233,6 +235,17 @@ class VoteController extends AbstractActionController
         $candidates = $this->getSubmittedCandidates();
         
         // save the vote
+        try {
+            $voter = new Entity\Voter($identity->getId(), new Entity\VoterRole($role));
+        } catch (\Exception $e) {
+            throw $e;
+        }
+        
+        try {
+            $this->getVoteService()->saveVote($voter, $candidates);
+        } catch (\Exception $e) {
+            throw $e;
+        }
         // redirect
         return $this->redirect()->toRoute('status');
     }
