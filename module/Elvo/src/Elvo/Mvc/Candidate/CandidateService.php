@@ -158,15 +158,17 @@ class CandidateService
             return $filteredCandidates;
         }
         
-        $candidates = $this->getCandidatesForIdentity($identity);
-        
-        // FIXME - get rid of double foreach
-        foreach ($candidates as $candidate) {
-            foreach ($candidateIds as $id) {
-                if ($candidate->getId() === intval($id)) {
-                    $filteredCandidates->append($candidate);
-                }
+        foreach ($candidateIds as $id) {
+            $candidate = $this->candidates->findById($id);
+            if (null === $candidate) {
+                throw new Exception\CandidateNotFoundException(sprintf("Candidate with ID:%d not found", $id));
             }
+            
+            if ($identity->getPrimaryRole() != $candidate->getChamber()->getCode()) {
+                throw new Exception\InvalidCandidateDataException(sprintf("Candidate ID:%d for chamber '%s' cannot be selected by voter with role '%s'", $id, $candidate->getChamber(), $identity->getPrimaryRole()));
+            }
+            
+            $filteredCandidates->append($candidate);
         }
         
         return $filteredCandidates;

@@ -199,11 +199,11 @@ class VoteController extends AbstractActionController
         
         try {
             $role = $this->resolveVoterRole();
+            $candidates = $this->getSubmittedCandidates();
         } catch (ApplicationErrorException $e) {
             return $this->errorPageFromException($e);
         }
         
-        $candidates = $this->getSubmittedCandidates();
         if (! $this->getCandidateService()->isValidCandidateCount($identity, $candidates)) {
             return $this->errorPage('error_title_data', 'error_title_invalid_candidate_count');
         }
@@ -229,25 +229,18 @@ class VoteController extends AbstractActionController
         
         try {
             $role = $this->resolveVoterRole();
+            $candidates = $this->getSubmittedCandidates();
         } catch (ApplicationErrorException $e) {
             return $this->errorPageFromException($e);
         }
         
-        $candidates = $this->getSubmittedCandidates();
-        
-        // save the vote
         try {
             $voter = new Entity\Voter($identity->getId(), new Entity\VoterRole($role));
-        } catch (\Exception $e) {
-            throw $e;
-        }
-        
-        try {
             $this->getVoteService()->saveVote($voter, $candidates);
         } catch (\Exception $e) {
             throw $e;
         }
-        // redirect
+        
         return $this->redirect()->toRoute('status');
     }
 
@@ -333,7 +326,12 @@ class VoteController extends AbstractActionController
         if (! is_array($submittedCandidateIds)) {
             $submittedCandidateIds = array();
         }
-        $candidates = $this->getCandidateService()->getCandidatesForIdentityFilteredByIds($identity, $submittedCandidateIds);
+        
+        try {
+            $candidates = $this->getCandidateService()->getCandidatesForIdentityFilteredByIds($identity, $submittedCandidateIds);
+        } catch (\Exception $e) {
+            throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
+        }
         
         return $candidates;
     }
