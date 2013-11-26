@@ -55,13 +55,13 @@ class ServiceConfig extends Config
             'Elvo\CandidateService' => function (ServiceManager $sm)
             {
                 $config = $sm->get('Config');
-                if (! isset($config['elvo']['candidates']['file'])) {
+                if (! isset($config['elvo']['candidates']['options']) || ! is_array($config['elvo']['candidates']['options'])) {
                     throw new Exception\MissingConfigException("Missing config 'elvo/candidates/file'");
                 }
                 
-                $candidateFile = $config['elvo']['candidates']['file'];
+                $options = new Options($config['elvo']['candidates']['options']);
                 
-                $candidateService = new CandidateService($sm->get('Elvo\Domain\CandidateFactory'), $candidateFile);
+                $candidateService = new CandidateService($sm->get('Elvo\Domain\CandidateFactory'), $options);
                 return $candidateService;
             },
             

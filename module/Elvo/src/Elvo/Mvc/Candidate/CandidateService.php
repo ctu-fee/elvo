@@ -6,6 +6,7 @@ use Elvo\Domain\Entity\Chamber;
 use Elvo\Domain\Entity\Factory\CandidateFactory;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
 use Elvo\Mvc\Authentication\Identity;
+use Elvo\Util\Options;
 
 
 /**
@@ -16,6 +17,15 @@ use Elvo\Mvc\Authentication\Identity;
  */
 class CandidateService
 {
+
+    const OPT_CANDIDATES = 'candidates';
+
+    const OPT_CHAMBER_COUNT = 'chamber_count';
+
+    /**
+     * @var Options
+     */
+    protected $options;
 
     /**
      * @var CandidateFactory
@@ -34,9 +44,12 @@ class CandidateService
      * @param CandidateFactory $candidateFactory
      * @param CandidateCollection|array|string $candidateData
      */
-    public function __construct(CandidateFactory $candidateFactory, $candidates = null)
+    public function __construct(CandidateFactory $candidateFactory, Options $options)
     {
+        $this->options = $options;
         $this->setCandidateFactory($candidateFactory);
+        
+        $candidates = $this->options->get(self::OPT_CANDIDATES);
         if (null !== $candidates) {
             $this->setCandidates($candidates);
         }
@@ -157,6 +170,27 @@ class CandidateService
         }
         
         return $filteredCandidates;
+    }
+
+
+    public function getCountRestrictionForIdentity(Identity $identity)
+    {
+        $role = $identity->getPrimaryRole();
+        $chamberCount = $this->options->get(self::OPT_CHAMBER_COUNT);
+        if (! $chamberCount || ! is_array($chamberCount)) {
+            throw new Exception\InvalidOptionException(sprintf("Invalid or unset option '%s'", self::OPT_CHAMBER_COUNT));
+        }
+        
+        if (! isset($chamberCount[$role])) {
+            throw new Exception\InvalidOptionException(sprintf("Wrong value in option '%s' or unknown role '%s'", self::OPT_CHAMBER_COUNT, $role));
+        }
+        
+        $count = intval($chamberCount[$role]);
+        if ($count <= 0) {
+            throw new Exception\InvalidOptionException(sprintf("Wrong value in option '%s' - chamber count cannot be <= 0: %d", self::OPT_CHAMBER_COUNT, $count));
+        }
+        
+        return $count;
     }
 
 

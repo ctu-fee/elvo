@@ -134,7 +134,13 @@ return array(
         ),
         
         'candidates' => array(
-            'file' => __DIR__ . '/../data/candidates.php'
+            'options' => array(
+                'candidates' => __DIR__ . '/../data/candidates.php',
+                'chamber_count' => array(
+                    'academic' => 3,
+                    'student' => 2
+                )
+            )
         ),
         
         'vote_validator' => array(

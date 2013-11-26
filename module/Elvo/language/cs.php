@@ -40,8 +40,9 @@ return array(
      * vote/form
      */
     'form_title' => 'Volební lístek',
-    'form_info_text' => 'Volbu provedete zaškrtnutím polí u kandidátů, kterým chcete dát svůj hlas. Počet hlasů je omezen - , Platný je i prázdný volební lístek (účastníte se voleb, ale nedáváte hlas žádnému kandidátovi).',
-    'form_button_submit' => 'Potvrdit',
+    'form_info_text' => 'Volbu provedete zaškrtnutím polí u kandidátů, kterým chcete dát svůj hlas. Platný je i prázdný volební lístek (účastníte se voleb, ale nedáváte hlas žádnému kandidátovi).',
+    'form_vote_count_restriction' => 'Maximální počet hlasů',
+    'form_vote_submit' => 'Odeslat',
     
     /*
      * vote/confirm
@@ -49,6 +50,7 @@ return array(
     'confirm_title' => 'Potvrzení volby',
     'confirm_info_text' => 'Nyní máte poslední možnost upravit Vaši volbu. Po odeslání již nelze Vaše rozhodnutí změnit.',
     'no_candidates_selected' => 'Žádný kandidát',
+    'confirm_vote_submit' => 'Potvrdit',
     
     
     /*

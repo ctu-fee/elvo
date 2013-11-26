@@ -176,11 +176,14 @@ class VoteController extends AbstractActionController
             return $this->redirect()->toRoute('role');
         }
         
-        $candidates = $this->getCandidateService()->getCandidatesForIdentity($identity);
+        $candidateService = $this->getCandidateService();
+        $candidates = $candidateService->getCandidatesForIdentity($identity);
+        $countRestriction = $candidateService->getCountRestrictionForIdentity($identity);
         
         $view = new ViewModel(array(
             'candidates' => $candidates,
-            'role' => $identity->getPrimaryRole()
+            'role' => $identity->getPrimaryRole(),
+            'countRestriction' => $countRestriction
         ));
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
