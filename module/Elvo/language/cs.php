@@ -4,6 +4,8 @@ return array(
     /*
      * general
      */
+    'title_global' => 'Volby do Senátu ČVUT 2013',
+    
     'role_student' => 'Student',
     'role_academic' => 'Zaměstnanec',
     
@@ -36,7 +38,7 @@ return array(
      */
     'role_title' => 'Volba role',
     'role_info_text' => 'Pokud se Vám zobrazila tato stránka, jste současně veden(-a) jako student(-ka) FEL i jako akademický(-á) pracovník(-ce). Volit můžete pouze jednou, musíte si tedy vybrat svoji roli. Volba je zcela na Vás, doporučujeme vzít v úvahu míru Vaší angažovanosti v obou rolích.',
-    'role_submit' => 'Odeslat',
+    'role_submit' => 'Zvolit',
     
     /*
      * vote/form
@@ -59,5 +61,5 @@ return array(
      * vote/status
      */
     'status_title' => 'Volba byla odeslána',
-    'status_info_text' => 'Výsledky voleb budou k dispozici...'
+    'status_info_text' => 'Výsledky voleb budou k dispozici... (informacni text)'
 );
