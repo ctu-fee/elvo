@@ -7,6 +7,9 @@ return array(
     'role_student' => 'Student',
     'role_academic' => 'Zaměstnanec',
     
+    'chamber_student' => 'Studenti',
+    'chamber_academic' => 'Akademičtí pracovníci',
+    
     /*
      * error page
      */
@@ -29,14 +32,24 @@ return array(
     /*
      * vote/role
      */
+    'role_title' => 'Volba role',
+    'role_info_text' => 'Pokud se Vám zobrazila tato stránka, jste současně veden(-a) jako student(-ka) FEL i jako akademický(-á) pracovník(-ce). Volit můžete pouze jednou, musíte si tedy vybrat svoji roli. Volba je zcela na Vás, doporučujeme vzít v úvahu míru Vaší angažovanosti v obou rolích.',
+    'role_submit' => 'Odeslat',
     
     /*
      * vote/form
      */
+    'form_title' => 'Volební lístek',
+    'form_info_text' => 'Volbu provedete zaškrtnutím polí u kandidátů, kterým chcete dát svůj hlas. Počet hlasů je omezen - , Platný je i prázdný volební lístek (účastníte se voleb, ale nedáváte hlas žádnému kandidátovi).',
+    'form_button_submit' => 'Potvrdit',
     
     /*
      * vote/confirm
      */
+    'confirm_title' => 'Potvrzení volby',
+    'confirm_info_text' => 'Nyní máte poslední možnost upravit Vaši volbu. Po odeslání již nelze Vaše rozhodnutí změnit.',
+    'no_candidates_selected' => 'Žádný kandidát',
+    
     
     /*
      * vote/status

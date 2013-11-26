@@ -9,6 +9,9 @@
 
     <form method="post" action="/submit">
 
+        <?php if (!$this->candidates->count()) { ?>
+        <p><?php echo $this->translate('no_candidates_selected'); ?></p>
+        <?php } ?>
         <?php foreach ($this->candidates as $candidate) { ?>
         <div class="checkbox">
             <label>
@@ -17,8 +20,14 @@
         </div>
         <?php } ?>
 
-        <input type="hidden" name="role" value="<?php echo $this->role; ?>"> <input type="submit" name="submit"
-            value="<?php echo $this->translate('form_button_submit'); ?>" class="btn btn-primary">
+        <br> 
+        <input type="hidden" name="role" value="<?php echo $this->role; ?>"> 
+        
+        
+        
+        <input type="submit" name="submit" value="<?php echo $this->translate('form_button_submit'); ?>" class="btn btn-primary">
+        <br>
+        <a href="/form" class="btn">&laquo; <?php echo $this->translate('button_start_over'); ?></a>
     </form>
 
 </div>
