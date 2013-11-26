@@ -195,7 +195,6 @@ class Service implements ServiceInterface
      */
     public function checkVotingActive()
     {
-        _dump($this->manager);
         if (! $this->isVotingActive()) {
             throw new Exception\VotingInactiveException('Voting is currently inactive');
         }

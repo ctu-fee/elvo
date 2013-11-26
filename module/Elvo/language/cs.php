@@ -21,7 +21,8 @@ return array(
     'error_title_data' => 'Chyba v odeslaných datech',
     'error_message_generic' => 'Vyskytla se chyba během zpracování dotazu.',
     'error_title_invalid_candidate_count' => 'Příliš mnoho zvolených kandidátů.',
-    'button_start_over' => 'Začít znovu', 
+    'button_start_over' => 'Začít znovu',
+    'button_to_start' => 'Na začátek',
     
     /*
      * component/main-navbar
@@ -63,5 +64,23 @@ return array(
      * vote/status
      */
     'status_title' => 'Volba byla odeslána',
-    'status_info_text' => 'Výsledky voleb budou k dispozici... (informacni text)'
+    'status_info_text' => 'Výsledky voleb budou k dispozici... (informacni text)',
+    
+    /*
+     * vote/disabled
+     */
+    'disabled_title' => 'Volby pozastaveny',
+    'disabled_info_text' => 'Z technických důvodů byly volby dočasně pozastaveny.',
+    
+    /*
+     * vote/notstarted
+     */
+    'notstarted_title' => 'Volby neaktiní',
+    'notstarted_info_text' => 'Volby ještě nebyly spuštěny.',
+    
+    /*
+     * vote/finished
+     */
+    'finished_title' => 'Volby ukončeny',
+    'finished_info_text' => 'Výsledky voleb budou k dispozici ve čtvrtek v odpoledních hodinách.'
 );

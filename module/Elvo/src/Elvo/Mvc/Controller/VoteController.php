@@ -15,6 +15,7 @@ use Elvo\Domain\Entity\Collection\CandidateCollection;
 use Zend\Stdlib\RequestInterface;
 use Zend\Stdlib\ResponseInterface;
 use Elvo\Mvc\Controller\Exception\ApplicationErrorException;
+use Elvo\Domain\Vote\VoteManager;
 
 
 class VoteController extends AbstractActionController
@@ -141,12 +142,20 @@ class VoteController extends AbstractActionController
             return $response;
         }
         
+        /*
+         * !!!!!!!
+         */
+        if (! $this->getVoteService()->isVotingActive()) {
+            $event->getRouteMatch()->setParam('action', 'inactive');
+        }
+        
         return parent::onDispatch($event);
     }
 
 
     public function roleAction()
     {
+        // if has primary role, redirect to /form
         $identity = $this->getIdentity();
         $selectedRole = $this->params()->fromPost('role');
         if ($selectedRole) {
@@ -260,22 +269,56 @@ class VoteController extends AbstractActionController
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         return $view;
     }
+
+
+    public function inactiveAction()
+    {
+        $voteManager = $this->getVoteService()->getManager();
+        $voteStatus = $voteManager->getVotingStatus();
+        
+        if ($voteStatus == VoteManager::STATUS_NOT_STARTED) {
+            return $this->notstartedAction();
+        }
+        
+        if ($voteStatus == VoteManager::STATUS_FINISHED) {
+            return $this->finishedAction();
+        }
+        
+        if (! $voteManager->isVotingEnabled()) {
+            return $this->disabledAction();
+        }
+        
+        $this->redirect()->toRoute('index');
+    }
+
+
+    public function notstartedAction()
+    {
+        $view = $this->initView();
+        $view->setTemplate('elvo/vote/notstarted');
+        return $view;
+    }
+
+
+    public function finishedAction()
+    {
+        $view = $this->initView();
+        $view->setTemplate('elvo/vote/finished');
+        return $view;
+    }
+
+
+    public function disabledAction()
+    {
+        $view = $this->initView();
+        $view->setTemplate('elvo/vote/disabled');
+        return $view;
+    }
     
     /*
      * -----------------------------------------------------------------
      */
-    protected function checkVotingActive()
-    {}
-
-
-    protected function votingNotStartedPage()
-    {}
-
-
-    protected function votingFinishedPage()
-    {}
-
-
+    
     /**
      * Returns an error page view model.
      * 
@@ -422,11 +465,25 @@ class VoteController extends AbstractActionController
      * 
      * @throws ApplicationErrorException
      */
-    public function checkCsrfToken()
+    protected function checkCsrfToken()
     {
         $token = $this->params()->fromPost('fuu');
         if (! $token || $token !== $this->calculateCsrfToken()) {
             throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
         }
+    }
+
+
+    /**
+     * Initializes the general action view.
+     * 
+     * @param array $params
+     * @return ViewModel
+     */
+    protected function initView(array $params = array())
+    {
+        $view = new ViewModel($params);
+        $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
+        return $view;
     }
 }
