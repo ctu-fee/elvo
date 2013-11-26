@@ -194,6 +194,17 @@ class CandidateService
     }
 
 
+    public function isValidCandidateCount(Identity $identity, CandidateCollection $candidates)
+    {
+        $countRestriction = $this->getCountRestrictionForIdentity($identity);
+        if ($candidates->count() > $countRestriction) {
+            return false;
+        }
+        
+        return true;
+    }
+
+
     /**
      * Validates the list of candidates.
      * 

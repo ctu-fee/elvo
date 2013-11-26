@@ -14,7 +14,9 @@ return array(
      * error page
      */
     'error_title_generic' => 'Chyba',
+    'error_title_data' => 'Chyba v odeslaných datech',
     'error_message_generic' => 'Vyskytla se chyba během zpracování dotazu. Pokud se to opakuje, kontaktujte správce anebo volební komisi.',
+    'error_title_invalid_candidate_count' => 'Příliš mnoho zvolených kandidátů.',
     'button_start_over' => 'Začít znovu', 
     
     /*

@@ -1,5 +1,6 @@
-- UI - forms, CSRF protection
-- kontrola vicenasobneho hlasovani
+- UI - forms, messages
+- CSRF protection
++ kontrola vicenasobneho hlasovani
 - implementace casoveho omezeni
 + text translations
 + authentication - Shibboleth, registration at CVUT IdP, attribute relase

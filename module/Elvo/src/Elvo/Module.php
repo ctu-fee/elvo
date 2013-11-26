@@ -51,11 +51,16 @@ class Module implements ServiceProviderInterface, ControllerProviderInterface
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($events);
         
-        $events->attach('dispatch.error', 
-            function (MvcEvent $e)
-            {
-                // $e->stopPropagation(true);
-                _dump('ERROR: ' . $e->getError());
-            }, 1000);
+        $events->attach('dispatch.error', function (MvcEvent $e)
+        {
+            // $e->stopPropagation(true);
+            _dump('ERROR: ' . $e->getError());
+            $exception = $e->getParam('exception');
+            if ($exception) {
+                _dump(sprintf("[%s] %s", get_class($exception), $exception->getMessage()));
+            }
+            
+            // $e->setError(false);
+        }, 1000);
     }
 }

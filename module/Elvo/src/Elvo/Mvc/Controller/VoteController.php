@@ -188,30 +188,25 @@ class VoteController extends AbstractActionController
     }
 
 
+    /**
+     * /confirm
+     * 
+     * @return mixed
+     */
     public function confirmAction()
     {
-        /*
         $identity = $this->getIdentity();
-        if (! $identity->getPrimaryRole()) {
-            return $this->errorPage('error_title_generic', 'error_message_generic');
-        }
         
-        $submittedRole = $this->params()->fromPost('role');
-        if (! $identity->isValidRole($submittedRole)) {
-            return $this->errorPage('error_title_invalid_data', 'error_message_invalid_voter_role');
-        }
-        $role = $submittedRole;
-        */
         try {
             $role = $this->resolveVoterRole();
         } catch (ApplicationErrorException $e) {
             return $this->errorPageFromException($e);
         }
         
-        /*
-         * Get and validate submitted candidates.
-         */
         $candidates = $this->getSubmittedCandidates();
+        if (! $this->getCandidateService()->isValidCandidateCount($identity, $candidates)) {
+            return $this->errorPage('error_title_data', 'error_title_invalid_candidate_count');
+        }
         
         $view = new ViewModel(array(
             'candidates' => $candidates,
@@ -223,31 +218,21 @@ class VoteController extends AbstractActionController
     }
 
 
+    /**
+     * /submit
+     * 
+     * @return mixed
+     */
     public function submitAction()
     {
         $identity = $this->getIdentity();
         
-        /*
-        if (! $identity->getPrimaryRole()) {
-            return $this->errorPage('error_title_generic', 'error_message_generic');
-        }
-        
-
-        $submittedRole = $this->params()->fromPost('role');
-        if (! $identity->isValidRole($submittedRole)) {
-            return $this->errorPage('error_title_invalid_data', 'error_message_invalid_voter_role');
-        }
-        $role = $submittedRole;
-        */
         try {
             $role = $this->resolveVoterRole();
         } catch (ApplicationErrorException $e) {
             return $this->errorPageFromException($e);
         }
         
-        /*
-         * Get and validate submitted candidates.
-        */
         $candidates = $this->getSubmittedCandidates();
         
         // save the vote
