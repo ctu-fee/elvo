@@ -180,7 +180,8 @@ class VoteController extends AbstractActionController
         $view = new ViewModel(array(
             'candidates' => $candidates,
             'role' => $identity->getPrimaryRole(),
-            'countRestriction' => $countRestriction
+            'countRestriction' => $countRestriction,
+            'csrfToken' => $this->calculateCsrfToken()
         ));
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
@@ -198,6 +199,7 @@ class VoteController extends AbstractActionController
         $identity = $this->getIdentity();
         
         try {
+            $this->checkCsrfToken();
             $role = $this->resolveVoterRole();
             $candidates = $this->getSubmittedCandidates();
         } catch (ApplicationErrorException $e) {
@@ -210,7 +212,8 @@ class VoteController extends AbstractActionController
         
         $view = new ViewModel(array(
             'candidates' => $candidates,
-            'role' => $role
+            'role' => $role,
+            'csrfToken' => $this->calculateCsrfToken()
         ));
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
         
@@ -228,6 +231,7 @@ class VoteController extends AbstractActionController
         $identity = $this->getIdentity();
         
         try {
+            $this->checkCsrfToken();
             $role = $this->resolveVoterRole();
             $candidates = $this->getSubmittedCandidates();
         } catch (ApplicationErrorException $e) {
@@ -384,5 +388,30 @@ class VoteController extends AbstractActionController
     protected function translate($message, $textDomain = null, $locale = null)
     {
         return $this->getTranslator()->translate($message, $textDomain, $locale);
+    }
+
+
+    /**
+     * Calculate simple CSRF token based on the user's identity.
+     * 
+     * @return string
+     */
+    protected function calculateCsrfToken()
+    {
+        return md5($this->getIdentity()->getId());
+    }
+
+
+    /**
+     * Checks if the POST-ed token corresponds to the calculated one.
+     * 
+     * @throws ApplicationErrorException
+     */
+    public function checkCsrfToken()
+    {
+        $token = $this->params()->fromPost('fuu');
+        if (! $token || $token !== $this->calculateCsrfToken()) {
+            throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
+        }
     }
 }

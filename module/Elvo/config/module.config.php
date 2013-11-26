@@ -115,6 +115,10 @@ return array(
     
     'elvo' => array(
         
+        'env' => array(
+            'mode' => 'devel'
+        ),
+        
         'db' => array(
             'driver' => 'Pdo_Sqlite',
             'database' => '/tmp/elvo.sqlite'

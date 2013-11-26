@@ -22,8 +22,10 @@
         </div>
         <?php } ?>
 
-        <br> <input type="hidden" name="role" value="<?php echo $this->role; ?>"> <input type="submit" name="submit"
-            value="<?php echo $this->translate('form_vote_submit'); ?>" class="btn btn-primary">
+        <br> 
+        <input type="hidden" name="role" value="<?php echo $this->role; ?>"> 
+        <input type="hidden" name="fuu" value="<?php echo $this->csrfToken; ?>">
+        <input type="submit" name="submit" value="<?php echo $this->translate('form_vote_submit'); ?>" class="btn btn-primary">
     </form>
 </div>
 <!-- END page container -->
