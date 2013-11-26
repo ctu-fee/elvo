@@ -318,9 +318,12 @@ class VoteController extends AbstractActionController
 
     public function statusAction()
     {
-        // check if the user has voted
-        // - if voted - show status page
-        // - else - redirect to start
+        $identity = $this->getIdentity();
+        
+        if (! $this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
+            return $this->redirect()->toRoute('index');
+        }
+        
         $view = new ViewModel();
         
         $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
