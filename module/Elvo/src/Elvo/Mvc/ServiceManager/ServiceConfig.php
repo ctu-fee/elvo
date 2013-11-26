@@ -10,6 +10,7 @@ use Elvo\Domain;
 use Elvo\Mvc\Authentication\IdentityFactory;
 use Elvo\Mvc\Candidate\CandidateService;
 use Elvo\Util\Options;
+use Elvo\Mvc\Listener\DispatchListener;
 
 
 class ServiceConfig extends Config
@@ -24,6 +25,12 @@ class ServiceConfig extends Config
              * MVC layer services
              * ------------------
              */
+            'Elvo\DispatchListener' => function (ServiceManager $sm)
+            {
+                $dispatchListener = new DispatchListener();
+                return $dispatchListener;
+            },
+            
             'Elvo\Translator' => 'Zend\I18n\Translator\TranslatorServiceFactory',
             
             'Elvo\IdentityFactory' => function (ServiceManager $sm)

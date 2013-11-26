@@ -48,19 +48,11 @@ class Module implements ServiceProviderInterface, ControllerProviderInterface
         /* @var $events \Zend\EventManager\EventManager */
         $events = $event->getApplication()->getEventManager();
         
+        $services = $event->getApplication()->getServiceManager();
+        
+        $events->attachAggregate($services->get('Elvo\DispatchListener'));
+        
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($events);
-        
-        $events->attach('dispatch.error', function (MvcEvent $e)
-        {
-            // $e->stopPropagation(true);
-            _dump('ERROR: ' . $e->getError());
-            $exception = $e->getParam('exception');
-            if ($exception) {
-                _dump(sprintf("[%s] %s", get_class($exception), $exception->getMessage()));
-            }
-            
-            // $e->setError(false);
-        }, 1000);
     }
 }
