@@ -30,6 +30,9 @@ interface ServiceInterface
     public function hasAlreadyVoted(Voter $voter);
 
 
+    public function hasAlreadyVotedById($voterId);
+
+
     /**
      * Creates and saves a vote.
      * 

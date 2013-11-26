@@ -19,4 +19,11 @@ class VoterRoleTest extends \PHPUnit_Framework_Testcase
     {
         $this->assertSame(VoterRole::ACADEMIC, (string) VoterRole::academic());
     }
+
+
+    public function testConstructorWithInvalidRole()
+    {
+        $this->setExpectedException('Elvo\Domain\Entity\Exception\InvalidVoterRoleException');
+        $role = new VoterRole('foo');
+    }
 }

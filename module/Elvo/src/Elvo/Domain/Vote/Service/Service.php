@@ -49,7 +49,9 @@ class Service implements ServiceInterface
      * @param Vote\EncryptorInterface $encryptor
      * @param Vote\Storage\StorageInterface $storage
      */
-    public function __construct(Vote\VoteManager $manager, VoteFactoryInterface $factory, Vote\Validator\ValidatorInterface $validator, Vote\EncryptorInterface $encryptor, Vote\Storage\StorageInterface $storage)
+    public function __construct(Vote\VoteManager $manager, VoteFactoryInterface $factory, 
+        Vote\Validator\ValidatorInterface $validator, Vote\EncryptorInterface $encryptor, 
+        Vote\Storage\StorageInterface $storage)
     {
         $this->setManager($manager);
         $this->setFactory($factory);
@@ -165,7 +167,17 @@ class Service implements ServiceInterface
      */
     public function hasAlreadyVoted(Entity\Voter $voter)
     {
-        return $this->getStorage()->existsVoterId($voter->getId());
+        return $this->hasAlreadyVotedById($voter->getId());
+    }
+
+
+    /**
+     * {@inhertidoc}
+     * @see \Elvo\Domain\Vote\Service\ServiceInterface::hasAlreadyVotedById()
+     */
+    public function hasAlreadyVotedById($voterId)
+    {
+        return $this->getStorage()->existsVoterId($voterId);
     }
 
 

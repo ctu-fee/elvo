@@ -19,4 +19,11 @@ class ChamberTest extends \PHPUnit_Framework_Testcase
     {
         $this->assertSame(Chamber::ACADEMIC, (string) Chamber::academic());
     }
+
+
+    public function testConstructorWithInvalidChamber()
+    {
+        $this->setExpectedException('Elvo\Domain\Entity\Exception\InvalidChamberCodeException');
+        $chamber = new Chamber('foo');
+    }
 }

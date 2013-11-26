@@ -7,14 +7,14 @@ use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\I18n\Translator\Translator;
 use Zend\Authentication\AuthenticationService;
+use Zend\Stdlib\RequestInterface;
+use Zend\Stdlib\ResponseInterface;
 use Elvo\Mvc\Authentication\Identity;
 use Elvo\Mvc\Candidate\CandidateService;
+use Elvo\Mvc\Controller\Exception\ApplicationErrorException;
 use Elvo\Domain\Vote;
 use Elvo\Domain\Entity;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
-use Zend\Stdlib\RequestInterface;
-use Zend\Stdlib\ResponseInterface;
-use Elvo\Mvc\Controller\Exception\ApplicationErrorException;
 use Elvo\Domain\Vote\VoteManager;
 
 
@@ -41,8 +41,15 @@ class VoteController extends AbstractActionController
      */
     protected $translator;
 
+    /**
+     * FIXME - move to service
+     * @var Entity\Factory\VoterFactory
+     */
+    protected $voterFactory;
 
-    public function __construct(Vote\Service\Service $voteService, AuthenticationService $authService, CandidateService $candidateService, Translator $translator)
+
+    public function __construct(Vote\Service\Service $voteService, AuthenticationService $authService, 
+        CandidateService $candidateService, Translator $translator)
     {
         $this->setVoteService($voteService);
         $this->setAuthService($authService);
@@ -124,6 +131,27 @@ class VoteController extends AbstractActionController
 
 
     /**
+     * @return Entity\Factory\VoterFactory
+     */
+    public function getVoterFactory()
+    {
+        if (! $this->voterFactory instanceof Entity\Factory\VoterFactory) {
+            $this->voterFactory = new Entity\Factory\VoterFactory();
+        }
+        return $this->voterFactory;
+    }
+
+
+    /**
+     * @param Entity\Factory\VoterFactory $voterFactory
+     */
+    public function setVoterFactory(Entity\Factory\VoterFactory $voterFactory)
+    {
+        $this->voterFactory = $voterFactory;
+    }
+
+
+    /**
      * {@inheritdoc}
      * @see \Zend\Mvc\Controller\AbstractActionController::onDispatch()
      */
@@ -142,12 +170,19 @@ class VoteController extends AbstractActionController
             return $response;
         }
         
+        $identity = $this->getIdentity();
+        
         /*
-         * !!!!!!!
+         * If voting inactive, redirect to the respective page.
          */
         if (! $this->getVoteService()->isVotingActive()) {
             $event->getRouteMatch()->setParam('action', 'inactive');
         }
+        
+        /*
+         * Early detection of voters who already voted - redirect them!
+         */
+        // if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {}
         
         return parent::onDispatch($event);
     }
@@ -155,8 +190,15 @@ class VoteController extends AbstractActionController
 
     public function roleAction()
     {
-        // if has primary role, redirect to /form
         $identity = $this->getIdentity();
+        
+        if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
+            return $this->redirectToStatusPage();
+        }
+        
+        /*
+         * if has primary role, redirect to /form
+         */
         $selectedRole = $this->params()->fromPost('role');
         if ($selectedRole) {
             try {
@@ -179,6 +221,11 @@ class VoteController extends AbstractActionController
     public function formAction()
     {
         $identity = $this->getIdentity();
+        
+        if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
+            return $this->redirectToStatusPage();
+        }
+        
         if ($identity->hasMultipleRoles() && ! $identity->getPrimaryRole()) {
             return $this->redirect()->toRoute('role');
         }
@@ -207,6 +254,10 @@ class VoteController extends AbstractActionController
     public function confirmAction()
     {
         $identity = $this->getIdentity();
+        
+        if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
+            return $this->redirectToStatusPage();
+        }
         
         try {
             $this->checkCsrfToken();
@@ -240,6 +291,10 @@ class VoteController extends AbstractActionController
     {
         $identity = $this->getIdentity();
         
+        if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
+            return $this->redirectToStatusPage();
+        }
+        
         try {
             $this->checkCsrfToken();
             $role = $this->resolveVoterRole();
@@ -249,14 +304,15 @@ class VoteController extends AbstractActionController
         }
         
         try {
-            $voter = new Entity\Voter($identity->getId(), new Entity\VoterRole($role));
+            // $voter = new Entity\Voter($identity->getId(), new Entity\VoterRole($role));
+            $voter = $this->getVoterFactory()->createVoter($identity->getId(), $role);
             $this->getVoteService()->saveVote($voter, $candidates);
         } catch (\Exception $e) {
             // FIXME
             throw $e;
         }
         
-        return $this->redirect()->toRoute('status');
+        return $this->redirectToStatusPage();
     }
 
 
@@ -358,6 +414,12 @@ class VoteController extends AbstractActionController
     protected function errorPageFromException(ApplicationErrorException $e)
     {
         return $this->errorPage($e->getErrorTitle(), $e->getErrorMessage());
+    }
+
+
+    protected function redirectToStatusPage()
+    {
+        return $this->redirect()->toRoute('status');
     }
     
     /*
