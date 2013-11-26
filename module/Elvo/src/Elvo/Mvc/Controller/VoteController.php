@@ -12,6 +12,9 @@ use Elvo\Mvc\Candidate\CandidateService;
 use Elvo\Domain\Vote;
 use Elvo\Domain\Entity;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
+use Zend\Stdlib\RequestInterface;
+use Zend\Stdlib\ResponseInterface;
+use Elvo\Mvc\Controller\Exception\ApplicationErrorException;
 
 
 class VoteController extends AbstractActionController
@@ -166,12 +169,6 @@ class VoteController extends AbstractActionController
     public function formAction()
     {
         $identity = $this->getIdentity();
-        /*
-         * Check user roles - if more than one, check if one of them has been selected and if
-         * none is selected, redirect to /role, where the user will select the role to vote.
-         */
-        
-        // $selectedRole = $this->params()->fromPost('role');
         if ($identity->hasMultipleRoles() && ! $identity->getPrimaryRole()) {
             return $this->redirect()->toRoute('role');
         }
@@ -193,16 +190,23 @@ class VoteController extends AbstractActionController
 
     public function confirmAction()
     {
-        $identity = $this->getIdentity();
-        
         /*
-         * Get and validate the submitted voter role.
-         */
+        $identity = $this->getIdentity();
+        if (! $identity->getPrimaryRole()) {
+            return $this->errorPage('error_title_generic', 'error_message_generic');
+        }
+        
         $submittedRole = $this->params()->fromPost('role');
         if (! $identity->isValidRole($submittedRole)) {
             return $this->errorPage('error_title_invalid_data', 'error_message_invalid_voter_role');
         }
         $role = $submittedRole;
+        */
+        try {
+            $role = $this->resolveVoterRole();
+        } catch (ApplicationErrorException $e) {
+            return $this->errorPageFromException($e);
+        }
         
         /*
          * Get and validate submitted candidates.
@@ -224,13 +228,22 @@ class VoteController extends AbstractActionController
         $identity = $this->getIdentity();
         
         /*
-         * Get and validate the submitted voter role.
-        */
+        if (! $identity->getPrimaryRole()) {
+            return $this->errorPage('error_title_generic', 'error_message_generic');
+        }
+        
+
         $submittedRole = $this->params()->fromPost('role');
         if (! $identity->isValidRole($submittedRole)) {
             return $this->errorPage('error_title_invalid_data', 'error_message_invalid_voter_role');
         }
         $role = $submittedRole;
+        */
+        try {
+            $role = $this->resolveVoterRole();
+        } catch (ApplicationErrorException $e) {
+            return $this->errorPageFromException($e);
+        }
         
         /*
          * Get and validate submitted candidates.
@@ -266,6 +279,13 @@ class VoteController extends AbstractActionController
     }
 
 
+    /**
+     * Returns an error page view model.
+     * 
+     * @param string $title
+     * @param string $message
+     * @return ViewModel
+     */
     protected function errorPage($title = null, $message = null)
     {
         if (null === $title) {
@@ -286,9 +306,26 @@ class VoteController extends AbstractActionController
         
         return $view;
     }
+
+
+    /**
+     * Returns an error page view model based on an exception.
+     * 
+     * @param ApplicationErrorException $e
+     * @return ViewModel
+     */
+    protected function errorPageFromException(ApplicationErrorException $e)
+    {
+        return $this->errorPage($e->getErrorTitle(), $e->getErrorMessage());
+    }
     
     /*
      * 
+     */
+    
+    /**
+     * Returns the main navigation bar's view model.
+     * @return ViewModel
      */
     protected function createNavbarViewModel()
     {
@@ -318,6 +355,31 @@ class VoteController extends AbstractActionController
 
 
     /**
+     * Fetch and validate the voter's role.
+     * 
+     * @throws ApplicationErrorException
+     * @return string
+     */
+    protected function resolveVoterRole()
+    {
+        $identity = $this->getIdentity();
+        if (! $identity->getPrimaryRole()) {
+            throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
+        }
+        
+        /*
+         * Get and validate the submitted voter role.
+        */
+        $submittedRole = $this->params()->fromPost('role');
+        if (! $identity->isValidRole($submittedRole)) {
+            throw new ApplicationErrorException('error_title_invalid_data', 'error_message_invalid_voter_role');
+        }
+        
+        return $submittedRole;
+    }
+
+
+    /**
      * Returns the current user's identity.
      * 
      * @return Identity
@@ -328,6 +390,14 @@ class VoteController extends AbstractActionController
     }
 
 
+    /**
+     * "Shortcut" for the translator call.
+     * 
+     * @param string $message
+     * @param string $textDomain
+     * @param string $locale
+     * @return string
+     */
     protected function translate($message, $textDomain = null, $locale = null)
     {
         return $this->getTranslator()->translate($message, $textDomain, $locale);
