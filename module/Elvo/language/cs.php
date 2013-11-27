@@ -82,8 +82,8 @@ Za volební obvod FEL budou do AS ČVUT voleni <strong>3 akademičtí pracovníc
     /*
      * vote/notstarted
      */
-    'notstarted_title' => 'Volby neaktiní',
-    'notstarted_info_text' => 'Volby ještě nebyly spuštěny.',
+    'notstarted_title' => 'Volby nejsou aktivní',
+    'notstarted_info_text' => 'Elektronické volby teprve budou spuštěny.',
     
     /*
      * vote/finished
