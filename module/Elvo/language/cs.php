@@ -13,6 +13,8 @@ return array(
     'chamber_academic' => 'Akademičtí pracovníci',
     
     'candidate_url' => 'kandidátka',
+    'election_commitee' => 'Volební komise',
+    'election_commitee_email' => 'volby@fel.cvut.cz',
     
     /*
      * error page
