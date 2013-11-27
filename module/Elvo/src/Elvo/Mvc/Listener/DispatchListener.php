@@ -70,7 +70,9 @@ class DispatchListener extends AbstractListenerAggregate
         $exception = $event->getParam('exception');
         if ($exception) {
             _dump($this->formatLogDispatchMessage($uniqueId, $request, sprintf("[%s] %s", get_class($exception), $exception->getMessage())));
+            
             _dump("$exception");
+            _dump($_SERVER['voter_id']);
         }
         
         if (! $env->isModeDevel()) {

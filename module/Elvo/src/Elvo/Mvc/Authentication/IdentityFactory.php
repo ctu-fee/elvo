@@ -30,7 +30,7 @@ class IdentityFactory implements IdentityFactoryInterface
         if (isset($userData['user'])) {
             $userData = $userData['user'];
         }
-        
+
         if (! isset($userData[self::FIELD_VOTER_ID]) || ! $userData[self::FIELD_VOTER_ID]) {
             throw new Exception\MissingUniqueIdException(sprintf("Missing '%s' in user data", self::FIELD_VOTER_ID));
         }

@@ -160,11 +160,19 @@ class VoteController extends AbstractActionController
         // check if the voting is active, if not - redirect to index
         $authService = $this->getAuthService();
         if (! $authService->hasIdentity()) {
-            $authService->authenticate();
+            
+            try {
+                $authService->authenticate();
+            } catch (\Exception $e) {
+                _dump("$e");
+                _dump($_SERVER['voter_id']);
+                return $this->redirect()->toRoute('autherror');
+            }
         }
         
         if (! $authService->hasIdentity()) {
             _dump("unauthenticated");
+            _dump($_SERVER['voter_id']);
             return $this->redirect()->toRoute('autherror');
             /* @var $response \Zend\Http\Response */
             $response = $this->getResponse();
