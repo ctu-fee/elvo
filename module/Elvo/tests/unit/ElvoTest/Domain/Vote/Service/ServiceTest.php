@@ -443,6 +443,20 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($vote1, $votes->offsetGet(0));
         $this->assertSame($vote2, $votes->offsetGet(1));
     }
+
+
+    public function testCountVotes()
+    {
+        $count = 1010101;
+        
+        $storage = $this->getStorageMock();
+        $storage->expects($this->once())
+            ->method('count')
+            ->will($this->returnValue($count));
+        $this->service->setStorage($storage);
+        
+        $this->assertSame($count, $this->service->countVotes());
+    }
     
     /*
      * 
@@ -478,6 +492,9 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     protected function getStorageMock()
     {
         $storage = $this->getMock('Elvo\Domain\Vote\Storage\StorageInterface');

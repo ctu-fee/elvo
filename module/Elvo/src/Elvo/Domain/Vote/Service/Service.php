@@ -219,6 +219,16 @@ class Service implements ServiceInterface
 
 
     /**
+     * {@inhertidoc}
+     * @see \Elvo\Domain\Vote\Service\ServiceInterface::countVotes()
+     */
+    public function countVotes()
+    {
+        return $this->getStorage()->count();
+    }
+
+
+    /**
      * Checks if the voting is active. If not, throws an exception.
      * 
      * @throws Exception\VotingInactiveException

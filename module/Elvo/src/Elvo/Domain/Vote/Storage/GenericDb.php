@@ -173,6 +173,23 @@ class GenericDb implements StorageInterface
     }
 
 
+    public function count()
+    {
+        $sql = $this->getSql();
+        $select = $sql->select($this->getVoteTableName());
+        
+        $select->columns(array(
+            'num' => new Db\Sql\Expression('count(*)')
+        ));
+        
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $result = $statement->execute();
+        $row = $result->current();
+        
+        return intval($row['num']);
+    }
+
+
     /**
      * Encodes data for saving to the storage.
      * 

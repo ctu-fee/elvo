@@ -43,4 +43,12 @@ interface StorageInterface
      * @return \Elvo\Domain\Entity\Collection\EncryptedVoteCollection
      */
     public function fetchAll();
+
+
+    /**
+     * Returns the current vote count.
+     * 
+     * @return integer
+     */
+    public function count();
 }
