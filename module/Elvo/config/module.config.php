@@ -79,6 +79,17 @@ return array(
                         'action' => 'error'
                     )
                 )
+            ),
+            
+            'autherror' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route' => '/autherror',
+                    'defaults' => array(
+                        'controller' => 'Elvo\Controller\IndexController',
+                        'action' => 'autherror'
+                    )
+                )
             )
         )
     ),

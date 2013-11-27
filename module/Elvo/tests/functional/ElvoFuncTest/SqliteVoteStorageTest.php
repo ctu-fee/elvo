@@ -55,6 +55,22 @@ class SqliteVoteStorageTest extends \PHPUnit_Framework_Testcase
     }
 
 
+    public function testCount()
+    {
+        $count = 0;
+        
+        $storage = new Storage\GenericDb($this->dbAdapter);
+        $this->assertSame($count, $storage->count());
+        
+        $encryptedVoteData = $this->getEncryptedVoteData();
+        foreach ($encryptedVoteData as $rawItem) {
+            $encryptedVote = new EncryptedVote($rawItem[0], $rawItem[1]);
+            $storage->save($encryptedVote);
+            $this->assertSame(++ $count, $storage->count());
+        }
+    }
+
+
     public function testStoreFetchVoterId()
     {
         $voterIds = array(

@@ -57,4 +57,22 @@ class IndexController extends AbstractActionController
         
         return $view;
     }
+
+
+    public function autherrorAction()
+    {
+        /*
+         * Main view
+        */
+        $view = new ViewModel();
+        
+        /*
+         * Navbar view
+        */
+        $navbarView = new ViewModel();
+        $navbarView->setTemplate('component/main-navbar');
+        $view->addChild($navbarView, 'mainNavbar');
+        
+        return $view;
+    }
 }

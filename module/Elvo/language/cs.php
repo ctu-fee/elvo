@@ -89,5 +89,11 @@ Za volební obvod FEL budou do AS ČVUT voleni <strong>3 akademičtí pracovníc
      * vote/finished
      */
     'finished_title' => 'Volby ukončeny',
-    'finished_info_text' => 'Výsledky voleb budou k dispozici ve čtvrtek v odpoledních hodinách.'
+    'finished_info_text' => 'Výsledky voleb budou k dispozici ve čtvrtek v odpoledních hodinách.',
+
+    /*
+     * index/autherror
+     */
+    'autherror_title' => 'Chyba v autentizaci',
+    'autherror_info_text' => 'Pravděpodobně nemáte oprávnění volit. Pokud se domníváte, že je to chyba, kontaktujte volební komisi.'
 );

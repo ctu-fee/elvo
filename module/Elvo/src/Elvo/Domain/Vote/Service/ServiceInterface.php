@@ -30,6 +30,11 @@ interface ServiceInterface
     public function hasAlreadyVoted(Voter $voter);
 
 
+    /**
+     * Returns true if the voter with the provided ID has already votes.
+     * 
+     * @param mixed $voterId
+     */
     public function hasAlreadyVotedById($voterId);
 
 
@@ -48,4 +53,12 @@ interface ServiceInterface
      * @return \Elvo\Domain\Entity\Collection\VoteCollection
      */
     public function fetchAllVotes();
+
+
+    /**
+     * Returns the current vote count;
+     * 
+     * @return integer
+     */
+    public function countVotes();
 }

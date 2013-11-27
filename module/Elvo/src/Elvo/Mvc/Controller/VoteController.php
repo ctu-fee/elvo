@@ -165,6 +165,7 @@ class VoteController extends AbstractActionController
         
         if (! $authService->hasIdentity()) {
             _dump("unauthenticated");
+            return $this->redirect()->toRoute('autherror');
             /* @var $response \Zend\Http\Response */
             $response = $this->getResponse();
             $response->setStatusCode(401);
