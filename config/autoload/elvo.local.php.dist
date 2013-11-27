@@ -1,0 +1,74 @@
+<?php
+
+return array(
+    
+    'elvo' => array(
+        
+        'environment' => array(
+            'mode' => 'devel'
+        ),
+        
+        'vote_manager' => array(
+            'options' => array(
+                'enabled' => true,
+                'start_time' => '2013-11-23 08:00:00',
+                'end_time' => '2013-11-28 14:00:00'
+            )
+        ),
+        
+        'db' => array(
+            'driver' => 'Pdo_Sqlite',
+            'database' => '/tmp/elvo.sqlite'
+        ),
+        
+        'authentication' => array(
+            'adapter' => 'ZfcShib\Authentication\Adapter\Dummy',
+            'options' => array(
+                'user_data' => array(
+                    'voter_id' => '123456',
+                    'voter_roles' => array(
+                        'student',
+                        'academic'
+                    )
+                )
+            )
+        ),
+        
+        'candidates' => array(
+            'options' => array(
+                'candidates' => __DIR__ . '/../../data/candidates/candidates.php',
+                'chamber_count' => array(
+                    'academic' => 3,
+                    'student' => 2
+                )
+            )
+        ),
+        
+        'vote_validator' => array(
+            'validators' => array(
+                'candidate_count' => array(
+                    'validator' => 'Elvo\Domain\Vote\Validator\CandidateCountValidator',
+                    'options' => array(
+                        'chamber_count' => array(
+                            'academic' => 3,
+                            'student' => 2
+                        )
+                    )
+                ),
+                'voter_role' => array(
+                    'validator' => 'Elvo\Domain\Vote\Validator\VoterRoleValidator',
+                    'options' => array()
+                )
+            )
+        ),
+        
+        'vote_encryptor' => array(
+            'encryptor' => 'Elvo\Domain\Vote\OpensslEncryptor',
+            'options' => array(
+                'certificate' => __DIR__ . '/../../data/ssl/crypt.crt',
+                'private_key' => __DIR__ . '/../../data/ssl/crypt.key'
+            )
+        )
+    )
+)
+;
