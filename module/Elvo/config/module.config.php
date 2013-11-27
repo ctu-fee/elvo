@@ -137,7 +137,7 @@ return array(
             'options' => array(
                 'user_data' => array(
                     'voter_id' => '123456',
-                    'voter_roles' => 4
+                    'voter_roles' => 3
                 )
             )
         ),
