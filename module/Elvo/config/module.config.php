@@ -18,7 +18,7 @@ return array(
             'role' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
-                    'route' => '/role',
+                    'route' => '/vote/role',
                     'defaults' => array(
                         'controller' => 'Elvo\Controller\VoteController',
                         'action' => 'role'
