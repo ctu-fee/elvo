@@ -4,8 +4,8 @@
 <title><?php echo $this->translate('title_global'); ?></title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
-<link href="css/custom.css" media="screen" rel="stylesheet" type="text/css">
+<link href="<?php echo $this->basePath('css/bootstrap.min.css'); ?>" media="screen" rel="stylesheet" type="text/css">
+<link href="<?php echo $this->basePath('css/custom.css'); ?>" media="screen" rel="stylesheet" type="text/css">
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js">
@@ -16,7 +16,7 @@
 <body>   
 <?php echo $this->content; ?>
 <script src="https://code.jquery.com/jquery.js"></script>
-<script src="js/bootstrap.min.js"></script>
+<script src="<?php echo $this->basePath('js/bootstrap.min.js'); ?>"></script>
 
 </body>
 </html>

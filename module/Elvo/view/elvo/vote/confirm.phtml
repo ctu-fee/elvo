@@ -7,7 +7,7 @@
     </div>
     <p class="lead"><?php echo $this->translate('confirm_info_text'); ?></p>
 
-    <form method="post" action="submit">
+    <form method="post" action="<?php echo $this->url('submit'); ?>">
 
         <?php if (!$this->candidates->count()) { ?>
         <p><?php echo $this->translate('no_candidates_selected'); ?></p>
@@ -26,7 +26,7 @@
         
         <input type="submit" name="submit" value="<?php echo $this->translate('confirm_vote_submit'); ?>" class="btn btn-primary">
         <br>
-        <a href="form" class="btn">&laquo; <?php echo $this->translate('button_start_over'); ?></a>
+        <a href="<?php echo $this->url('form'); ?>" class="btn">&laquo; <?php echo $this->translate('button_start_over'); ?></a>
     </form>
 
 </div>

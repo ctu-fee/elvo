@@ -29,7 +29,7 @@ return array(
             'form' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
-                    'route' => '/form',
+                    'route' => '/vote/form',
                     'defaults' => array(
                         'controller' => 'Elvo\Controller\VoteController',
                         'action' => 'form'
@@ -40,7 +40,7 @@ return array(
             'confirm' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
-                    'route' => '/confirm',
+                    'route' => '/vote/confirm',
                     'defaults' => array(
                         'controller' => 'Elvo\Controller\VoteController',
                         'action' => 'confirm'
@@ -51,7 +51,7 @@ return array(
             'submit' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
-                    'route' => '/submit',
+                    'route' => '/vote/submit',
                     'defaults' => array(
                         'controller' => 'Elvo\Controller\VoteController',
                         'action' => 'submit'
@@ -62,7 +62,7 @@ return array(
             'status' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
-                    'route' => '/status',
+                    'route' => '/vote/status',
                     'defaults' => array(
                         'controller' => 'Elvo\Controller\VoteController',
                         'action' => 'status'
@@ -73,7 +73,7 @@ return array(
             'error' => array(
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => array(
-                    'route' => '/error',
+                    'route' => '/vote/error',
                     'defaults' => array(
                         'controller' => 'Elvo\Controller\VoteController',
                         'action' => 'error'

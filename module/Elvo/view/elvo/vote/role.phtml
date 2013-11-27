@@ -8,7 +8,7 @@
     </div>
     <p class="lead"><?php echo $this->translate('role_info_text'); ?></p>
 
-    <form method="post" action="role">
+    <form method="post" action="<?php echo $this->url('role'); ?>">
 
         <div class="radio">
             <label> <input type="radio" name="role" id="optionsRadios1" value="student">

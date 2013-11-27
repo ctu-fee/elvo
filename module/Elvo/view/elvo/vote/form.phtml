@@ -11,7 +11,7 @@
     <p><?php printf("%s: %d", $this->translate('form_vote_count_restriction'), $this->countRestriction); ?></p>
     <?php } ?>
 
-    <form method="post" action="confirm">
+    <form method="post" action="<?php echo $this->url('confirm'); ?>">
 
         <?php foreach ($this->candidates as $candidate) { ?>
         <div class="checkbox">
