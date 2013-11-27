@@ -210,7 +210,7 @@ class VoteController extends AbstractActionController
             }
         }
         
-        $view = new $this->initView();
+        $view = $this->initView();
         
         return $view;
     }
