@@ -67,6 +67,7 @@ class VoteResultCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $votes = $this->getVoteService()->fetchAllVotes();
+        
         $resultCollection = $this->getVoteProcessor()->processVotes($votes);
         
         $data = array();
@@ -80,6 +81,9 @@ class VoteResultCommand extends Command
                 $result->getNumVotes()
             );
         }
+        
+        $output->writeln('');
+        $output->writeln(sprintf("<info>Total votes: %d</info>", $votes->count()));
         
         $output->writeln('');
         
