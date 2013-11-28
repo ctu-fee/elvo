@@ -75,12 +75,23 @@ class VoteResultCommand extends Command
             
             $candidate = $result->getCandidate();
             $candidateName = sprintf("%s %s", $candidate->getFirstName(), $candidate->getLastName());
-            $data[] = array(
+            $data[$candidate->getChamber()->getCode()][] = array(
                 $candidateName,
                 $result->getNumVotes()
             );
         }
         
+        $output->writeln('');
+        
+        foreach ($data as $chamber => $chamberResultData) {
+            $this->renderResult($chamber, $chamberResultData, $output);
+        }
+    }
+
+
+    protected function renderResult($chamber, array $data, OutputInterface $output)
+    {
+        $output->writeln(sprintf("<info>%s</info>", $chamber));
         /* @var $table \Symfony\Component\Console\Helper\TableHelper */
         $table = $this->getHelperSet()->get('table');
         $table->setHeaders(array(
@@ -89,5 +100,6 @@ class VoteResultCommand extends Command
         ))->setRows($data);
         
         $table->render($output);
+        $output->writeln('');
     }
 }

@@ -41,7 +41,15 @@ class ServiceConfig extends Config
                 $command = new Command\VoteResultCommand();
                 $command->setVoteService($sm->get('Elvo\Domain\VoteService'));
                 $command->setVoteProcessor($sm->get('Elvo\VoteProcessor'));
-                                
+                
+                return $command;
+            },
+            
+            'Elvo\Console\VoteExportCommand' => function ($sm)
+            {
+                $command = new Command\VoteExportCommand();
+                $command->setVoteService($sm->get('Elvo\Domain\VoteService'));
+                
                 return $command;
             }
         );

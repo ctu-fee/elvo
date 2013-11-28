@@ -20,7 +20,8 @@ $serviceManager->setService('Config', require __DIR__ . '/../config/autoload/elv
 $application = new Application('Elvo', 'v0.1.0');
 $application->addCommands(array(
     $serviceManager->get('Elvo\Console\VoteCountCommand'),
-    $serviceManager->get('Elvo\Console\VoteResultCommand')
+    $serviceManager->get('Elvo\Console\VoteResultCommand'),
+    $serviceManager->get('Elvo\Console\VoteExportCommand')
 ));
 $application->run();
 

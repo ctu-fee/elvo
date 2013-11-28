@@ -27,6 +27,9 @@ class Processor implements ProcessorInterface
             }
         }
         
+
+        $candidateResultCollection->sortByNumVotes();
+
         return $candidateResultCollection;
     }
 }

@@ -61,6 +61,27 @@ class CandidateResultCollection extends AbstractCollection
 
 
     /**
+     * Sorts the collection by the number of votes for each CandidateResult.
+     * 
+     * @return number
+     */
+    public function sortByNumVotes()
+    {
+        $this->items->uasort(function (CandidateResult $cr1, CandidateResult $cr2)
+        {
+            $numVotes1 = $cr1->getNumVotes();
+            $numVotes2 = $cr2->getNumVotes();
+            
+            if ($numVotes1 == $numVotes2) {
+                return 0;
+            }
+            
+            return ($numVotes1 < $numVotes2) ? 1 : - 1;
+        });
+    }
+
+
+    /**
      * Creates a candidate result for the provided candidate.
      * 
      * @param Candidate $candidate
