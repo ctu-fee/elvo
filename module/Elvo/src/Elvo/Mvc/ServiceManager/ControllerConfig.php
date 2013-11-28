@@ -18,7 +18,7 @@ class ControllerConfig extends Config
             'Elvo\Controller\IndexController' => function (ControllerManager $cm)
             {
                 $sm = $cm->getServiceLocator();
-                $controller = new IndexController($sm->get('Elvo\AuthenticationService'));
+                $controller = new IndexController($sm->get('Elvo\AuthenticationService'), $sm->get('Elvo\Domain\VoteManager'));
                 return $controller;
             },
             

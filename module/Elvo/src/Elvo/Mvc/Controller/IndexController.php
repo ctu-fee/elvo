@@ -5,6 +5,7 @@ namespace Elvo\Mvc\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Authentication\AuthenticationService;
+use Elvo\Domain\Vote\VoteManager;
 
 
 class IndexController extends AbstractActionController
@@ -15,10 +16,25 @@ class IndexController extends AbstractActionController
      */
     protected $authService;
 
+    /**
+     * 
+     * @var VoteManager
+     */
+    protected $voteManager;
 
-    public function __construct(AuthenticationService $authService)
+    protected $timeFormat = 'd.n.Y H:i';
+
+
+    /**
+     * Constructor.
+     * 
+     * @param AuthenticationService $authService
+     * @param VoteManager $voteManager
+     */
+    public function __construct(AuthenticationService $authService, VoteManager $voteManager)
     {
         $this->setAuthService($authService);
+        $this->setVoteManager($voteManager);
     }
 
 
@@ -40,18 +56,45 @@ class IndexController extends AbstractActionController
     }
 
 
+    /**
+     * @return VoteManager
+     */
+    public function getVoteManager()
+    {
+        return $this->voteManager;
+    }
+
+
+    /**
+     * @param VoteManager $voteManager
+     */
+    public function setVoteManager(VoteManager $voteManager)
+    {
+        $this->voteManager = $voteManager;
+    }
+
+
     public function indexAction()
     {
         $this->getAuthService()->clearIdentity();
         /*
          * Main view
          */
-        $view = new ViewModel();
+        $view = new ViewModel(array(
+            'startTime' => $this->getVoteManager()
+                ->getStartTime()
+                ->format($this->timeFormat),
+            'endTime' => $this->getVoteManager()
+                ->getEndTime()
+                ->format($this->timeFormat)
+        ));
         
         /*
          * Navbar view
          */
+        
         $navbarView = new ViewModel();
+        
         $navbarView->setTemplate('component/main-navbar');
         $view->addChild($navbarView, 'mainNavbar');
         

@@ -14,7 +14,7 @@ return array(
     
     'candidate_url' => 'kandidátka',
     'election_commitee' => 'Volební komise',
-    'election_commitee_email' => 'volby@fel.cvut.cz',
+    'election_commitee_email' => '{EMAIL_CONTACT}',
     
     /*
      * error page
@@ -35,16 +35,16 @@ return array(
      * index/index
      */
     'index_title' => 'Vítejte u voleb do Akademického senátu ČVUT',
-    'index_info_text' => 'Ve volebním obvodu FEL probíhají volby elektronickou formou, a to v termínu 
-    <strong>od středy 27.11.2013 (začátek v 8:00) do čtvrtka 28.11.2013 (konec ve 13:00)</strong>.
-Za volební obvod FEL budou do AS ČVUT voleni <strong>3 akademičtí pracovníci a 2 studenti.</strong>',
+    'index_info_text' => 'Ve volebním obvodu {OBVOD} probíhají volby elektronickou formou, a to v termínu 
+    od <strong>%s</strong> do <strong>%s</strong>. Za volební obvod {OBVOD} budou do AS ČVUT voleni <strong>{NUM_ACADEMIC} akademičtí pracovníci 
+    a {NUM_STUDENT} studenti.</strong>', 
     'button_vote_start' => 'Zahájit volbu',
     
     /*
      * vote/role
      */
     'role_title' => 'Volba role',
-    'role_info_text' => 'Pokud se Vám zobrazila tato stránka, jste současně veden(-a) jako student(-ka) FEL 
+    'role_info_text' => 'Pokud se Vám zobrazila tato stránka, jste současně veden(-a) jako student(-ka) {OBVOD} 
     i jako akademický(-á) pracovník(-ce). Volit můžete pouze jednou, musíte si tedy vybrat svoji roli. 
     Volba je zcela na Vás, doporučujeme vzít v úvahu míru Vaší angažovanosti v obou rolích.',
     'role_submit' => 'Zvolit',
