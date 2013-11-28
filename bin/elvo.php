@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-
 use Zend\ServiceManager\ServiceManager;
 use Symfony\Component\Console\Application;
 use Elvo\Console;
@@ -18,9 +17,10 @@ $consoleServiceConfig->configureServiceManager($serviceManager);
 
 $serviceManager->setService('Config', require __DIR__ . '/../config/autoload/elvo.local.php');
 
-$application = new Application();
+$application = new Application('Elvo', 'v0.1.0');
 $application->addCommands(array(
-    $serviceManager->get('Elvo\Console\VoteCountCommand')
+    $serviceManager->get('Elvo\Console\VoteCountCommand'),
+    $serviceManager->get('Elvo\Console\VoteResultCommand')
 ));
 $application->run();
 
