@@ -1,8 +1,8 @@
 <?php
 
-namespace ElvoTest\Domain\Vote\Processor;
+namespace ElvoTest\Domain\Entity;
 
-use Elvo\Domain\Vote\Processor\CandidateResult;
+use Elvo\Domain\Entity\CandidateResult;
 
 
 class CandidateResultTest extends \PHPUnit_Framework_TestCase

@@ -1,8 +1,6 @@
 <?php
 
-namespace Elvo\Domain\Vote\Processor;
-
-use Elvo\Domain\Entity\Candidate;
+namespace Elvo\Domain\Entity;
 
 
 /**
