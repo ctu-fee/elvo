@@ -6,6 +6,7 @@ use Elvo\Domain\Vote;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Command\Command;
+use Elvo\Domain\Entity\VoterRole;
 
 
 class VoteResultCommand extends Command
@@ -67,16 +68,6 @@ class VoteResultCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $votes = $this->getVoteService()->fetchAllVotes();
-        $voteCount = array();
-        
-        foreach ($votes as $vote) {
-            /* @var $vote \Elvo\Domain\Entity\Vote */
-            $role = $vote->getVoterRole()->getValue();
-            if (! isset($voteCount[$role])) {
-                $voteCount[$role] = 0;
-            }
-            $voteCount[$role] ++;
-        }
         
         $resultCollection = $this->getVoteProcessor()->processVotes($votes);
         
@@ -95,8 +86,12 @@ class VoteResultCommand extends Command
         $output->writeln('');
         $output->writeln(sprintf("<info>Total votes: %d</info>", $votes->count()));
         
-        foreach ($voteCount as $chamber => $count) {
-            $output->writeln(sprintf("<info>%s: %d</info>", $chamber, $count));
+        $voterRoles = array(
+            VoterRole::academic(),
+            VoterRole::student()
+        );
+        foreach ($voterRoles as $voterRole) {
+            $output->writeln(sprintf("<info>%s: %d</info>", $voterRole->getValue(), $votes->countByVoterRole($voterRole)));
         }
         
         $output->writeln('');
