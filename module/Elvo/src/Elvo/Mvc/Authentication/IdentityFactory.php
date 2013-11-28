@@ -3,6 +3,7 @@
 namespace Elvo\Mvc\Authentication;
 
 use ZfcShib\Authentication\Identity\IdentityFactoryInterface;
+use ZfcShib\Authentication\Identity\Data;
 
 
 /**
@@ -24,13 +25,10 @@ class IdentityFactory implements IdentityFactoryInterface
      * {@inheritdoc}
      * @see \ZfcShib\Authentication\Identity\IdentityFactoryInterface::createIdentity()
      */
-    public function createIdentity(array $userData)
+    public function createIdentity(Data $identityData)
     {
-        // FIXME - dirty fix
-        if (isset($userData['user'])) {
-            $userData = $userData['user'];
-        }
-
+        $userData = $identityData->getUserData();
+        
         if (! isset($userData[self::FIELD_VOTER_ID]) || ! $userData[self::FIELD_VOTER_ID]) {
             throw new Exception\MissingUniqueIdException(sprintf("Missing '%s' in user data", self::FIELD_VOTER_ID));
         }
