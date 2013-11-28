@@ -47,8 +47,7 @@ class VoteExportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $votes = $this->getVoteService()->fetchAllVotes();
-        $votes = $this->generateVotes();
-        _dump($votes);
+        
         $data = array();
         foreach ($votes as $vote) {
             /* @var $vote \Elvo\Domain\Entity\Vote */
@@ -66,42 +65,5 @@ class VoteExportCommand extends Command
         
         $jsonData = Json::encode($data);
         $output->writeln($jsonData);
-    }
-
-
-    protected function generateVotes()
-    {
-        $numVotes = 3000;
-        
-        $votes = new \Elvo\Domain\Entity\Collection\VoteCollection();
-        for ($i = 0; $i < $numVotes; $i ++) {
-            $candidates = $this->generateCandidates();
-            $voterRole = VoterRole::academic();
-            $vote = new \Elvo\Domain\Entity\Vote($voterRole, $candidates);
-            
-            $votes->append($vote);
-        }
-        
-        return $votes;
-    }
-
-
-    protected function generateCandidates()
-    {
-        $factory = new \Elvo\Domain\Entity\Factory\CandidateFactory();
-        $candidates = new CandidateCollection();
-        for ($i = 0; $i <= 3; $i ++) {
-            
-            $candidate = $factory->createCandidate(array(
-                'id' => 1,
-                'first_name' => 'Franta',
-                'last_name' => 'Vomacka',
-                'email' => 'vomacka@fel.cvut.cz',
-                'candidateUrl' => 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-            ));
-            $candidates->append($candidate);
-        }
-        
-        return $candidates;
     }
 }
