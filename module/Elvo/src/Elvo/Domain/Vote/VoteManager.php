@@ -20,6 +20,10 @@ class VoteManager
 
     const OPT_CHAMBER_MAX_VOTES = 'chamber_max_votes';
 
+    const OPT_ELECTORAL_NAME = 'electoral_name';
+
+    const OPT_CONTACT_EMAIL = 'contact_email';
+
     const STATUS_NOT_STARTED = 'not_started';
 
     const STATUS_FINISHED = 'finished';
@@ -160,5 +164,27 @@ class VoteManager
         }
         
         return intval($maxVotes[$chamber->getCode()]);
+    }
+
+
+    /**
+     * Returns the name of the electoral.
+     * 
+     * @return string
+     */
+    public function getElectoralName()
+    {
+        return $this->options->get(self::OPT_ELECTORAL_NAME, '{undefined}');
+    }
+
+
+    /**
+     * Returns the contact email for the elections.
+     * 
+     * @return string
+     */
+    public function getContactEmail()
+    {
+        return $this->options->get(self::OPT_CONTACT_EMAIL, '{undefined}');
     }
 }

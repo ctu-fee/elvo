@@ -91,6 +91,24 @@ class VoteManagerTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    public function testGetElectoralName()
+    {
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_ELECTORAL_NAME => 'FOO'
+        )));
+        $this->assertSame('FOO', $this->manager->getElectoralName());
+    }
+
+
+    public function testGetContactEmail()
+    {
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_CONTACT_EMAIL => 'foo@example.cz'
+        )));
+        $this->assertSame('foo@example.cz', $this->manager->getContactEmail());
+    }
+
+
     /**
      * @dataProvider isVotingActiveProvider
      */
