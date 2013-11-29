@@ -14,6 +14,7 @@ use Elvo\Mvc\Controller\Exception\ApplicationErrorException;
 use Elvo\Domain\Vote;
 use Elvo\Domain\Entity;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
+use Elvo\Domain\Vote\VoteManager;
 
 
 class VoteController extends AbstractController
@@ -158,19 +159,12 @@ class VoteController extends AbstractController
                 $authService->authenticate();
             } catch (\Exception $e) {
                 _dump("$e");
-                _dump($_SERVER['voter_id']);
-                return $this->redirect()->toRoute('autherror');
+                return $this->redirectToAuthError();
             }
         }
         
         if (! $authService->hasIdentity()) {
-            _dump("unauthenticated");
-            _dump($_SERVER['voter_id']);
-            return $this->redirect()->toRoute('autherror');
-            /* @var $response \Zend\Http\Response */
-            $response = $this->getResponse();
-            $response->setStatusCode(401);
-            return $response;
+            // return $this->redirectToAuthError();
         }
         
         $identity = $this->getIdentity();
@@ -181,11 +175,6 @@ class VoteController extends AbstractController
         if (! $this->getVoteService()->isVotingActive()) {
             $event->getRouteMatch()->setParam('action', 'inactive');
         }
-        
-        /*
-         * Early detection of voters who already voted - redirect them!
-         */
-        // if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {}
         
         return parent::onDispatch($event);
     }
@@ -421,9 +410,25 @@ class VoteController extends AbstractController
     }
 
 
+    /**
+     * Redirects to the /status page.
+     * 
+     * @return \Zend\Http\Response
+     */
     protected function redirectToStatusPage()
     {
         return $this->redirect()->toRoute('status');
+    }
+
+
+    /**
+     * Redirects to the /autherror page.
+     * 
+     * @return \Zend\Http\Response
+     */
+    protected function redirectToAuthError()
+    {
+        return $this->redirect()->toRoute('autherror');
     }
     
     /*

@@ -19,6 +19,7 @@ class IndexController extends AbstractController
         $voteManager = $this->getVoteManager();
         
         $view = $this->initView(array(
+            'votingActive' => $voteManager->isVotingActive(),
             'startTime' => $voteManager->getStartTime()
                 ->format($this->timeFormat),
             'endTime' => $voteManager->getEndTime()
