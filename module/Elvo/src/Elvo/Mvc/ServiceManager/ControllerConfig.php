@@ -26,12 +26,13 @@ class ControllerConfig extends Config
             {
                 $sm = $cm->getServiceLocator();
                 
-                $voteService = $sm->get('Elvo\Domain\VoteService');
                 $authService = $sm->get('Elvo\AuthenticationService');
+                $voteManager = $sm->get('Elvo\Domain\VoteManager');
+                $voteService = $sm->get('Elvo\Domain\VoteService');
                 $candidateService = $sm->get('Elvo\CandidateService');
                 $translator = $sm->get('Elvo\Translator');
                 
-                $controller = new VoteController($voteService, $authService, $candidateService, $translator);
+                $controller = new VoteController($authService, $voteManager, $voteService, $candidateService, $translator);
                 return $controller;
             }
         );

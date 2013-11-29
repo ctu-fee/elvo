@@ -14,7 +14,6 @@ return array(
     
     'candidate_url' => 'kandidátka',
     'election_commitee' => 'Volební komise',
-    'election_commitee_email' => '{EMAIL_CONTACT}',
     
     /*
      * error page
@@ -35,16 +34,16 @@ return array(
      * index/index
      */
     'index_title' => 'Vítejte u voleb do Akademického senátu ČVUT',
-    'index_info_text' => 'Ve volebním obvodu {OBVOD} probíhají volby elektronickou formou, a to v termínu 
-    od <strong>%s</strong> do <strong>%s</strong>. Za volební obvod {OBVOD} budou do AS ČVUT voleni <strong>{NUM_ACADEMIC} akademičtí pracovníci 
-    a {NUM_STUDENT} studenti.</strong>', 
+    'index_info_text' => 'Ve volebním obvodu %s probíhají volby elektronickou formou, a to v termínu 
+    od <strong>%s</strong> do <strong>%s</strong>. Za volební obvod %s budou do AS ČVUT voleni <strong>%d akademičtí pracovníci 
+    a %d studenti.</strong>',
     'button_vote_start' => 'Zahájit volbu',
     
     /*
      * vote/role
      */
     'role_title' => 'Volba role',
-    'role_info_text' => 'Pokud se Vám zobrazila tato stránka, jste současně veden(-a) jako student(-ka) {OBVOD} 
+    'role_info_text' => 'Pokud se Vám zobrazila tato stránka, jste současně veden(-a) jako student(-ka) %s 
     i jako akademický(-á) pracovník(-ce). Volit můžete pouze jednou, musíte si tedy vybrat svoji roli. 
     Volba je zcela na Vás, doporučujeme vzít v úvahu míru Vaší angažovanosti v obou rolích.',
     'role_submit' => 'Zvolit',
@@ -89,7 +88,7 @@ return array(
      * vote/finished
      */
     'finished_title' => 'Volby ukončeny',
-    'finished_info_text' => 'Výsledky voleb budou k dispozici ve čtvrtek v odpoledních hodinách.',
+    'finished_info_text' => 'Výsledky voleb zpracovává volební komise.',
 
     /*
      * index/autherror

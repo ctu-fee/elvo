@@ -4,7 +4,6 @@ namespace Elvo\Mvc\Controller;
 
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\I18n\Translator\Translator;
 use Zend\Authentication\AuthenticationService;
 use Zend\Stdlib\RequestInterface;
@@ -15,21 +14,15 @@ use Elvo\Mvc\Controller\Exception\ApplicationErrorException;
 use Elvo\Domain\Vote;
 use Elvo\Domain\Entity;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
-use Elvo\Domain\Vote\VoteManager;
 
 
-class VoteController extends AbstractActionController
+class VoteController extends AbstractController
 {
 
     /**
      * @var Vote\Service\Service
      */
     protected $voteService;
-
-    /**
-     * @var AuthenticationService
-     */
-    protected $authAdapter;
 
     /**
      * @var CandidateService
@@ -48,11 +41,11 @@ class VoteController extends AbstractActionController
     protected $voterFactory;
 
 
-    public function __construct(Vote\Service\Service $voteService, AuthenticationService $authService, 
-        CandidateService $candidateService, Translator $translator)
+    public function __construct(AuthenticationService $authService, Vote\VoteManager $voteManager, Vote\Service\Service $voteService, CandidateService $candidateService, Translator $translator)
     {
+        parent::__construct($authService, $voteManager);
+        
         $this->setVoteService($voteService);
-        $this->setAuthService($authService);
         $this->setCandidateService($candidateService);
         $this->setTranslator($translator);
     }
@@ -220,7 +213,10 @@ class VoteController extends AbstractActionController
             }
         }
         
-        $view = $this->initView();
+        $view = $this->initView(array(
+            'electoralName' => $this->getVoteManager()
+                ->getElectoralName()
+        ));
         
         return $view;
     }
@@ -339,7 +335,7 @@ class VoteController extends AbstractActionController
 
     public function inactiveAction()
     {
-        $voteManager = $this->getVoteService()->getManager();
+        $voteManager = $this->getVoteManager();
         $voteStatus = $voteManager->getVotingStatus();
         
         if ($voteStatus == VoteManager::STATUS_NOT_STARTED) {
@@ -435,19 +431,6 @@ class VoteController extends AbstractActionController
      */
     
     /**
-     * Returns the main navigation bar's view model.
-     * @return ViewModel
-     */
-    protected function createNavbarViewModel()
-    {
-        $navbarView = new ViewModel();
-        $navbarView->setTemplate('component/main-navbar');
-        
-        return $navbarView;
-    }
-
-
-    /**
      * Retrieves and validates the candidates submitted by the voter.
      * 
      * @return CandidateCollection
@@ -499,17 +482,6 @@ class VoteController extends AbstractActionController
 
 
     /**
-     * Returns the current user's identity.
-     * 
-     * @return Identity
-     */
-    protected function getIdentity()
-    {
-        return $this->getAuthService()->getIdentity();
-    }
-
-
-    /**
      * "Shortcut" for the translator call.
      * 
      * @param string $message
@@ -547,19 +519,5 @@ class VoteController extends AbstractActionController
             _dump(sprintf("Invalid CSRF token [%s], expected [%s]", $token, $expectedToken));
             throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
         }
-    }
-
-
-    /**
-     * Initializes the general action view.
-     * 
-     * @param array $params
-     * @return ViewModel
-     */
-    protected function initView(array $params = array())
-    {
-        $view = new ViewModel($params);
-        $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
-        return $view;
     }
 }
