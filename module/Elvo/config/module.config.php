@@ -138,7 +138,9 @@ return array(
                 'chamber_max_votes' => array(
                     'academic' => 3,
                     'student' => 2
-                )
+                ),
+                'electoral_name' => 'FEL',
+                'contact_email' => 'volby@example.cz'
             )
         ),
         
