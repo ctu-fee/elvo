@@ -3,6 +3,7 @@
 namespace ElvoTest\Mvc\Authentication;
 
 use Elvo\Mvc\Authentication\IdentityFactory;
+use ZfcShib\Authentication\Identity\Data;
 
 
 class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
@@ -21,9 +22,9 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('Elvo\Mvc\Authentication\Exception\MissingUniqueIdException');
         
-        $this->factory->createIdentity(array(
+        $this->factory->createIdentity($this->getIdentityData(array(
             'foo' => 'bar'
-        ));
+        )));
     }
 
 
@@ -31,9 +32,9 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('Elvo\Mvc\Authentication\Exception\MissingUniqueIdException');
         
-        $this->factory->createIdentity(array(
+        $this->factory->createIdentity($this->getIdentityData(array(
             'voter_id' => ''
-        ));
+        )));
     }
 
 
@@ -41,9 +42,9 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('Elvo\Mvc\Authentication\Exception\MissingRoleException');
         
-        $this->factory->createIdentity(array(
+        $this->factory->createIdentity($this->getIdentityData(array(
             'voter_id' => '123'
-        ));
+        )));
     }
 
 
@@ -64,10 +65,10 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
             'academic'
         );
         
-        $identity = $this->factory->createIdentity(array(
+        $identity = $this->factory->createIdentity($this->getIdentityData(array(
             'voter_id' => $id,
             'voter_roles' => $encodedRoles
-        ));
+        )));
         
         $this->assertInstanceOf('Elvo\Mvc\Authentication\Identity', $identity);
         $this->assertSame($id, $identity->getId());
@@ -132,5 +133,11 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
                 )
             )
         );
+    }
+
+
+    protected function getIdentityData($userData = array(), $systemData = array())
+    {
+        return new Data($userData, $systemData);
     }
 }
