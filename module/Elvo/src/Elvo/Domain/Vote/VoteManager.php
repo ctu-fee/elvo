@@ -3,6 +3,7 @@
 namespace Elvo\Domain\Vote;
 
 use Elvo\Util\Options;
+use Elvo\Domain\Entity\Chamber;
 
 
 /**
@@ -17,6 +18,8 @@ class VoteManager
 
     const OPT_END_TIME = 'end_time';
 
+    const OPT_CHAMBER_MAX_VOTES = 'chamber_max_votes';
+
     const STATUS_NOT_STARTED = 'not_started';
 
     const STATUS_FINISHED = 'finished';
@@ -27,6 +30,11 @@ class VoteManager
      * @var Options
      */
     protected $options;
+
+    /**
+     * @var unknown
+     */
+    protected $defaulMaxVotes = 1;
 
 
     /**
@@ -135,5 +143,22 @@ class VoteManager
         }
         
         return self::STATUS_RUNNING;
+    }
+
+
+    /**
+     * Returns the maximum allowed votes for a particular chamber.
+     * 
+     * @param Chamber $chamber
+     * @return integer
+     */
+    public function getMaxVotesForChamber(Chamber $chamber)
+    {
+        $maxVotes = $this->options->get(self::OPT_CHAMBER_MAX_VOTES);
+        if (! isset($maxVotes[$chamber->getCode()])) {
+            return $this->defaulMaxVotes;
+        }
+        
+        return intval($maxVotes[$chamber->getCode()]);
     }
 }

@@ -134,7 +134,11 @@ return array(
             'options' => array(
                 'enabled' => true,
                 'start_time' => '2013-11-23 08:00:00',
-                'end_time' => '2013-11-28 14:00:00'
+                'end_time' => '2013-11-28 14:00:00',
+                'chamber_max_votes' => array(
+                    'academic' => 3,
+                    'student' => 2
+                )
             )
         ),
         

@@ -28,7 +28,7 @@ class IdentityFactory implements IdentityFactoryInterface
     public function createIdentity(Data $identityData)
     {
         $userData = $identityData->getUserData();
-        
+
         if (! isset($userData[self::FIELD_VOTER_ID]) || ! $userData[self::FIELD_VOTER_ID]) {
             throw new Exception\MissingUniqueIdException(sprintf("Missing '%s' in user data", self::FIELD_VOTER_ID));
         }

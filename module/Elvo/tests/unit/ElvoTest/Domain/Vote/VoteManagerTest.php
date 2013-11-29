@@ -4,6 +4,7 @@ namespace ElvoTest\Domain\Vote;
 
 use Elvo\Domain\Vote\VoteManager;
 use Elvo\Util\Options;
+use Elvo\Domain\Entity\Chamber;
 
 
 class VoteManagerTest extends \PHPUnit_Framework_TestCase
@@ -64,6 +65,29 @@ class VoteManagerTest extends \PHPUnit_Framework_TestCase
         ));
         $this->manager->setOptions($options);
         $this->assertTrue($this->manager->isVotingEnabled());
+    }
+
+
+    public function testGetMaxVotesForChamberWithUnsetValue()
+    {
+        $this->assertSame(1, $this->manager->getMaxVotesForChamber(Chamber::academic()));
+    }
+
+
+    public function testGetMaxVotesForChamber()
+    {
+        $studentChamber = Chamber::student();
+        $academicChamber = Chamber::academic();
+        
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_CHAMBER_MAX_VOTES => array(
+                $studentChamber->getCode() => 3,
+                $academicChamber->getCode() => 5
+            )
+        )));
+        
+        $this->assertSame(3, $this->manager->getMaxVotesForChamber($studentChamber));
+        $this->assertSame(5, $this->manager->getMaxVotesForChamber($academicChamber));
     }
 
 
