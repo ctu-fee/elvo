@@ -245,6 +245,13 @@ class VoteController extends AbstractController
      */
     public function confirmAction()
     {
+        /*
+         * Force POST
+         */
+        if (!$this->getRequest()->isPost()) {
+            $this->redirect()->toRoute('form');
+        }
+        
         $identity = $this->getIdentity();
         
         if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
@@ -281,6 +288,13 @@ class VoteController extends AbstractController
      */
     public function submitAction()
     {
+        /*
+         * Force POST
+        */
+        if (!$this->getRequest()->isPost()) {
+            $this->redirect()->toRoute('form');
+        }
+        
         $identity = $this->getIdentity();
         
         if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
