@@ -18,7 +18,10 @@ class ControllerConfig extends Config
             'Elvo\Controller\IndexController' => function (ControllerManager $cm)
             {
                 $sm = $cm->getServiceLocator();
+                
                 $controller = new IndexController($sm->get('Elvo\AuthenticationService'), $sm->get('Elvo\Domain\VoteManager'));
+                $controller->setEventManager($sm->get('Elvo\EventManager'));
+                
                 return $controller;
             },
             
@@ -33,6 +36,8 @@ class ControllerConfig extends Config
                 $translator = $sm->get('Elvo\Translator');
                 
                 $controller = new VoteController($authService, $voteManager, $voteService, $candidateService, $translator);
+                $controller->setEventManager($sm->get('Elvo\EventManager'));
+                
                 return $controller;
             }
         );

@@ -51,8 +51,12 @@ class Module implements ServiceProviderInterface, ControllerProviderInterface
         $services = $event->getApplication()->getServiceManager();
         
         $events->attachAggregate($services->get('Elvo\DispatchListener'));
+        // $events->attachAggregate($services->get('Elvo\ApplicationEventsListener'));
         
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($events);
+        
+        $elvoEvents = $services->get('Elvo\EventManager');
+        $elvoEvents->attachAggregate($services->get('Elvo\ApplicationEventsListener'));
     }
 }

@@ -13,6 +13,11 @@ use Elvo\Mvc\Candidate\CandidateService;
 use Elvo\Util\Options;
 use Elvo\Mvc\Listener\DispatchListener;
 use Elvo\Domain\Vote\VoteManager;
+use Elvo\Mvc\Listener\ApplicationEventsListener;
+use Zend\EventManager\EventManager;
+use Monolog\Logger;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Formatter\LineFormatter;
 
 
 class ServiceConfig extends Config
@@ -28,6 +33,24 @@ class ServiceConfig extends Config
              * MVC layer services
              * ------------------
              */
+            'Elvo\EventManager' => function (ServiceManager $sm)
+            {
+                $events = new EventManager();
+                return $events;
+            },
+            
+            'Elvo\Logger' => function (ServiceManager $sm)
+            {
+                $logger = new Logger('elvo');
+                
+                $handler = new ErrorLogHandler();
+                $handler->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message%'));
+                
+                $logger->pushHandler($handler);
+                
+                return $logger;
+            },
+            
             'Elvo\Environment' => function (ServiceManager $sm)
             {
                 $config = $sm->get('Config');
@@ -43,7 +66,17 @@ class ServiceConfig extends Config
             'Elvo\DispatchListener' => function (ServiceManager $sm)
             {
                 $dispatchListener = new DispatchListener();
+                $dispatchListener->setLogger($sm->get('Elvo\Logger'));
+                
                 return $dispatchListener;
+            },
+            
+            'Elvo\ApplicationEventsListener' => function (ServiceManager $sm)
+            {
+                $listener = new ApplicationEventsListener();
+                $listener->setLogger($sm->get('Elvo\Logger'));
+                
+                return $listener;
             },
             
             'Elvo\Translator' => 'Zend\I18n\Translator\TranslatorServiceFactory',

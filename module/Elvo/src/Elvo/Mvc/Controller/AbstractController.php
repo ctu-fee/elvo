@@ -5,6 +5,7 @@ namespace Elvo\Mvc\Controller;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationService;
+use Zend\EventManager\EventManagerInterface;
 use Elvo\Domain\Vote\VoteManager;
 
 
@@ -109,5 +110,43 @@ class AbstractController extends AbstractActionController
         $navbarView->setTemplate('component/main-navbar');
         
         return $navbarView;
+    }
+
+
+    /**
+     * Logs the exception.
+     * 
+     * @param \Exception $e
+     */
+    protected function logException(\Exception $e)
+    {
+        $message = sprintf("[%s] %s\n%s", get_class($e), $e->getMessage(), $e->getTraceAsString());
+        $this->logError($message);
+    }
+
+
+    /**
+     * Logs an error.
+     *
+     * @param string $message
+     */
+    protected function logError($message)
+    {
+        $this->log($message, \Monolog\Logger::ERROR);
+    }
+
+
+    /**
+     * Logs a message.
+     *
+     * @param string $message
+     * @param integer $priority
+     */
+    protected function log($message, $level = \Monolog\Logger::INFO)
+    {
+        $this->getEventManager()->trigger('elvo.log', null, array(
+            'message' => $message,
+            'level' => $level
+        ));
     }
 }

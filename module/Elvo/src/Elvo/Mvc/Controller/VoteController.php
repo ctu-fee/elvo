@@ -6,9 +6,6 @@ use Zend\View\Model\ViewModel;
 use Zend\Mvc\MvcEvent;
 use Zend\I18n\Translator\Translator;
 use Zend\Authentication\AuthenticationService;
-use Zend\Stdlib\RequestInterface;
-use Zend\Stdlib\ResponseInterface;
-use Elvo\Mvc\Authentication\Identity;
 use Elvo\Mvc\Candidate\CandidateService;
 use Elvo\Mvc\Controller\Exception\ApplicationErrorException;
 use Elvo\Domain\Vote;
@@ -67,24 +64,6 @@ class VoteController extends AbstractController
     public function setVoteService(Vote\Service\Service $voteService)
     {
         $this->voteService = $voteService;
-    }
-
-
-    /**
-     * @return AuthenticationService
-     */
-    public function getAuthService()
-    {
-        return $this->authAdapter;
-    }
-
-
-    /**
-     * @param AuthenticationService $authService
-     */
-    public function setAuthService(AuthenticationService $authService)
-    {
-        $this->authAdapter = $authService;
     }
 
 
@@ -158,7 +137,7 @@ class VoteController extends AbstractController
             try {
                 $authService->authenticate();
             } catch (\Exception $e) {
-                _dump("$e");
+                $this->logException($e);
                 return $this->redirectToAuthError();
             }
         }
@@ -197,7 +176,7 @@ class VoteController extends AbstractController
                 $identity->setPrimaryRole($selectedRole);
                 $this->redirect()->toRoute('form');
             } catch (InvalidRoleException $e) {
-                _dump("$e");
+                $this->logException($e);
                 return $this->errorPage();
             }
         }
@@ -248,7 +227,7 @@ class VoteController extends AbstractController
         /*
          * Force POST
          */
-        if (!$this->getRequest()->isPost()) {
+        if (! $this->getRequest()->isPost()) {
             $this->redirect()->toRoute('form');
         }
         
@@ -263,7 +242,7 @@ class VoteController extends AbstractController
             $role = $this->resolveVoterRole();
             $candidates = $this->getSubmittedCandidates();
         } catch (ApplicationErrorException $e) {
-            _dump("$e");
+            $this->logException($e);
             return $this->errorPageFromException($e);
         }
         
@@ -291,7 +270,7 @@ class VoteController extends AbstractController
         /*
          * Force POST
         */
-        if (!$this->getRequest()->isPost()) {
+        if (! $this->getRequest()->isPost()) {
             $this->redirect()->toRoute('form');
         }
         
@@ -306,7 +285,7 @@ class VoteController extends AbstractController
             $role = $this->resolveVoterRole();
             $candidates = $this->getSubmittedCandidates();
         } catch (ApplicationErrorException $e) {
-            _dump("$e");
+            $this->logException($e);
             return $this->errorPageFromException($e);
         }
         
@@ -314,8 +293,7 @@ class VoteController extends AbstractController
             $voter = $this->getVoterFactory()->createVoter($identity->getId(), $role);
             $this->getVoteService()->saveVote($voter, $candidates);
         } catch (\Exception $e) {
-            // FIXME
-            _dump("$e");
+            $this->logException($e);
             return $this->errorPage();
         }
         
@@ -465,7 +443,7 @@ class VoteController extends AbstractController
         try {
             $candidates = $this->getCandidateService()->getCandidatesForIdentityFilteredByIds($identity, $submittedCandidateIds);
         } catch (\Exception $e) {
-            _dump("$e");
+            $this->logException($e);
             throw new ApplicationErrorException('error_title_generic', 'error_message_generic', $e);
         }
         
@@ -483,8 +461,8 @@ class VoteController extends AbstractController
     {
         $identity = $this->getIdentity();
         if (! $identity->getPrimaryRole()) {
-            _dump('Error: no primary role');
-            throw new ApplicationErrorException('error_title_generic', 'error_message_generic', $e);
+            $this->logError('The identity has no primary role');
+            throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
         }
         
         /*
@@ -492,8 +470,8 @@ class VoteController extends AbstractController
         */
         $submittedRole = $this->params()->fromPost('role');
         if (! $identity->isValidRole($submittedRole)) {
-            _dump(sprintf("Invalid role '%s'", $submittedRole));
-            throw new ApplicationErrorException('error_title_invalid_data', 'error_message_invalid_voter_role', $e);
+            $this->logError(sprintf("Invalid role '%s'", $submittedRole));
+            throw new ApplicationErrorException('error_title_invalid_data', 'error_message_invalid_voter_role');
         }
         
         return $submittedRole;
@@ -535,7 +513,7 @@ class VoteController extends AbstractController
         $token = $this->params()->fromPost('fuu');
         $expectedToken = $this->calculateCsrfToken();
         if (! $token || $token !== $expectedToken) {
-            _dump(sprintf("Invalid CSRF token [%s], expected [%s]", $token, $expectedToken));
+            $this->logError(sprintf("Invalid CSRF token [%s], expected [%s]", $token, $expectedToken));
             throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
         }
     }
