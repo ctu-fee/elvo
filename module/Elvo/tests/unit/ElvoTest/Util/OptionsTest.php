@@ -39,4 +39,26 @@ class OptionsTest extends \PHPUnit_Framework_Testcase
         $options->set('foo', 'bar');
         $this->assertSame('bar', $options->get('foo'));
     }
+
+
+    public function testAddDefaultValues()
+    {
+        $options = new Options(array(
+            'item1' => 'value1',
+            'item2' => 'value2'
+        ));
+        
+        $options->addDefaultValues(array(
+            'item1' => 'default1',
+            'item3' => 'default3'
+        ));
+        
+        $expected = array(
+            'item1' => 'value1',
+            'item2' => 'value2',
+            'item3' => 'default3'
+        );
+        
+        $this->assertEquals($expected, $options->getArrayCopy());
+    }
 }
