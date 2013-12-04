@@ -48,15 +48,6 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    /**
-     * @dataProvider createIdentityProvider
-     */
-    public function testDecodeRoles($encodedRoles, $decodedRoles)
-    {
-        $this->assertEquals($decodedRoles, $this->factory->decodeRoles($encodedRoles));
-    }
-
-
     public function testCreateIdentity()
     {
         $id = 'abc';
@@ -64,6 +55,13 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
         $expectedRoles = array(
             'academic'
         );
+        
+        $extractor = $this->getMock('Elvo\Mvc\Authentication\Role\RoleExtractorInterface');
+        $extractor->expects($this->once())
+            ->method('extractRoles')
+            ->with($encodedRoles)
+            ->will($this->returnValue($expectedRoles));
+        $this->factory->setRoleExtractor($extractor);
         
         $identity = $this->factory->createIdentity($this->getIdentityData(array(
             'voter_id' => $id,
@@ -73,66 +71,6 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Elvo\Mvc\Authentication\Identity', $identity);
         $this->assertSame($id, $identity->getId());
         $this->assertEquals($expectedRoles, $identity->getRoles());
-    }
-
-
-    public function createIdentityProvider()
-    {
-        return array(
-            array(
-                'encodedRoles' => - 1,
-                'decodedRoles' => array()
-            ),
-            array(
-                'encodedRoles' => 0,
-                'decodedRoles' => array()
-            ),
-            array(
-                'encodedRoles' => 1,
-                'decodedRoles' => array(
-                    'student'
-                )
-            ),
-            array(
-                'encodedRoles' => 2,
-                'decodedRoles' => array(
-                    'academic'
-                )
-            ),
-            array(
-                'encodedRoles' => 3,
-                'decodedRoles' => array(
-                    'student',
-                    'academic'
-                )
-            ),
-            array(
-                'encodedRoles' => 4,
-                'decodedRoles' => array(
-                    'academic'
-                )
-            ),
-            array(
-                'encodedRoles' => 5,
-                'decodedRoles' => array(
-                    'student',
-                    'academic'
-                )
-            ),
-            array(
-                'encodedRoles' => 6,
-                'decodedRoles' => array(
-                    'academic'
-                )
-            ),
-            array(
-                'encodedRoles' => 7,
-                'decodedRoles' => array(
-                    'student',
-                    'academic'
-                )
-            )
-        );
     }
 
 

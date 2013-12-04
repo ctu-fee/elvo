@@ -20,6 +20,32 @@ class IdentityFactory implements IdentityFactoryInterface
 
     const ROLE_ACADEMIC = 'academic';
 
+    /**
+     * @var Role\RoleExtractorInterface
+     */
+    protected $roleExtractor;
+
+
+    /**
+     * @return Role\RoleExtractorInterface
+     */
+    public function getRoleExtractor()
+    {
+        if (! $this->roleExtractor instanceof Role\RoleExtractorInterface) {
+            $this->roleExtractor = new Role\FelRoleExtractor();
+        }
+        return $this->roleExtractor;
+    }
+
+
+    /**
+     * @param Role\RoleExtractorInterface $roleExtractor
+     */
+    public function setRoleExtractor(Role\RoleExtractorInterface $roleExtractor)
+    {
+        $this->roleExtractor = $roleExtractor;
+    }
+
 
     /**
      * {@inheritdoc}
@@ -28,7 +54,7 @@ class IdentityFactory implements IdentityFactoryInterface
     public function createIdentity(Data $identityData)
     {
         $userData = $identityData->getUserData();
-
+        
         if (! isset($userData[self::FIELD_VOTER_ID]) || ! $userData[self::FIELD_VOTER_ID]) {
             throw new Exception\MissingUniqueIdException(sprintf("Missing '%s' in user data", self::FIELD_VOTER_ID));
         }
@@ -39,7 +65,8 @@ class IdentityFactory implements IdentityFactoryInterface
             throw new Exception\MissingRoleException(sprintf("Missing '%s' in user data", self::FIELD_VOTER_ROLES));
         }
         
-        $roles = $this->decodeRoles($userData[self::FIELD_VOTER_ROLES]);
+        //$roles = $this->decodeRoles($userData[self::FIELD_VOTER_ROLES]);
+        $roles = $this->getRoleExtractor()->extractRoles($userData[self::FIELD_VOTER_ROLES]);
         if (empty($roles)) {
             throw new Exception\InvalidRoleException(sprintf("No roles decoded from value '%s'", $userData[self::FIELD_VOTER_ROLES]));
         }
