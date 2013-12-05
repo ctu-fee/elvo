@@ -1,6 +1,6 @@
 <?php
 
-namespace Elvo\Mvc\Candidate;
+namespace Elvo\Domain\Candidate;
 
 use Elvo\Domain\Entity\Chamber;
 use Elvo\Domain\Entity\Factory\CandidateFactory;

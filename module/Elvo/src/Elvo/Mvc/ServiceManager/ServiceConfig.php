@@ -2,19 +2,17 @@
 
 namespace Elvo\Mvc\ServiceManager;
 
-use Elvo\Util\Environment;
 use Zend\Db;
+use Zend\EventManager\EventManager;
 use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Authentication\AuthenticationService;
 use Elvo\Domain;
-use Elvo\Mvc\Authentication\IdentityFactory;
-use Elvo\Mvc\Candidate\CandidateService;
 use Elvo\Util\Options;
+use Elvo\Util\Environment;
+use Elvo\Mvc\Authentication\IdentityFactory;
 use Elvo\Mvc\Listener\DispatchListener;
-use Elvo\Domain\Vote\VoteManager;
 use Elvo\Mvc\Listener\ApplicationEventsListener;
-use Zend\EventManager\EventManager;
 use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Formatter\LineFormatter;
@@ -135,6 +133,13 @@ class ServiceConfig extends Config
                 return $authService;
             },
             
+
+            
+            /*
+             * ----------------------
+             * Domain layer services
+             * ----------------------
+             */
             'Elvo\CandidateService' => function (ServiceManager $sm)
             {
                 $config = $sm->get('Config');
@@ -144,15 +149,10 @@ class ServiceConfig extends Config
                 
                 $options = new Options($config['elvo']['candidates']['options']);
                 
-                $candidateService = new CandidateService($sm->get('Elvo\Domain\CandidateFactory'), $options);
+                $candidateService = new Domain\Candidate\CandidateService($sm->get('Elvo\Domain\CandidateFactory'), $options);
                 return $candidateService;
             },
             
-            /*
-             * ----------------------
-             * Domain layer services
-             * ----------------------
-             */
             'Elvo\Domain\VoteService' => function (ServiceManager $sm)
             {
                 $voteManager = $sm->get('Elvo\Domain\VoteManager');
@@ -173,7 +173,7 @@ class ServiceConfig extends Config
                 }
                 
                 $options = new Options($config['elvo']['vote_manager']['options']);
-                $voteManager = new VoteManager($options);
+                $voteManager = new Domain\Vote\VoteManager($options);
                 return $voteManager;
             },
             

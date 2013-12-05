@@ -2,7 +2,7 @@
 
 namespace ElvoFuncTest;
 
-use Elvo\Mvc\Candidate\CandidateService;
+use Elvo\Domain\Candidate\CandidateService;
 use Elvo\Domain\Entity\Factory\CandidateFactory;
 use Elvo\Domain\Entity\Chamber;
 use Elvo\Util\Options;
@@ -14,7 +14,7 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCandidatesWithInvalidArray()
     {
-        $this->setExpectedException('Elvo\Mvc\Candidate\Exception\InvalidCandidateDataException', 'Each candidate item must have the "id" property set');
+        $this->setExpectedException('Elvo\Domain\Candidate\Exception\InvalidCandidateDataException', 'Each candidate item must have the "id" property set');
         
         $candidates = array(
             array(

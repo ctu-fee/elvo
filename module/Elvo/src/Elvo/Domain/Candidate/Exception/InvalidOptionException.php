@@ -1,6 +1,6 @@
 <?php
 
-namespace Elvo\Mvc\Candidate\Exception;
+namespace Elvo\Domain\Candidate\Exception;
 
 
 class InvalidOptionException extends \InvalidArgumentException

@@ -6,7 +6,7 @@ use Zend\View\Model\ViewModel;
 use Zend\Mvc\MvcEvent;
 use Zend\I18n\Translator\Translator;
 use Zend\Authentication\AuthenticationService;
-use Elvo\Mvc\Candidate\CandidateService;
+use Elvo\Domain\Candidate\CandidateService;
 use Elvo\Mvc\Controller\Exception\ApplicationErrorException;
 use Elvo\Domain\Vote;
 use Elvo\Domain\Entity;
