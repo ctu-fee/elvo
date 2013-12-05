@@ -33,7 +33,7 @@ class CvutRoleExtractor implements RoleExtractorInterface
     protected $defaultOptions = array(
         self::OPT_VALUE_DELIMITER => ';',
         self::OPT_FIELD_DELIMITER => ':',
-        self::OPT_DEPARTMENT_CODE => '13000',
+        self::OPT_DEPARTMENT_CODE => null,
         self::OPT_ROLE_MAP => array(
             'ZAMESTNANEC-AKADEMICKY' => Identity::ROLE_ACADEMIC,
             'STUDENT' => Identity::ROLE_STUDENT

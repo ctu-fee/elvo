@@ -1,5 +1,4 @@
 <?php
-
 return array(
     
     'elvo' => array(
@@ -13,6 +12,12 @@ return array(
                 'enabled' => true,
                 'start_time' => '2013-11-23 08:00:00',
                 'end_time' => '2013-11-28 14:00:00'
+                'chamber_max_votes' => array(
+                    'academic' => 3,
+                    'student' => 2
+                ),
+                'electoral_name' => 'FEL',
+                'contact_email' => 'volby@example.cz'                
             )
         ),
         
@@ -22,11 +27,19 @@ return array(
         ),
         
         'authentication' => array(
-            'adapter' => 'ZfcShib\Authentication\Adapter\Dummy',
-            'options' => array(
-                'user_data' => array(
-                    'voter_id' => '123456',
-                    'voter_roles' => 3
+            'adapter' => array(
+                'adapter' => 'ZfcShib\Authentication\Adapter\Dummy',
+                'options' => array(
+                    'user_data' => array(
+                        'voter_id' => '123451',
+                        'voter_roles' => 'B-13000-STUDENT;B-13000-ZAMESTNANEC-AKADEMICKY'
+                    )
+                )
+            ),
+            'role_extractor' => array(
+                'class' => 'Elvo\Mvc\Authentication\Role\CvutRoleExtractor',
+                'options' => array(
+                    'department_code' => '13000'
                 )
             )
         ),
@@ -67,5 +80,4 @@ return array(
             )
         )
     )
-)
-;
+);

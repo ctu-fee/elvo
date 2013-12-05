@@ -83,7 +83,29 @@ class ServiceConfig extends Config
             
             'Elvo\IdentityFactory' => function (ServiceManager $sm)
             {
-                return new IdentityFactory();
+                $identityFactory = new IdentityFactory();
+                $identityFactory->setRoleExtractor($sm->get('Elvo\AuthenticationRoleExtractor'));
+                
+                return $identityFactory;
+            },
+            
+            'Elvo\AuthenticationRoleExtractor' => function (ServiceManager $sm)
+            {
+                $config = $sm->get('Config');
+                if (! isset($config['elvo']['authentication']['role_extractor']['class'])) {
+                    throw new Exception\MissingConfigException("Missing config 'elvo/authentication/role_extractor'");
+                }
+                
+                $roleExtractorClass = $config['elvo']['authentication']['role_extractor']['class'];
+                
+                $options = array();
+                if (isset($config['elvo']['authentication']['role_extractor']['options']) && is_array($config['elvo']['authentication']['role_extractor']['options'])) {
+                    $options = $config['elvo']['authentication']['role_extractor']['options'];
+                }
+                
+                $roleExtractor = new $roleExtractorClass(new Options($options));
+                
+                return $roleExtractor;
             },
             
             'Elvo\AuthenticationService' => function (ServiceManager $sm)
@@ -93,10 +115,16 @@ class ServiceConfig extends Config
                     throw new Exception\MissingConfigException("Missing config 'elvo/authentication/adapter'");
                 }
                 
-                $adapterClass = $config['elvo']['authentication']['adapter'];
+                $authAdapterConfig = $config['elvo']['authentication']['adapter'];
+                
+                if (! isset($authAdapterConfig['adapter'])) {
+                    throw new Exception\MissingConfigException("Missing config 'elvo/authentication/adapter/adapter'");
+                }
+                
+                $adapterClass = $authAdapterConfig['adapter'];
                 $options = array();
-                if (isset($config['elvo']['authentication']['options']) && is_array($config['elvo']['authentication']['options'])) {
-                    $options = $config['elvo']['authentication']['options'];
+                if (isset($authAdapterConfig['options']) && is_array($authAdapterConfig['options'])) {
+                    $options = $authAdapterConfig['options'];
                 }
                 
                 $adapter = new $adapterClass($options, null, $sm->get('Elvo\IdentityFactory'));

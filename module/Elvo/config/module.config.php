@@ -150,12 +150,18 @@ return array(
         ),
         
         'authentication' => array(
-            'adapter' => 'ZfcShib\Authentication\Adapter\Dummy',
-            'options' => array(
-                'user_data' => array(
-                    'voter_id' => '123456',
-                    'voter_roles' => 3
+            'adapter' => array(
+                'adapter' => 'ZfcShib\Authentication\Adapter\Dummy',
+                'options' => array(
+                    'user_data' => array(
+                        'voter_id' => '123456',
+                        'voter_roles' => 3
+                    )
                 )
+            ),
+            'role_extractor' => array(
+                'class' => 'Elvo\Mvc\Authentication\Role\FelRoleExtractor',
+                'options' => array()
             )
         ),
         
