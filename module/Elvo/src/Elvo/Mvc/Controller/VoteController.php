@@ -6,12 +6,12 @@ use Zend\View\Model\ViewModel;
 use Zend\Mvc\MvcEvent;
 use Zend\I18n\Translator\Translator;
 use Zend\Authentication\AuthenticationService;
-use Elvo\Domain\Candidate\CandidateService;
 use Elvo\Mvc\Controller\Exception\ApplicationErrorException;
 use Elvo\Domain\Vote;
 use Elvo\Domain\Entity;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
 use Elvo\Domain\Vote\VoteManager;
+use Elvo\Domain\Candidate\CandidateService;
 
 
 class VoteController extends AbstractController
@@ -228,12 +228,15 @@ class VoteController extends AbstractController
          * Force POST
          */
         if (! $this->getRequest()->isPost()) {
+            $this->logError(sprintf("Unexpected HTTP method '%s', expecting POST", $this->getRequest()
+                ->getMethod()));
             $this->redirect()->toRoute('form');
         }
         
         $identity = $this->getIdentity();
         
         if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
+            $this->logError('Already voted');
             return $this->redirectToStatusPage();
         }
         
@@ -247,6 +250,7 @@ class VoteController extends AbstractController
         }
         
         if (! $this->getCandidateService()->isValidCandidateCount($identity, $candidates)) {
+            $this->logError(sprintf("Too many selected candidates: %d", $candidates->count()));
             return $this->errorPage('error_title_data', 'error_title_invalid_candidate_count');
         }
         
@@ -271,12 +275,15 @@ class VoteController extends AbstractController
          * Force POST
         */
         if (! $this->getRequest()->isPost()) {
+            $this->logError(sprintf("Unexpected HTTP method '%s', expecting POST", $this->getRequest()
+                ->getMethod()));
             $this->redirect()->toRoute('form');
         }
         
         $identity = $this->getIdentity();
         
         if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
+            $this->logError('Already voted');
             return $this->redirectToStatusPage();
         }
         
@@ -297,6 +304,8 @@ class VoteController extends AbstractController
             return $this->errorPage();
         }
         
+        $this->log('Vote submitted OK');
+        
         return $this->redirectToStatusPage();
     }
 
@@ -306,6 +315,7 @@ class VoteController extends AbstractController
         $identity = $this->getIdentity();
         
         if (! $this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
+            $this->logError('Not voted yet.');
             return $this->redirect()->toRoute('index');
         }
         

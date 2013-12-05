@@ -6,6 +6,7 @@ use Elvo\Domain\Candidate\CandidateService;
 use Elvo\Domain\Entity\Factory\CandidateFactory;
 use Elvo\Domain\Entity\Chamber;
 use Elvo\Util\Options;
+use Elvo\Domain\Vote\VoteManager;
 
 
 class CandidateServiceTest extends \PHPUnit_Framework_TestCase
@@ -26,8 +27,7 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
             'candidates' => $candidates
         ));
         
-        $candidateFactory = new CandidateFactory();
-        $service = new CandidateService($candidateFactory, $options);
+        $service = $this->createCandidateService($options);
     }
 
 
@@ -50,8 +50,7 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
             'candidates' => $candidates
         ));
         
-        $candidateFactory = new CandidateFactory();
-        $service = new CandidateService($candidateFactory, $options);
+        $service = $this->createCandidateService($options);
     }
 
 
@@ -72,8 +71,7 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
             'candidates' => $candidates
         ));
         
-        $candidateFactory = new CandidateFactory();
-        $service = new CandidateService($candidateFactory, $options);
+        $service = $this->createCandidateService($options);
         
         $candidates = $service->getCandidates();
         
@@ -111,8 +109,7 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
             'candidates' => $candidates
         ));
         
-        $candidateFactory = new CandidateFactory();
-        $service = new CandidateService($candidateFactory, $options);
+        $service = $this->createCandidateService($options);
         
         $studentCandidates = $service->getCandidatesForChamber(Chamber::student());
         $this->assertInstanceOf('Elvo\Domain\Entity\Collection\CandidateCollection', $studentCandidates);
@@ -130,8 +127,7 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
             'candidates' => ELVO_TESTS_DATA_DIR . '/candidates.php'
         ));
         
-        $candidateFactory = new CandidateFactory();
-        $service = new CandidateService($candidateFactory, $options);
+        $service = $this->createCandidateService($options);
         $candidates = $service->getCandidates();
         
         $this->assertInstanceOf('Elvo\Domain\Entity\Collection\CandidateCollection', $candidates);
@@ -143,5 +139,24 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('Vomacka', $candidate->getLastName());
         $this->assertSame('student', $candidate->getChamber()
             ->getCode());
+    }
+    
+    /*
+     * 
+     */
+    protected function createCandidateService($options)
+    {
+        $candidateFactory = new CandidateFactory();
+        $voteManager = $this->createVoteManager();
+        $service = new CandidateService($candidateFactory, $voteManager, $options);
+        
+        return $service;
+    }
+
+
+    protected function createVoteManager()
+    {
+        $voteManager = new VoteManager();
+        return $voteManager;
     }
 }

@@ -7,6 +7,7 @@ use Elvo\Domain\Entity\Factory\CandidateFactory;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
 use Elvo\Mvc\Authentication\Identity;
 use Elvo\Util\Options;
+use Elvo\Domain\Vote\VoteManager;
 
 
 /**
@@ -20,8 +21,6 @@ class CandidateService
 
     const OPT_CANDIDATES = 'candidates';
 
-    const OPT_CHAMBER_COUNT = 'chamber_count';
-
     /**
      * @var Options
      */
@@ -33,21 +32,29 @@ class CandidateService
     protected $candidateFactory;
 
     /**
+     * @var VoteManager
+     */
+    protected $voteManager;
+
+    /**
      * @var CandidateCollection
      */
     protected $candidates;
+
 
 
     /**
      * Constructor.
      * 
      * @param CandidateFactory $candidateFactory
-     * @param CandidateCollection|array|string $candidateData
+     * @param VoteManager $voteManager
+     * @param Options $options
      */
-    public function __construct(CandidateFactory $candidateFactory, Options $options)
+    public function __construct(CandidateFactory $candidateFactory, VoteManager $voteManager, Options $options)
     {
         $this->options = $options;
         $this->setCandidateFactory($candidateFactory);
+        $this->setVoteManager($voteManager);
         
         $candidates = $this->options->get(self::OPT_CANDIDATES);
         if (null !== $candidates) {
@@ -71,6 +78,24 @@ class CandidateService
     public function setCandidateFactory(CandidateFactory $candidateFactory)
     {
         $this->candidateFactory = $candidateFactory;
+    }
+
+
+    /**
+     * @return VoteManager
+     */
+    public function getVoteManager()
+    {
+        return $this->voteManager;
+    }
+
+
+    /**
+     * @param VoteManager $voteManager
+     */
+    public function setVoteManager(VoteManager $voteManager)
+    {
+        $this->voteManager = $voteManager;
     }
 
 
@@ -178,21 +203,9 @@ class CandidateService
     public function getCountRestrictionForIdentity(Identity $identity)
     {
         $role = $identity->getPrimaryRole();
-        $chamberCount = $this->options->get(self::OPT_CHAMBER_COUNT);
-        if (! $chamberCount || ! is_array($chamberCount)) {
-            throw new Exception\InvalidOptionException(sprintf("Invalid or unset option '%s'", self::OPT_CHAMBER_COUNT));
-        }
+        $chamber = new Chamber($role);
         
-        if (! isset($chamberCount[$role])) {
-            throw new Exception\InvalidOptionException(sprintf("Wrong value in option '%s' or unknown role '%s'", self::OPT_CHAMBER_COUNT, $role));
-        }
-        
-        $count = intval($chamberCount[$role]);
-        if ($count <= 0) {
-            throw new Exception\InvalidOptionException(sprintf("Wrong value in option '%s' - chamber count cannot be <= 0: %d", self::OPT_CHAMBER_COUNT, $count));
-        }
-        
-        return $count;
+        return $this->getVoteManager()->getMaxVotesForChamber($chamber);
     }
 
 

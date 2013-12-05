@@ -167,11 +167,7 @@ return array(
         
         'candidates' => array(
             'options' => array(
-                'candidates' => __DIR__ . '/../data/candidates.php',
-                'chamber_count' => array(
-                    'academic' => 3,
-                    'student' => 2
-                )
+                'candidates' => __DIR__ . '/../data/candidates.php'
             )
         ),
         

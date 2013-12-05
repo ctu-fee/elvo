@@ -148,8 +148,10 @@ class ServiceConfig extends Config
                 }
                 
                 $options = new Options($config['elvo']['candidates']['options']);
+                $candidateFactory = $sm->get('Elvo\Domain\CandidateFactory');
+                $voteManager = $sm->get('Elvo\Domain\VoteManager');
                 
-                $candidateService = new Domain\Candidate\CandidateService($sm->get('Elvo\Domain\CandidateFactory'), $options);
+                $candidateService = new Domain\Candidate\CandidateService($candidateFactory, $voteManager, $options);
                 return $candidateService;
             },
             
