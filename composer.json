@@ -18,6 +18,7 @@
         "php" : ">=5.3.3",
         "zendframework/zendframework" : "2.2.*",
         "ivan-novakov/zfc-shib": "1.*",
+        "ivan-novakov/php-in-general": "dev-master",
         "symfony/console": "2.*",
         "monolog/monolog": "1.7.*"
     },
