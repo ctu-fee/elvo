@@ -1,6 +1,6 @@
 <?php
 
-namespace Elvo\Domain\Candidate\Exception;
+namespace Elvo\Domain\Candidate\Service\Exception;
 
 
 class CandidateNotFoundException extends \RuntimeException

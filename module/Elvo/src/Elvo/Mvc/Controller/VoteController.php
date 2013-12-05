@@ -9,9 +9,9 @@ use Zend\Authentication\AuthenticationService;
 use Elvo\Mvc\Controller\Exception\ApplicationErrorException;
 use Elvo\Domain\Vote;
 use Elvo\Domain\Entity;
+use Elvo\Domain\Candidate;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
 use Elvo\Domain\Vote\VoteManager;
-use Elvo\Domain\Candidate\CandidateService;
 
 
 class VoteController extends AbstractController
@@ -23,7 +23,7 @@ class VoteController extends AbstractController
     protected $voteService;
 
     /**
-     * @var CandidateService
+     * @var Candidate\Service\Service
      */
     protected $candidateService;
 
@@ -39,7 +39,7 @@ class VoteController extends AbstractController
     protected $voterFactory;
 
 
-    public function __construct(AuthenticationService $authService, Vote\VoteManager $voteManager, Vote\Service\Service $voteService, CandidateService $candidateService, Translator $translator)
+    public function __construct(AuthenticationService $authService, Vote\VoteManager $voteManager, Vote\Service\Service $voteService, Candidate\Service\Service $candidateService, Translator $translator)
     {
         parent::__construct($authService, $voteManager);
         
@@ -68,7 +68,7 @@ class VoteController extends AbstractController
 
 
     /**
-     * @return CandidateService
+     * @return Candidate\Service\Service
      */
     public function getCandidateService()
     {
@@ -77,9 +77,9 @@ class VoteController extends AbstractController
 
 
     /**
-     * @param CandidateService $candidateService
+     * @param Candidate\Service\Service $candidateService
      */
-    public function setCandidateService(CandidateService $candidateService)
+    public function setCandidateService(Candidate\Service\Service $candidateService)
     {
         $this->candidateService = $candidateService;
     }

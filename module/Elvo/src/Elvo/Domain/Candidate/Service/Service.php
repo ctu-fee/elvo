@@ -1,6 +1,6 @@
 <?php
 
-namespace Elvo\Domain\Candidate;
+namespace Elvo\Domain\Candidate\Service;
 
 use Elvo\Domain\Entity\Chamber;
 use Elvo\Domain\Entity\Factory\CandidateFactory;
@@ -16,7 +16,7 @@ use Elvo\Domain\Vote\VoteManager;
  * @todo Move candidate loading to a separate class (with adapters for array, collection, file, etc.)
  * @todo Move candidate validation to a separate class.
  */
-class CandidateService
+class Service
 {
 
     const OPT_CANDIDATES = 'candidates';
@@ -40,7 +40,6 @@ class CandidateService
      * @var CandidateCollection
      */
     protected $candidates;
-
 
 
     /**
