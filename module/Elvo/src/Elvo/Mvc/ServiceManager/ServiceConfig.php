@@ -184,6 +184,13 @@ class ServiceConfig extends Config
                 return new Domain\Entity\Factory\VoteFactory();
             },
             
+            'Elvo\Domain\VoteValidatorFactory' => function (ServiceManager $sm)
+            {
+                $voteValidatorFactory = new Domain\Vote\Validator\ValidatorFactory();
+                
+                return $voteValidatorFactory;
+            },
+            
             'Elvo\Domain\VoteValidator' => function (ServiceManager $sm)
             {
                 $config = $sm->get('Config');
@@ -191,25 +198,12 @@ class ServiceConfig extends Config
                     throw new Exception\MissingConfigException("Missing config 'elvo/vote_validator/validators'");
                 }
                 
-                // FIXME - move to factory class and add tests
                 $validatorsConfig = $config['elvo']['vote_validator']['validators'];
-                $chainValidator = new Domain\Vote\Validator\ChainValidator();
+                $validatorFactory = $sm->get('Elvo\Domain\VoteValidatorFactory');
+                
+                $chainValidator = $validatorFactory->createChainValidator();
                 foreach ($validatorsConfig as $validatorConfig) {
-                    if (! isset($validatorConfig['validator'])) {
-                        throw new Exception\MissingConfigException("Missing validator field in 'elvo/vote_validator/validators' config");
-                    }
-                    
-                    $validatorClass = $validatorConfig['validator'];
-                    if (! class_exists($validatorClass)) {
-                        throw new Exception\UndefinedClassException(sprintf("Undefined vote validator class '%s'", $validatorClass));
-                    }
-                    
-                    $options = array();
-                    if (isset($validatorConfig['options']) && is_array($validatorConfig['options'])) {
-                        $options = $validatorConfig['options'];
-                    }
-                    
-                    $validator = new $validatorClass(new Options($options));
+                    $validator = $validatorFactory->createValidator($validatorConfig);
                     $chainValidator->addValidator($validator);
                 }
                 
