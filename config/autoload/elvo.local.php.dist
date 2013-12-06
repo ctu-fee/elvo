@@ -12,9 +12,13 @@ return array(
                 'enabled' => true,
                 'start_time' => '2013-11-23 08:00:00',
                 'end_time' => '2013-11-28 14:00:00'
-                'chamber_max_votes' => array(
+                'chamber_max_candidates' => array(
                     'academic' => 3,
                     'student' => 2
+                ),
+                'chamber_max_votes' => array(
+                    'academic' => 2,
+                    'student' => 1
                 ),
                 'electoral_name' => 'FEL',
                 'contact_email' => 'volby@example.cz'                
@@ -55,7 +59,7 @@ return array(
                 'candidate_count' => array(
                     'validator' => 'Elvo\Domain\Vote\Validator\CandidateCountValidator',
                     'options' => array(
-                        'chamber_count' => array(
+                        'max_candidate_count' => array(
                             'academic' => 3,
                             'student' => 2
                         )

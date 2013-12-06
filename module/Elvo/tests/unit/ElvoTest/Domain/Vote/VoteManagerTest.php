@@ -68,9 +68,35 @@ class VoteManagerTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    public function testGetMaxCandidatesForChamberWithUnsetValue()
+    {
+        $this->setExpectedException('Elvo\Util\Exception\MissingOptionException');
+        
+        $this->manager->getMaxCandidatesForChamber(Chamber::academic());
+    }
+
+
+    public function testGetMaxCandidatesForChamber()
+    {
+        $studentChamber = Chamber::student();
+        $academicChamber = Chamber::academic();
+        
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_CHAMBER_MAX_CANDIDATES => array(
+                $studentChamber->getCode() => 3,
+                $academicChamber->getCode() => 5
+            )
+        )));
+        
+        $this->assertSame(3, $this->manager->getMaxCandidatesForChamber($studentChamber));
+        $this->assertSame(5, $this->manager->getMaxCandidatesForChamber($academicChamber));
+    }
+    
     public function testGetMaxVotesForChamberWithUnsetValue()
     {
-        $this->assertSame(1, $this->manager->getMaxVotesForChamber(Chamber::academic()));
+        $this->setExpectedException('Elvo\Util\Exception\MissingOptionException');
+    
+        $this->manager->getMaxVotesForChamber(Chamber::academic());
     }
 
 
@@ -81,13 +107,13 @@ class VoteManagerTest extends \PHPUnit_Framework_TestCase
         
         $this->manager->setOptions(new Options(array(
             VoteManager::OPT_CHAMBER_MAX_VOTES => array(
-                $studentChamber->getCode() => 3,
-                $academicChamber->getCode() => 5
+                $studentChamber->getCode() => 2,
+                $academicChamber->getCode() => 4
             )
         )));
         
-        $this->assertSame(3, $this->manager->getMaxVotesForChamber($studentChamber));
-        $this->assertSame(5, $this->manager->getMaxVotesForChamber($academicChamber));
+        $this->assertSame(2, $this->manager->getMaxVotesForChamber($studentChamber));
+        $this->assertSame(4, $this->manager->getMaxVotesForChamber($academicChamber));
     }
 
 

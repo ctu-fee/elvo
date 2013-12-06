@@ -4,6 +4,7 @@ namespace Elvo\Domain\Vote;
 
 use Elvo\Util\Options;
 use Elvo\Domain\Entity\Chamber;
+use Elvo\Util\Exception\MissingOptionException;
 
 
 /**
@@ -17,6 +18,8 @@ class VoteManager
     const OPT_START_TIME = 'start_time';
 
     const OPT_END_TIME = 'end_time';
+
+    const OPT_CHAMBER_MAX_CANDIDATES = 'chamber_max_candidates';
 
     const OPT_CHAMBER_MAX_VOTES = 'chamber_max_votes';
 
@@ -36,9 +39,9 @@ class VoteManager
     protected $options;
 
     /**
-     * @var unknown
+     * @var integer
      */
-    protected $defaulMaxVotes = 1;
+    protected $defaulMaxCandidates = 1;
 
 
     /**
@@ -151,19 +154,41 @@ class VoteManager
 
 
     /**
+     * Returns the maximum candidates to be voted for a particular chamber.
+     * 
+     * @param Chamber $chamber
+     * @return integer
+     */
+    public function getMaxCandidatesForChamber(Chamber $chamber)
+    {
+        $maxCandidates = $this->options->get(self::OPT_CHAMBER_MAX_CANDIDATES);
+        $chamberCode = $chamber->getCode();
+        
+        if (! isset($maxCandidates[$chamberCode])) {
+            throw new MissingOptionException(sprintf("Missing '%s' for chamber '%s'", self::OPT_CHAMBER_MAX_VOTES, $chamberCode));
+        }
+        
+        return intval($maxCandidates[$chamberCode]);
+    }
+
+
+    /**
      * Returns the maximum allowed votes for a particular chamber.
      * 
      * @param Chamber $chamber
+     * @throws MissingOptionException
      * @return integer
      */
     public function getMaxVotesForChamber(Chamber $chamber)
     {
         $maxVotes = $this->options->get(self::OPT_CHAMBER_MAX_VOTES);
-        if (! isset($maxVotes[$chamber->getCode()])) {
-            return $this->defaulMaxVotes;
+        $chamberCode = $chamber->getCode();
+        
+        if (! isset($maxVotes[$chamberCode])) {
+            throw new MissingOptionException(sprintf("Missing '%s' for chamber '%s'", self::OPT_CHAMBER_MAX_VOTES, $chamberCode));
         }
         
-        return intval($maxVotes[$chamber->getCode()]);
+        return intval($maxVotes[$chamberCode]);
     }
 
 
