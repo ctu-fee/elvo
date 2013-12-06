@@ -1,0 +1,3 @@
+<?php
+
+// invalid candidates file

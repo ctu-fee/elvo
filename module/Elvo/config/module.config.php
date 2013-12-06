@@ -169,9 +169,10 @@ return array(
             )
         ),
         
-        'candidates' => array(
+        'candidate_storage' => array(
+            'storage' => 'Elvo\Domain\Candidate\Storage\PhpArrayInFile',
             'options' => array(
-                'candidates' => __DIR__ . '/../data/candidates.php'
+                'file_path' => __DIR__ . '/../data/candidates.php'
             )
         ),
         

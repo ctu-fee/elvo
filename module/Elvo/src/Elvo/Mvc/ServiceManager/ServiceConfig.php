@@ -142,16 +142,10 @@ class ServiceConfig extends Config
              */
             'Elvo\CandidateService' => function (ServiceManager $sm)
             {
-                $config = $sm->get('Config');
-                if (! isset($config['elvo']['candidates']['options']) || ! is_array($config['elvo']['candidates']['options'])) {
-                    throw new Exception\MissingConfigException("Missing config 'elvo/candidates/file'");
-                }
-                
-                $options = new Options($config['elvo']['candidates']['options']);
-                $candidateFactory = $sm->get('Elvo\Domain\CandidateFactory');
+                $candidateStorage = $sm->get('Elvo\Domain\CandidateStorage');
                 $voteManager = $sm->get('Elvo\Domain\VoteManager');
                 
-                $candidateService = new Domain\Candidate\Service\Service($candidateFactory, $voteManager, $options);
+                $candidateService = new Domain\Candidate\Service\Service($candidateStorage, $voteManager);
                 return $candidateService;
             },
             
@@ -266,6 +260,25 @@ class ServiceConfig extends Config
             'Elvo\Domain\CandidateFactory' => function (ServiceManager $sm)
             {
                 return new Domain\Entity\Factory\CandidateFactory();
+            },
+            
+            'Elvo\Domain\CandidateStorage' => function (ServiceManager $sm)
+            {
+                $config = $sm->get('Config');
+                if (! isset($config['elvo']['candidate_storage']['storage'])) {
+                    throw new Exception\MissingConfigException("Missing config 'elvo/candidate_storage/storage'");
+                }
+                
+                $storageClass = $config['elvo']['candidate_storage']['storage'];
+                
+                $options = array();
+                if (isset($config['elvo']['candidate_storage']['options']) && is_array($config['elvo']['candidate_storage']['options'])) {
+                    $options = $config['elvo']['candidate_storage']['options'];
+                }
+                
+                $storage = new $storageClass($options);
+                
+                return $storage;
             },
             
             /*

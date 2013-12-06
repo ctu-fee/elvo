@@ -2,11 +2,12 @@
 
 namespace Elvo\Domain\Candidate\Service;
 
+use Elvo\Mvc\Authentication\Identity;
+use Elvo\Util\Options;
+use Elvo\Domain\Candidate;
 use Elvo\Domain\Entity\Chamber;
 use Elvo\Domain\Entity\Factory\CandidateFactory;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
-use Elvo\Mvc\Authentication\Identity;
-use Elvo\Util\Options;
 use Elvo\Domain\Vote\VoteManager;
 
 
@@ -27,56 +28,44 @@ class Service
     protected $options;
 
     /**
-     * @var CandidateFactory
-     */
-    protected $candidateFactory;
-
-    /**
      * @var VoteManager
      */
     protected $voteManager;
 
     /**
-     * @var CandidateCollection
+     * @var Candidate\Storage\StorageInterface
      */
-    protected $candidates;
+    protected $candidateStorage;
 
 
     /**
      * Constructor.
      * 
-     * @param CandidateFactory $candidateFactory
+     * @param Candidate\Storage\StorageInterface $candidateStorage
      * @param VoteManager $voteManager
-     * @param Options $options
      */
-    public function __construct(CandidateFactory $candidateFactory, VoteManager $voteManager, Options $options)
+    public function __construct(Candidate\Storage\StorageInterface $candidateStorage, VoteManager $voteManager)
     {
-        $this->options = $options;
-        $this->setCandidateFactory($candidateFactory);
+        $this->setCandidateStorage($candidateStorage);
         $this->setVoteManager($voteManager);
-        
-        $candidates = $this->options->get(self::OPT_CANDIDATES);
-        if (null !== $candidates) {
-            $this->setCandidates($candidates);
-        }
     }
 
 
     /**
-     * @return CandidateFactory
+     * @return Candidate\Storage\StorageInterface
      */
-    public function getCandidateFactory()
+    public function getCandidateStorage()
     {
-        return $this->candidateFactory;
+        return $this->candidateStorage;
     }
 
 
     /**
-     * @param CandidateFactory $candidateFactory
+     * @param Candidate\Storage\StorageInterface $candidateStorage
      */
-    public function setCandidateFactory(CandidateFactory $candidateFactory)
+    public function setCandidateStorage(Candidate\Storage\StorageInterface $candidateStorage)
     {
-        $this->candidateFactory = $candidateFactory;
+        $this->candidateStorage = $candidateStorage;
     }
 
 
@@ -99,44 +88,6 @@ class Service
 
 
     /**
-     * @return CandidateCollection
-     */
-    public function getCandidates()
-    {
-        return $this->candidates;
-    }
-
-
-    /**
-     * @param CandidateCollection|array|string $candidates
-     */
-    public function setCandidates($candidates)
-    {
-        if (! $candidates instanceof CandidateCollection) {
-            if (is_string($candidates) && is_file($candidates)) {
-                $candidates = $this->loadCandidatesFromFile($candidates);
-            }
-            
-            if (! is_array($candidates)) {
-                throw new Exception\InvalidCandidateDataException('Expected CandidateCollection or array');
-            }
-            
-            $this->validateCandidateArray($candidates);
-            
-            $collection = new CandidateCollection();
-            foreach ($candidates as $item) {
-                $collection->append($this->getCandidateFactory()
-                    ->createCandidate($item));
-            }
-            
-            $candidates = $collection;
-        }
-        
-        $this->candidates = $candidates;
-    }
-
-
-    /**
      * Returns candidates for the specific chamber only.
      * 
      * @param Chamber $chamber
@@ -144,8 +95,9 @@ class Service
      */
     public function getCandidatesForChamber(Chamber $chamber)
     {
+        $candidateCollection = $this->fetchCandidates();
         $candidatesForChamber = new CandidateCollection();
-        foreach ($this->getCandidates() as $candidate) {
+        foreach ($candidateCollection as $candidate) {
             if ($chamber->getCode() === $candidate->getChamber()->getCode()) {
                 $candidatesForChamber->append($candidate);
             }
@@ -183,7 +135,7 @@ class Service
         }
         
         foreach ($candidateIds as $id) {
-            $candidate = $this->candidates->findById($id);
+            $candidate = $this->fetchCandidates()->findById($id);
             if (null === $candidate) {
                 throw new Exception\CandidateNotFoundException(sprintf("Candidate with ID:%d not found", $id));
             }
@@ -216,6 +168,17 @@ class Service
         }
         
         return true;
+    }
+
+
+    /**
+     * Fetches the candidates from the storage.
+     * 
+     * @return CandidateCollection
+     */
+    protected function fetchCandidates()
+    {
+        return $this->getCandidateStorage()->fetchAll();
     }
 
 
