@@ -24,8 +24,8 @@ class IndexController extends AbstractController
                 ->format($this->timeFormat),
             'endTime' => $voteManager->getEndTime()
                 ->format($this->timeFormat),
-            'maxVoteCountStudent' => $voteManager->getMaxVotesForChamber(Chamber::student()),
-            'maxVoteCountAcademic' => $voteManager->getMaxVotesForChamber(Chamber::academic()),
+            'maxVoteCountStudent' => $voteManager->getMaxCandidatesForChamber(Chamber::student()),
+            'maxVoteCountAcademic' => $voteManager->getMaxCandidatesForChamber(Chamber::academic()),
             'electoralName' => $voteManager->getElectoralName()
         ));
         

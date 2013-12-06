@@ -204,7 +204,7 @@ class Service
         $role = $identity->getPrimaryRole();
         $chamber = new Chamber($role);
         
-        return $this->getVoteManager()->getMaxVotesForChamber($chamber);
+        return $this->getVoteManager()->getMaxCandidatesForChamber($chamber);
     }
 
 

@@ -184,6 +184,24 @@ class ServiceConfig extends Config
                 return new Domain\Entity\Factory\VoteFactory();
             },
             
+            'Elvo\Domain\CandidateCountVoteValidator' => function (ServiceManager $sm)
+            {
+                $validorFactory = $sm->get('Elvo\Domain\VoteValidatorFactory');
+                $voteManager = $sm->get('Elvo\Domain\VoteManager');
+                
+                $validator = $validorFactory->createValidator(array(
+                    'validator' => 'Elvo\Domain\Vote\Validator\CandidateCountValidator',
+                    'options' => array(
+                        'max_votes_count' => array(
+                            'student' => $voteManager->getMaxVotesForChamber('student'),
+                            'academic' => $voteManager->getMaxVotesForChamber('academic')
+                        )
+                    )
+                ));
+                
+                return $validator;
+            },
+            
             'Elvo\Domain\VoteValidatorFactory' => function (ServiceManager $sm)
             {
                 $voteValidatorFactory = new Domain\Vote\Validator\ValidatorFactory();
@@ -202,6 +220,7 @@ class ServiceConfig extends Config
                 $validatorFactory = $sm->get('Elvo\Domain\VoteValidatorFactory');
                 
                 $chainValidator = $validatorFactory->createChainValidator();
+                $chainValidator->addValidator($sm->get('Elvo\Domain\CandidateCountVoteValidator'));
                 foreach ($validatorsConfig as $validatorConfig) {
                     $validator = $validatorFactory->createValidator($validatorConfig);
                     $chainValidator->addValidator($validator);
@@ -234,6 +253,7 @@ class ServiceConfig extends Config
                 }
                 
                 $encryptor = new $encryptorClass(new Options($options));
+                
                 return $encryptor;
             },
             

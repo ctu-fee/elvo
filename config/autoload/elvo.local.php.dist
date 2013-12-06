@@ -54,24 +54,6 @@ return array(
             )
         ),
         
-        'vote_validator' => array(
-            'validators' => array(
-                'candidate_count' => array(
-                    'validator' => 'Elvo\Domain\Vote\Validator\CandidateCountValidator',
-                    'options' => array(
-                        'max_candidate_count' => array(
-                            'academic' => 3,
-                            'student' => 2
-                        )
-                    )
-                ),
-                'voter_role' => array(
-                    'validator' => 'Elvo\Domain\Vote\Validator\VoterRoleValidator',
-                    'options' => array()
-                )
-            )
-        ),
-        
         'vote_encryptor' => array(
             'encryptor' => 'Elvo\Domain\Vote\OpensslEncryptor',
             'options' => array(

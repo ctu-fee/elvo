@@ -5,6 +5,7 @@ namespace Elvo\Domain\Vote;
 use Elvo\Util\Options;
 use Elvo\Domain\Entity\Chamber;
 use Elvo\Util\Exception\MissingOptionException;
+use Elvo\Util\Exception\InvalidArgumentException;
 
 
 /**
@@ -156,13 +157,13 @@ class VoteManager
     /**
      * Returns the maximum candidates to be voted for a particular chamber.
      * 
-     * @param Chamber $chamber
+     * @param Chamber|string $chamber
      * @return integer
      */
-    public function getMaxCandidatesForChamber(Chamber $chamber)
+    public function getMaxCandidatesForChamber($chamber)
     {
         $maxCandidates = $this->options->get(self::OPT_CHAMBER_MAX_CANDIDATES);
-        $chamberCode = $chamber->getCode();
+        $chamberCode = $this->initChamber($chamber)->getCode();
         
         if (! isset($maxCandidates[$chamberCode])) {
             throw new MissingOptionException(sprintf("Missing '%s' for chamber '%s'", self::OPT_CHAMBER_MAX_VOTES, $chamberCode));
@@ -175,14 +176,14 @@ class VoteManager
     /**
      * Returns the maximum allowed votes for a particular chamber.
      * 
-     * @param Chamber $chamber
+     * @param Chamber|string $chamber
      * @throws MissingOptionException
      * @return integer
      */
-    public function getMaxVotesForChamber(Chamber $chamber)
+    public function getMaxVotesForChamber($chamber)
     {
         $maxVotes = $this->options->get(self::OPT_CHAMBER_MAX_VOTES);
-        $chamberCode = $chamber->getCode();
+        $chamberCode = $this->initChamber($chamber)->getCode();
         
         if (! isset($maxVotes[$chamberCode])) {
             throw new MissingOptionException(sprintf("Missing '%s' for chamber '%s'", self::OPT_CHAMBER_MAX_VOTES, $chamberCode));
@@ -211,5 +212,30 @@ class VoteManager
     public function getContactEmail()
     {
         return $this->options->get(self::OPT_CONTACT_EMAIL, '{undefined}');
+    }
+
+
+    /**
+     * Resolves a chamber.
+     * 
+     * @param Chamber|string $chamber
+     * @throws InvalidArgumentException
+     * @return Chamber
+     */
+    protected function initChamber($chamber)
+    {
+        if (is_string($chamber)) {
+            try {
+                $chamber = new Chamber($chamber);
+            } catch (\Exception $e) {
+                throw new InvalidArgumentException(sprintf("Invalid chamber definition '%s'", $chamber), null, $e);
+            }
+        }
+        
+        if (! $chamber instanceof Chamber) {
+            throw new InvalidArgumentException('Chamber should be instance of Chamber entity or a string');
+        }
+        
+        return $chamber;
     }
 }

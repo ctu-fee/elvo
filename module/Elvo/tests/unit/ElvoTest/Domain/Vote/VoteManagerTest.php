@@ -91,11 +91,29 @@ class VoteManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(3, $this->manager->getMaxCandidatesForChamber($studentChamber));
         $this->assertSame(5, $this->manager->getMaxCandidatesForChamber($academicChamber));
     }
-    
+
+
+    public function testGetMaxCandidatesForChamberWithChamberString()
+    {
+        $studentChamber = Chamber::student();
+        $academicChamber = Chamber::academic();
+        
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_CHAMBER_MAX_CANDIDATES => array(
+                $studentChamber->getCode() => 3,
+                $academicChamber->getCode() => 5
+            )
+        )));
+        
+        $this->assertSame(3, $this->manager->getMaxCandidatesForChamber($studentChamber->getCode()));
+        $this->assertSame(5, $this->manager->getMaxCandidatesForChamber($academicChamber->getCode()));
+    }
+
+
     public function testGetMaxVotesForChamberWithUnsetValue()
     {
         $this->setExpectedException('Elvo\Util\Exception\MissingOptionException');
-    
+        
         $this->manager->getMaxVotesForChamber(Chamber::academic());
     }
 
@@ -114,6 +132,23 @@ class VoteManagerTest extends \PHPUnit_Framework_TestCase
         
         $this->assertSame(2, $this->manager->getMaxVotesForChamber($studentChamber));
         $this->assertSame(4, $this->manager->getMaxVotesForChamber($academicChamber));
+    }
+
+
+    public function testGetMaxVotesForChamberWithChamberString()
+    {
+        $studentChamber = Chamber::student();
+        $academicChamber = Chamber::academic();
+        
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_CHAMBER_MAX_VOTES => array(
+                $studentChamber->getCode() => 2,
+                $academicChamber->getCode() => 4
+            )
+        )));
+        
+        $this->assertSame(2, $this->manager->getMaxVotesForChamber($studentChamber->getCode()));
+        $this->assertSame(4, $this->manager->getMaxVotesForChamber($academicChamber->getCode()));
     }
 
 
