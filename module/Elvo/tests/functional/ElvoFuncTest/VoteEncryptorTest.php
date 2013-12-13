@@ -5,7 +5,6 @@ namespace ElvoFuncTest;
 use Elvo\Util\Options;
 use Elvo\Domain\Vote\OpensslEncryptor;
 use Elvo\Domain\Entity\Factory\CandidateFactory;
-use Elvo\Domain\Entity\Candidate;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
 use Elvo\Domain\Entity\VoterRole;
 use Elvo\Domain\Entity\Vote;

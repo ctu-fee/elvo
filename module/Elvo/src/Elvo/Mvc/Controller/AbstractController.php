@@ -5,7 +5,6 @@ namespace Elvo\Mvc\Controller;
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationService;
-use Zend\EventManager\EventManagerInterface;
 use Elvo\Domain\Vote\VoteManager;
 
 

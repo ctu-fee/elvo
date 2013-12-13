@@ -12,6 +12,7 @@ use Elvo\Domain\Entity;
 use Elvo\Domain\Candidate;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
 use Elvo\Domain\Vote\VoteManager;
+use Elvo\Mvc\Authentication\Exception\InvalidRoleException;
 
 
 class VoteController extends AbstractController

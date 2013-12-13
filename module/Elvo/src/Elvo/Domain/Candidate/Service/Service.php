@@ -6,7 +6,6 @@ use Elvo\Mvc\Authentication\Identity;
 use Elvo\Util\Options;
 use Elvo\Domain\Candidate;
 use Elvo\Domain\Entity\Chamber;
-use Elvo\Domain\Entity\Factory\CandidateFactory;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
 use Elvo\Domain\Vote\VoteManager;
 

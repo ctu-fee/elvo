@@ -4,7 +4,6 @@ namespace ElvoTest\Domain\Vote\Validator;
 
 use Elvo\Domain\Entity\Chamber;
 use Elvo\Domain\Entity\Factory\CandidateFactory;
-use Elvo\Domain\Entity\Candidate;
 use Elvo\Domain\Entity\Vote;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
 use Elvo\Domain\Entity\VoterRole;

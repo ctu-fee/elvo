@@ -7,8 +7,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Zend\Json\Json;
-use Elvo\Domain\Entity\Collection\CandidateCollection;
-use Elvo\Domain\Entity\VoterRole;
 
 
 class VoteExportCommand extends Command

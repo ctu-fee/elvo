@@ -2,7 +2,6 @@
 
 namespace Elvo\Mvc\Controller;
 
-use Zend\View\Model\ViewModel;
 use Elvo\Domain\Entity\Chamber;
 
 

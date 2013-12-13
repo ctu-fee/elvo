@@ -2,7 +2,6 @@
 
 namespace ElvoTest\Domain\Entity\Collection;
 
-use Elvo\Domain\Entity\Vote;
 use Elvo\Domain\Entity\Collection\VoteCollection;
 use Elvo\Domain\Entity\VoterRole;
 

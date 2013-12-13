@@ -4,9 +4,7 @@ namespace Elvo\Domain\Vote\Validator;
 
 use Elvo\Domain\Vote\VoteManager;
 use Elvo\Util\Exception\MissingOptionException;
-use Elvo\Util\Exception\UndefinedClassException;
 use InGeneral\Factory\ClassWithOptionsGenericFactory;
-use Elvo\Util\Options;
 
 
 class ValidatorFactory extends ClassWithOptionsGenericFactory implements ValidatorFactoryInterface
