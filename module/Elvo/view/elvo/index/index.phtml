@@ -2,10 +2,12 @@
 <div class="jumbotron">
     <div class="container">
         <h1><?php echo $this->translate('index_title'); ?></h1>
-        <p><?php echo $this->translate('index_info_text'); ?></p>
+        <p><?php printf($this->translate('index_info_text'), $this->electoralName, $this->startTime, $this->endTime,$this->electoralName, $this->maxVoteCountAcademic, $this->maxVoteCountStudent); ?></p>
+        <?php if ($this->votingActive) { ?>
         <p>
             <a class="btn btn-primary btn-lg" role="button" href="<?php echo $this->url('form'); ?>">
             <?php echo $this->translate('button_vote_start'); ?> &raquo;</a>
         </p>
+        <?php } ?>
     </div>
 </div>

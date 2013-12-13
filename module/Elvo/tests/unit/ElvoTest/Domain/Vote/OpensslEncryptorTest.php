@@ -3,9 +3,6 @@
 namespace ElvoTest\Domain\Vote;
 
 use Elvo\Util\Options;
-use Elvo\Domain\Entity\Vote;
-use Elvo\Domain\Entity\Collection\CandidateCollection;
-use Elvo\Domain\Entity\VoterRole;
 use Elvo\Domain\Vote\OpensslEncryptor;
 
 

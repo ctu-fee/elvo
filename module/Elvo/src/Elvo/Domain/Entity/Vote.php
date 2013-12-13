@@ -71,4 +71,16 @@ class Vote
     {
         $this->candidates = $candidates;
     }
+
+
+    /**
+     * Returns true, if the vote has the provided voter role.
+     * 
+     * @param VoterRole $voterRole
+     * @return boolean
+     */
+    public function hasVoterRole(VoterRole $voterRole)
+    {
+        return ($this->voterRole->getValue() == $voterRole->getValue());
+    }
 }

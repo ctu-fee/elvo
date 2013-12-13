@@ -42,6 +42,15 @@ class ChainValidator implements ValidatorInterface
 
 
     /**
+     * @return ValidatorInterface[]
+     */
+    public function getValidators()
+    {
+        return $this->validators;
+    }
+
+
+    /**
      * {@inhertidoc}
      * @see \Elvo\Domain\Vote\Validator\ValidatorInterface::validate()
      */

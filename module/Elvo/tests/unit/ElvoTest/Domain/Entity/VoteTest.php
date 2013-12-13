@@ -21,4 +21,25 @@ class VoteTest extends \PHPUnit_Framework_Testcase
         $this->assertSame($voterRole, $vote->getVoterRole());
         $this->assertSame($candidates, $vote->getCandidates());
     }
+
+
+    public function testHasVoterRole()
+    {
+        $vote = new Vote(VoterRole::academic(), $this->getCandidateCollectionMock());
+        
+        $this->assertTrue($vote->hasVoterRole(VoterRole::academic()));
+        $this->assertFalse($vote->hasVoterRole(VoterRole::student()));
+        
+        $vote->setVoterRole(VoterRole::student());
+        
+        $this->assertFalse($vote->hasVoterRole(VoterRole::academic()));
+        $this->assertTrue($vote->hasVoterRole(VoterRole::student()));
+    }
+
+
+    protected function getCandidateCollectionMock()
+    {
+        $candidates = $this->getMock('Elvo\Domain\Entity\Collection\CandidateCollection');
+        return $candidates;
+    }
 }

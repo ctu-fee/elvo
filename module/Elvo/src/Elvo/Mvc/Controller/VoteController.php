@@ -4,35 +4,27 @@ namespace Elvo\Mvc\Controller;
 
 use Zend\View\Model\ViewModel;
 use Zend\Mvc\MvcEvent;
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\I18n\Translator\Translator;
 use Zend\Authentication\AuthenticationService;
-use Zend\Stdlib\RequestInterface;
-use Zend\Stdlib\ResponseInterface;
-use Elvo\Mvc\Authentication\Identity;
-use Elvo\Mvc\Candidate\CandidateService;
 use Elvo\Mvc\Controller\Exception\ApplicationErrorException;
 use Elvo\Domain\Vote;
 use Elvo\Domain\Entity;
+use Elvo\Domain\Candidate;
 use Elvo\Domain\Entity\Collection\CandidateCollection;
 use Elvo\Domain\Vote\VoteManager;
+use Elvo\Mvc\Authentication\Exception\InvalidRoleException;
 
 
-class VoteController extends AbstractActionController
+class VoteController extends AbstractController
 {
 
     /**
-     * @var Vote\Service\Service
+     * @var Vote\Service\ServiceInterface
      */
     protected $voteService;
 
     /**
-     * @var AuthenticationService
-     */
-    protected $authAdapter;
-
-    /**
-     * @var CandidateService
+     * @var Candidate\Service\ServiceInterface
      */
     protected $candidateService;
 
@@ -48,18 +40,18 @@ class VoteController extends AbstractActionController
     protected $voterFactory;
 
 
-    public function __construct(Vote\Service\Service $voteService, AuthenticationService $authService, 
-        CandidateService $candidateService, Translator $translator)
+    public function __construct(AuthenticationService $authService, Vote\VoteManager $voteManager, Vote\Service\ServiceInterface $voteService, Candidate\Service\ServiceInterface $candidateService, Translator $translator)
     {
+        parent::__construct($authService, $voteManager);
+        
         $this->setVoteService($voteService);
-        $this->setAuthService($authService);
         $this->setCandidateService($candidateService);
         $this->setTranslator($translator);
     }
 
 
     /**
-     * @return Vote\Service\Service
+     * @return Vote\Service\ServiceInterface
      */
     public function getVoteService()
     {
@@ -68,34 +60,16 @@ class VoteController extends AbstractActionController
 
 
     /**
-     * @param Vote\Service\Service $voteService
+     * @param Vote\Service\ServiceInterface $voteService
      */
-    public function setVoteService(Vote\Service\Service $voteService)
+    public function setVoteService(Vote\Service\ServiceInterface $voteService)
     {
         $this->voteService = $voteService;
     }
 
 
     /**
-     * @return AuthenticationService
-     */
-    public function getAuthService()
-    {
-        return $this->authAdapter;
-    }
-
-
-    /**
-     * @param AuthenticationService $authService
-     */
-    public function setAuthService(AuthenticationService $authService)
-    {
-        $this->authAdapter = $authService;
-    }
-
-
-    /**
-     * @return CandidateService
+     * @return Candidate\Service\ServiceInterface
      */
     public function getCandidateService()
     {
@@ -104,9 +78,9 @@ class VoteController extends AbstractActionController
 
 
     /**
-     * @param CandidateService $candidateService
+     * @param Candidate\Service\ServiceInterface $candidateService
      */
-    public function setCandidateService(CandidateService $candidateService)
+    public function setCandidateService(Candidate\Service\ServiceInterface $candidateService)
     {
         $this->candidateService = $candidateService;
     }
@@ -164,20 +138,13 @@ class VoteController extends AbstractActionController
             try {
                 $authService->authenticate();
             } catch (\Exception $e) {
-                _dump("$e");
-                _dump($_SERVER['voter_id']);
-                return $this->redirect()->toRoute('autherror');
+                $this->logException($e);
+                return $this->redirectToAuthError();
             }
         }
         
         if (! $authService->hasIdentity()) {
-            _dump("unauthenticated");
-            _dump($_SERVER['voter_id']);
-            return $this->redirect()->toRoute('autherror');
-            /* @var $response \Zend\Http\Response */
-            $response = $this->getResponse();
-            $response->setStatusCode(401);
-            return $response;
+            return $this->redirectToAuthError();
         }
         
         $identity = $this->getIdentity();
@@ -188,11 +155,6 @@ class VoteController extends AbstractActionController
         if (! $this->getVoteService()->isVotingActive()) {
             $event->getRouteMatch()->setParam('action', 'inactive');
         }
-        
-        /*
-         * Early detection of voters who already voted - redirect them!
-         */
-        // if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {}
         
         return parent::onDispatch($event);
     }
@@ -215,12 +177,15 @@ class VoteController extends AbstractActionController
                 $identity->setPrimaryRole($selectedRole);
                 $this->redirect()->toRoute('form');
             } catch (InvalidRoleException $e) {
-                _dump("$e");
+                $this->logException($e);
                 return $this->errorPage();
             }
         }
         
-        $view = $this->initView();
+        $view = $this->initView(array(
+            'electoralName' => $this->getVoteManager()
+                ->getElectoralName()
+        ));
         
         return $view;
     }
@@ -260,9 +225,19 @@ class VoteController extends AbstractActionController
      */
     public function confirmAction()
     {
+        /*
+         * Force POST
+         */
+        if (! $this->getRequest()->isPost()) {
+            $this->logError(sprintf("Unexpected HTTP method '%s', expecting POST", $this->getRequest()
+                ->getMethod()));
+            $this->redirect()->toRoute('form');
+        }
+        
         $identity = $this->getIdentity();
         
         if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
+            $this->logError('Already voted');
             return $this->redirectToStatusPage();
         }
         
@@ -271,11 +246,12 @@ class VoteController extends AbstractActionController
             $role = $this->resolveVoterRole();
             $candidates = $this->getSubmittedCandidates();
         } catch (ApplicationErrorException $e) {
-            _dump("$e");
+            $this->logException($e);
             return $this->errorPageFromException($e);
         }
         
         if (! $this->getCandidateService()->isValidCandidateCount($identity, $candidates)) {
+            $this->logError(sprintf("Too many selected candidates: %d", $candidates->count()));
             return $this->errorPage('error_title_data', 'error_title_invalid_candidate_count');
         }
         
@@ -296,9 +272,19 @@ class VoteController extends AbstractActionController
      */
     public function submitAction()
     {
+        /*
+         * Force POST
+        */
+        if (! $this->getRequest()->isPost()) {
+            $this->logError(sprintf("Unexpected HTTP method '%s', expecting POST", $this->getRequest()
+                ->getMethod()));
+            $this->redirect()->toRoute('form');
+        }
+        
         $identity = $this->getIdentity();
         
         if ($this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
+            $this->logError('Already voted');
             return $this->redirectToStatusPage();
         }
         
@@ -307,7 +293,7 @@ class VoteController extends AbstractActionController
             $role = $this->resolveVoterRole();
             $candidates = $this->getSubmittedCandidates();
         } catch (ApplicationErrorException $e) {
-            _dump("$e");
+            $this->logException($e);
             return $this->errorPageFromException($e);
         }
         
@@ -315,10 +301,11 @@ class VoteController extends AbstractActionController
             $voter = $this->getVoterFactory()->createVoter($identity->getId(), $role);
             $this->getVoteService()->saveVote($voter, $candidates);
         } catch (\Exception $e) {
-            // FIXME
-            _dump("$e");
+            $this->logException($e);
             return $this->errorPage();
         }
+        
+        $this->log('Vote submitted OK');
         
         return $this->redirectToStatusPage();
     }
@@ -329,6 +316,7 @@ class VoteController extends AbstractActionController
         $identity = $this->getIdentity();
         
         if (! $this->getVoteService()->hasAlreadyVotedById($identity->getId())) {
+            $this->logError('Not voted yet.');
             return $this->redirect()->toRoute('index');
         }
         
@@ -339,7 +327,7 @@ class VoteController extends AbstractActionController
 
     public function inactiveAction()
     {
-        $voteManager = $this->getVoteService()->getManager();
+        $voteManager = $this->getVoteManager();
         $voteStatus = $voteManager->getVotingStatus();
         
         if ($voteStatus == VoteManager::STATUS_NOT_STARTED) {
@@ -425,28 +413,31 @@ class VoteController extends AbstractActionController
     }
 
 
+    /**
+     * Redirects to the /status page.
+     * 
+     * @return \Zend\Http\Response
+     */
     protected function redirectToStatusPage()
     {
         return $this->redirect()->toRoute('status');
+    }
+
+
+    /**
+     * Redirects to the /autherror page.
+     * 
+     * @return \Zend\Http\Response
+     */
+    protected function redirectToAuthError()
+    {
+        return $this->redirect()->toRoute('autherror');
     }
     
     /*
      * 
      */
     
-    /**
-     * Returns the main navigation bar's view model.
-     * @return ViewModel
-     */
-    protected function createNavbarViewModel()
-    {
-        $navbarView = new ViewModel();
-        $navbarView->setTemplate('component/main-navbar');
-        
-        return $navbarView;
-    }
-
-
     /**
      * Retrieves and validates the candidates submitted by the voter.
      * 
@@ -463,7 +454,7 @@ class VoteController extends AbstractActionController
         try {
             $candidates = $this->getCandidateService()->getCandidatesForIdentityFilteredByIds($identity, $submittedCandidateIds);
         } catch (\Exception $e) {
-            _dump("$e");
+            $this->logException($e);
             throw new ApplicationErrorException('error_title_generic', 'error_message_generic', $e);
         }
         
@@ -481,8 +472,8 @@ class VoteController extends AbstractActionController
     {
         $identity = $this->getIdentity();
         if (! $identity->getPrimaryRole()) {
-            _dump('Error: no primary role');
-            throw new ApplicationErrorException('error_title_generic', 'error_message_generic', $e);
+            $this->logError('The identity has no primary role');
+            throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
         }
         
         /*
@@ -490,22 +481,11 @@ class VoteController extends AbstractActionController
         */
         $submittedRole = $this->params()->fromPost('role');
         if (! $identity->isValidRole($submittedRole)) {
-            _dump(sprintf("Invalid role '%s'", $submittedRole));
-            throw new ApplicationErrorException('error_title_invalid_data', 'error_message_invalid_voter_role', $e);
+            $this->logError(sprintf("Invalid role '%s'", $submittedRole));
+            throw new ApplicationErrorException('error_title_invalid_data', 'error_message_invalid_voter_role');
         }
         
         return $submittedRole;
-    }
-
-
-    /**
-     * Returns the current user's identity.
-     * 
-     * @return Identity
-     */
-    protected function getIdentity()
-    {
-        return $this->getAuthService()->getIdentity();
     }
 
 
@@ -544,22 +524,8 @@ class VoteController extends AbstractActionController
         $token = $this->params()->fromPost('fuu');
         $expectedToken = $this->calculateCsrfToken();
         if (! $token || $token !== $expectedToken) {
-            _dump(sprintf("Invalid CSRF token [%s], expected [%s]", $token, $expectedToken));
+            $this->logError(sprintf("Invalid CSRF token [%s], expected [%s]", $token, $expectedToken));
             throw new ApplicationErrorException('error_title_generic', 'error_message_generic');
         }
-    }
-
-
-    /**
-     * Initializes the general action view.
-     * 
-     * @param array $params
-     * @return ViewModel
-     */
-    protected function initView(array $params = array())
-    {
-        $view = new ViewModel($params);
-        $view->addChild($this->createNavbarViewModel(), 'mainNavbar');
-        return $view;
     }
 }

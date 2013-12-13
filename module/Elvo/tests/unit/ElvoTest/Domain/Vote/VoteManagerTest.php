@@ -4,6 +4,7 @@ namespace ElvoTest\Domain\Vote;
 
 use Elvo\Domain\Vote\VoteManager;
 use Elvo\Util\Options;
+use Elvo\Domain\Entity\Chamber;
 
 
 class VoteManagerTest extends \PHPUnit_Framework_TestCase
@@ -64,6 +65,108 @@ class VoteManagerTest extends \PHPUnit_Framework_TestCase
         ));
         $this->manager->setOptions($options);
         $this->assertTrue($this->manager->isVotingEnabled());
+    }
+
+
+    public function testGetMaxCandidatesForChamberWithUnsetValue()
+    {
+        $this->setExpectedException('Elvo\Util\Exception\MissingOptionException');
+        
+        $this->manager->getMaxCandidatesForChamber(Chamber::academic());
+    }
+
+
+    public function testGetMaxCandidatesForChamber()
+    {
+        $studentChamber = Chamber::student();
+        $academicChamber = Chamber::academic();
+        
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_CHAMBER_MAX_CANDIDATES => array(
+                $studentChamber->getCode() => 3,
+                $academicChamber->getCode() => 5
+            )
+        )));
+        
+        $this->assertSame(3, $this->manager->getMaxCandidatesForChamber($studentChamber));
+        $this->assertSame(5, $this->manager->getMaxCandidatesForChamber($academicChamber));
+    }
+
+
+    public function testGetMaxCandidatesForChamberWithChamberString()
+    {
+        $studentChamber = Chamber::student();
+        $academicChamber = Chamber::academic();
+        
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_CHAMBER_MAX_CANDIDATES => array(
+                $studentChamber->getCode() => 3,
+                $academicChamber->getCode() => 5
+            )
+        )));
+        
+        $this->assertSame(3, $this->manager->getMaxCandidatesForChamber($studentChamber->getCode()));
+        $this->assertSame(5, $this->manager->getMaxCandidatesForChamber($academicChamber->getCode()));
+    }
+
+
+    public function testGetMaxVotesForChamberWithUnsetValue()
+    {
+        $this->setExpectedException('Elvo\Util\Exception\MissingOptionException');
+        
+        $this->manager->getMaxVotesForChamber(Chamber::academic());
+    }
+
+
+    public function testGetMaxVotesForChamber()
+    {
+        $studentChamber = Chamber::student();
+        $academicChamber = Chamber::academic();
+        
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_CHAMBER_MAX_VOTES => array(
+                $studentChamber->getCode() => 2,
+                $academicChamber->getCode() => 4
+            )
+        )));
+        
+        $this->assertSame(2, $this->manager->getMaxVotesForChamber($studentChamber));
+        $this->assertSame(4, $this->manager->getMaxVotesForChamber($academicChamber));
+    }
+
+
+    public function testGetMaxVotesForChamberWithChamberString()
+    {
+        $studentChamber = Chamber::student();
+        $academicChamber = Chamber::academic();
+        
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_CHAMBER_MAX_VOTES => array(
+                $studentChamber->getCode() => 2,
+                $academicChamber->getCode() => 4
+            )
+        )));
+        
+        $this->assertSame(2, $this->manager->getMaxVotesForChamber($studentChamber->getCode()));
+        $this->assertSame(4, $this->manager->getMaxVotesForChamber($academicChamber->getCode()));
+    }
+
+
+    public function testGetElectoralName()
+    {
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_ELECTORAL_NAME => 'FOO'
+        )));
+        $this->assertSame('FOO', $this->manager->getElectoralName());
+    }
+
+
+    public function testGetContactEmail()
+    {
+        $this->manager->setOptions(new Options(array(
+            VoteManager::OPT_CONTACT_EMAIL => 'foo@example.cz'
+        )));
+        $this->assertSame('foo@example.cz', $this->manager->getContactEmail());
     }
 
 

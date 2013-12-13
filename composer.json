@@ -18,7 +18,9 @@
         "php" : ">=5.3.3",
         "zendframework/zendframework" : "2.2.*",
         "ivan-novakov/zfc-shib": "1.*",
-        "symfony/console": "2.*"
+        "ivan-novakov/php-in-general": "dev-master",
+        "symfony/console": "2.*",
+        "monolog/monolog": "1.7.*"
     },
     
     "require-dev": {

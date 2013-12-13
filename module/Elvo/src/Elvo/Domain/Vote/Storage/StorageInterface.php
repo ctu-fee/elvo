@@ -3,7 +3,6 @@
 namespace Elvo\Domain\Vote\Storage;
 
 use Elvo\Domain\Entity\EncryptedVote;
-use Elvo\Domain\Entity\Voter;
 
 
 /**
