@@ -19,12 +19,12 @@ class VoteController extends AbstractController
 {
 
     /**
-     * @var Vote\Service\Service
+     * @var Vote\Service\ServiceInterface
      */
     protected $voteService;
 
     /**
-     * @var Candidate\Service\Service
+     * @var Candidate\Service\ServiceInterface
      */
     protected $candidateService;
 
@@ -40,7 +40,7 @@ class VoteController extends AbstractController
     protected $voterFactory;
 
 
-    public function __construct(AuthenticationService $authService, Vote\VoteManager $voteManager, Vote\Service\Service $voteService, Candidate\Service\Service $candidateService, Translator $translator)
+    public function __construct(AuthenticationService $authService, Vote\VoteManager $voteManager, Vote\Service\ServiceInterface $voteService, Candidate\Service\ServiceInterface $candidateService, Translator $translator)
     {
         parent::__construct($authService, $voteManager);
         
@@ -51,7 +51,7 @@ class VoteController extends AbstractController
 
 
     /**
-     * @return Vote\Service\Service
+     * @return Vote\Service\ServiceInterface
      */
     public function getVoteService()
     {
@@ -60,16 +60,16 @@ class VoteController extends AbstractController
 
 
     /**
-     * @param Vote\Service\Service $voteService
+     * @param Vote\Service\ServiceInterface $voteService
      */
-    public function setVoteService(Vote\Service\Service $voteService)
+    public function setVoteService(Vote\Service\ServiceInterface $voteService)
     {
         $this->voteService = $voteService;
     }
 
 
     /**
-     * @return Candidate\Service\Service
+     * @return Candidate\Service\ServiceInterface
      */
     public function getCandidateService()
     {
@@ -78,9 +78,9 @@ class VoteController extends AbstractController
 
 
     /**
-     * @param Candidate\Service\Service $candidateService
+     * @param Candidate\Service\ServiceInterface $candidateService
      */
-    public function setCandidateService(Candidate\Service\Service $candidateService)
+    public function setCandidateService(Candidate\Service\ServiceInterface $candidateService)
     {
         $this->candidateService = $candidateService;
     }
@@ -144,7 +144,7 @@ class VoteController extends AbstractController
         }
         
         if (! $authService->hasIdentity()) {
-            // return $this->redirectToAuthError();
+            return $this->redirectToAuthError();
         }
         
         $identity = $this->getIdentity();

@@ -16,7 +16,7 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
     {
         $service = $this->createCandidateService();
         
-        $studentCandidates = $service->getCandidatesForChamber(Chamber::academic());
+        $studentCandidates = $service->fetchCandidatesForChamber(Chamber::academic());
         $this->assertInstanceOf('Elvo\Domain\Entity\Collection\CandidateCollection', $studentCandidates);
         $this->assertCount(4, $studentCandidates);
         $this->assertSame(1, $studentCandidates->offsetGet(0)
@@ -34,7 +34,7 @@ class CandidateServiceTest extends \PHPUnit_Framework_TestCase
     {
         $service = $this->createCandidateService();
         
-        $studentCandidates = $service->getCandidatesForChamber(Chamber::student());
+        $studentCandidates = $service->fetchCandidatesForChamber(Chamber::student());
         $this->assertInstanceOf('Elvo\Domain\Entity\Collection\CandidateCollection', $studentCandidates);
         $this->assertCount(3, $studentCandidates);
         $this->assertSame(5, $studentCandidates->offsetGet(0)

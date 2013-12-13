@@ -13,10 +13,9 @@ use Elvo\Domain\Vote\VoteManager;
 /**
  * A service responsible for loading and manipulating with candidates.
  * 
- * @todo Move candidate loading to a separate class (with adapters for array, collection, file, etc.)
  * @todo Move candidate validation to a separate class.
  */
-class Service
+class Service implements ServiceInterface
 {
 
     const OPT_CANDIDATES = 'candidates';
@@ -92,7 +91,7 @@ class Service
      * @param Chamber $chamber
      * @return CandidateCollection
      */
-    public function getCandidatesForChamber(Chamber $chamber)
+    public function fetchCandidatesForChamber(Chamber $chamber)
     {
         $candidateCollection = $this->fetchCandidates();
         $candidatesForChamber = new CandidateCollection();
@@ -107,24 +106,19 @@ class Service
 
 
     /**
-     * Returns the candidates from the chamber, the user has role to vote for.
-     * 
-     * @param Identity $identity
-     * @return CandidateCollection
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Candidate\Service\ServiceInterface::getCandidatesForIdentity()
      */
     public function getCandidatesForIdentity(Identity $identity)
     {
         $chamber = new Chamber($identity->getPrimaryRole());
-        return $this->getCandidatesForChamber($chamber);
+        return $this->fetchCandidatesForChamber($chamber);
     }
 
 
     /**
-     * Returns selected candidates from the candidates relevant for the voter.
-     * 
-     * @param Identity $identity
-     * @param array $candidateIds
-     * @return CandidateCollection
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Candidate\Service\ServiceInterface::getCandidatesForIdentityFilteredByIds()
      */
     public function getCandidatesForIdentityFilteredByIds(Identity $identity, array $candidateIds)
     {
@@ -150,6 +144,10 @@ class Service
     }
 
 
+    /**
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Candidate\Service\ServiceInterface::getCountRestrictionForIdentity()
+     */
     public function getCountRestrictionForIdentity(Identity $identity)
     {
         $role = $identity->getPrimaryRole();
@@ -159,6 +157,10 @@ class Service
     }
 
 
+    /**
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Candidate\Service\ServiceInterface::isValidCandidateCount()
+     */
     public function isValidCandidateCount(Identity $identity, CandidateCollection $candidates)
     {
         $countRestriction = $this->getCountRestrictionForIdentity($identity);
