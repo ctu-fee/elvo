@@ -61,6 +61,15 @@ return array(
                 'certificate' => __DIR__ . '/../../data/ssl/crypt.crt',
                 'private_key' => __DIR__ . '/../../data/ssl/crypt.key'
             )
+        ),
+        
+        'vote_validator' => array(
+            'validators' => array(
+                'voter_role' => array(
+                    'validator' => 'Elvo\Domain\Vote\Validator\VoterRoleValidator',
+                    'options' => array()
+                )
+            )
         )
     )
 );
