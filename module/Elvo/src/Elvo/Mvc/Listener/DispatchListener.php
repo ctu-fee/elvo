@@ -4,10 +4,10 @@ namespace Elvo\Mvc\Listener;
 
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
-use Zend\Log\Logger;
 use Zend\Mvc\MvcEvent;
 use Zend\Http\PhpEnvironment\Request;
 use Zend\Mvc\Application;
+use Monolog\Logger;
 
 
 class DispatchListener extends AbstractListenerAggregate
@@ -24,13 +24,36 @@ class DispatchListener extends AbstractListenerAggregate
     protected $uniqueId;
 
 
+    /**
+     * @return Logger
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+
+    /**
+     * @param Logger $logger
+     */
+    public function setLogger(Logger $logger)
+    {
+        $this->logger = $logger;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     * @see \Zend\EventManager\ListenerAggregateInterface::attach()
+     */
     public function attach(EventManagerInterface $events)
     {
+        /*
         $this->listeners[] = $events->attach('dispatch', array(
             $this,
             'onDispatch'
-        ));
-        
+        ), 10);
+        */
         $this->listeners[] = $events->attach('dispatch.error', array(
             $this,
             'onPreDispatchError'
@@ -66,13 +89,12 @@ class DispatchListener extends AbstractListenerAggregate
         $env = $sm->get('Elvo\Environment');
         $uniqueId = $this->getUniqueId($application);
         
-        _dump($this->formatLogDispatchMessage($uniqueId, $request, sprintf("ERROR: %s", $event->getError())));
+        $this->log($this->formatLogDispatchMessage($uniqueId, $request, sprintf("ERROR: %s", $event->getError())), Logger::ERROR);
+        
         $exception = $event->getParam('exception');
         if ($exception) {
-            _dump($this->formatLogDispatchMessage($uniqueId, $request, sprintf("[%s] %s", get_class($exception), $exception->getMessage())));
-            
-            _dump("$exception");
-            _dump($_SERVER['voter_id']);
+            $this->log($this->formatLogDispatchMessage($uniqueId, $request, sprintf("[%s] %s", get_class($exception), $exception->getMessage())), Logger::ERROR);
+            $this->log(sprintf("TRACE: \n%s", $exception->getTraceAsString()), Logger::DEBUG);
         }
         
         if (! $env->isModeDevel()) {
@@ -107,5 +129,11 @@ class DispatchListener extends AbstractListenerAggregate
         }
         
         return $this->uniqueId;
+    }
+
+
+    protected function log($message, $level = Logger::INFO)
+    {
+        $this->getLogger()->log($level, $message);
     }
 }

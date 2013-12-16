@@ -2,17 +2,20 @@
 
 namespace Elvo\Mvc\ServiceManager;
 
-use Elvo\Util\Environment;
 use Zend\Db;
+use Zend\EventManager\EventManager;
 use Zend\ServiceManager\Config;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Authentication\AuthenticationService;
 use Elvo\Domain;
-use Elvo\Mvc\Authentication\IdentityFactory;
-use Elvo\Mvc\Candidate\CandidateService;
 use Elvo\Util\Options;
+use Elvo\Util\Environment;
+use Elvo\Mvc\Authentication\IdentityFactory;
 use Elvo\Mvc\Listener\DispatchListener;
-use Elvo\Domain\Vote\VoteManager;
+use Elvo\Mvc\Listener\ApplicationEventsListener;
+use Monolog\Logger;
+use Monolog\Handler\ErrorLogHandler;
+use Monolog\Formatter\LineFormatter;
 
 
 class ServiceConfig extends Config
@@ -28,6 +31,24 @@ class ServiceConfig extends Config
              * MVC layer services
              * ------------------
              */
+            'Elvo\EventManager' => function (ServiceManager $sm)
+            {
+                $events = new EventManager();
+                return $events;
+            },
+            
+            'Elvo\Logger' => function (ServiceManager $sm)
+            {
+                $logger = new Logger('elvo');
+                
+                $handler = new ErrorLogHandler();
+                $handler->setFormatter(new LineFormatter('[%datetime%] %channel%.%level_name%: %message%'));
+                
+                $logger->pushHandler($handler);
+                
+                return $logger;
+            },
+            
             'Elvo\Environment' => function (ServiceManager $sm)
             {
                 $config = $sm->get('Config');
@@ -43,14 +64,46 @@ class ServiceConfig extends Config
             'Elvo\DispatchListener' => function (ServiceManager $sm)
             {
                 $dispatchListener = new DispatchListener();
+                $dispatchListener->setLogger($sm->get('Elvo\Logger'));
+                
                 return $dispatchListener;
+            },
+            
+            'Elvo\ApplicationEventsListener' => function (ServiceManager $sm)
+            {
+                $listener = new ApplicationEventsListener();
+                $listener->setLogger($sm->get('Elvo\Logger'));
+                
+                return $listener;
             },
             
             'Elvo\Translator' => 'Zend\I18n\Translator\TranslatorServiceFactory',
             
             'Elvo\IdentityFactory' => function (ServiceManager $sm)
             {
-                return new IdentityFactory();
+                $identityFactory = new IdentityFactory();
+                $identityFactory->setRoleExtractor($sm->get('Elvo\AuthenticationRoleExtractor'));
+                
+                return $identityFactory;
+            },
+            
+            'Elvo\AuthenticationRoleExtractor' => function (ServiceManager $sm)
+            {
+                $config = $sm->get('Config');
+                if (! isset($config['elvo']['authentication']['role_extractor']['class'])) {
+                    throw new Exception\MissingConfigException("Missing config 'elvo/authentication/role_extractor'");
+                }
+                
+                $roleExtractorClass = $config['elvo']['authentication']['role_extractor']['class'];
+                
+                $options = array();
+                if (isset($config['elvo']['authentication']['role_extractor']['options']) && is_array($config['elvo']['authentication']['role_extractor']['options'])) {
+                    $options = $config['elvo']['authentication']['role_extractor']['options'];
+                }
+                
+                $roleExtractor = new $roleExtractorClass(new Options($options));
+                
+                return $roleExtractor;
             },
             
             'Elvo\AuthenticationService' => function (ServiceManager $sm)
@@ -60,10 +113,16 @@ class ServiceConfig extends Config
                     throw new Exception\MissingConfigException("Missing config 'elvo/authentication/adapter'");
                 }
                 
-                $adapterClass = $config['elvo']['authentication']['adapter'];
+                $authAdapterConfig = $config['elvo']['authentication']['adapter'];
+                
+                if (! isset($authAdapterConfig['adapter'])) {
+                    throw new Exception\MissingConfigException("Missing config 'elvo/authentication/adapter/adapter'");
+                }
+                
+                $adapterClass = $authAdapterConfig['adapter'];
                 $options = array();
-                if (isset($config['elvo']['authentication']['options']) && is_array($config['elvo']['authentication']['options'])) {
-                    $options = $config['elvo']['authentication']['options'];
+                if (isset($authAdapterConfig['options']) && is_array($authAdapterConfig['options'])) {
+                    $options = $authAdapterConfig['options'];
                 }
                 
                 $adapter = new $adapterClass($options, null, $sm->get('Elvo\IdentityFactory'));
@@ -74,24 +133,22 @@ class ServiceConfig extends Config
                 return $authService;
             },
             
-            'Elvo\CandidateService' => function (ServiceManager $sm)
-            {
-                $config = $sm->get('Config');
-                if (! isset($config['elvo']['candidates']['options']) || ! is_array($config['elvo']['candidates']['options'])) {
-                    throw new Exception\MissingConfigException("Missing config 'elvo/candidates/file'");
-                }
-                
-                $options = new Options($config['elvo']['candidates']['options']);
-                
-                $candidateService = new CandidateService($sm->get('Elvo\Domain\CandidateFactory'), $options);
-                return $candidateService;
-            },
+
             
             /*
              * ----------------------
              * Domain layer services
              * ----------------------
              */
+            'Elvo\CandidateService' => function (ServiceManager $sm)
+            {
+                $candidateStorage = $sm->get('Elvo\Domain\CandidateStorage');
+                $voteManager = $sm->get('Elvo\Domain\VoteManager');
+                
+                $candidateService = new Domain\Candidate\Service\Service($candidateStorage, $voteManager);
+                return $candidateService;
+            },
+            
             'Elvo\Domain\VoteService' => function (ServiceManager $sm)
             {
                 $voteManager = $sm->get('Elvo\Domain\VoteManager');
@@ -112,13 +169,38 @@ class ServiceConfig extends Config
                 }
                 
                 $options = new Options($config['elvo']['vote_manager']['options']);
-                $voteManager = new VoteManager($options);
+                $voteManager = new Domain\Vote\VoteManager($options);
                 return $voteManager;
             },
             
             'Elvo\Domain\VoteFactory' => function (ServiceManager $sm)
             {
                 return new Domain\Entity\Factory\VoteFactory();
+            },
+            
+            'Elvo\Domain\CandidateCountVoteValidator' => function (ServiceManager $sm)
+            {
+                $validorFactory = $sm->get('Elvo\Domain\VoteValidatorFactory');
+                $voteManager = $sm->get('Elvo\Domain\VoteManager');
+                
+                $validator = $validorFactory->createValidator(array(
+                    'validator' => 'Elvo\Domain\Vote\Validator\CandidateCountValidator',
+                    'options' => array(
+                        'max_votes_count' => array(
+                            'student' => $voteManager->getMaxVotesForChamber('student'),
+                            'academic' => $voteManager->getMaxVotesForChamber('academic')
+                        )
+                    )
+                ));
+                
+                return $validator;
+            },
+            
+            'Elvo\Domain\VoteValidatorFactory' => function (ServiceManager $sm)
+            {
+                $voteValidatorFactory = new Domain\Vote\Validator\ValidatorFactory();
+                
+                return $voteValidatorFactory;
             },
             
             'Elvo\Domain\VoteValidator' => function (ServiceManager $sm)
@@ -128,25 +210,13 @@ class ServiceConfig extends Config
                     throw new Exception\MissingConfigException("Missing config 'elvo/vote_validator/validators'");
                 }
                 
-                // FIXME - move to factory class and add tests
                 $validatorsConfig = $config['elvo']['vote_validator']['validators'];
-                $chainValidator = new Domain\Vote\Validator\ChainValidator();
+                $validatorFactory = $sm->get('Elvo\Domain\VoteValidatorFactory');
+                
+                $chainValidator = $validatorFactory->createChainValidator();
+                $chainValidator->addValidator($sm->get('Elvo\Domain\CandidateCountVoteValidator'));
                 foreach ($validatorsConfig as $validatorConfig) {
-                    if (! isset($validatorConfig['validator'])) {
-                        throw new Exception\MissingConfigException("Missing validator field in 'elvo/vote_validator/validators' config");
-                    }
-                    
-                    $validatorClass = $validatorConfig['validator'];
-                    if (! class_exists($validatorClass)) {
-                        throw new Exception\UndefinedClassException(sprintf("Undefined vote validator class '%s'", $validatorClass));
-                    }
-                    
-                    $options = array();
-                    if (isset($validatorConfig['options']) && is_array($validatorConfig['options'])) {
-                        $options = $validatorConfig['options'];
-                    }
-                    
-                    $validator = new $validatorClass(new Options($options));
+                    $validator = $validatorFactory->createValidator($validatorConfig);
                     $chainValidator->addValidator($validator);
                 }
                 
@@ -177,6 +247,7 @@ class ServiceConfig extends Config
                 }
                 
                 $encryptor = new $encryptorClass(new Options($options));
+                
                 return $encryptor;
             },
             
@@ -189,6 +260,25 @@ class ServiceConfig extends Config
             'Elvo\Domain\CandidateFactory' => function (ServiceManager $sm)
             {
                 return new Domain\Entity\Factory\CandidateFactory();
+            },
+            
+            'Elvo\Domain\CandidateStorage' => function (ServiceManager $sm)
+            {
+                $config = $sm->get('Config');
+                if (! isset($config['elvo']['candidate_storage']['storage'])) {
+                    throw new Exception\MissingConfigException("Missing config 'elvo/candidate_storage/storage'");
+                }
+                
+                $storageClass = $config['elvo']['candidate_storage']['storage'];
+                
+                $options = array();
+                if (isset($config['elvo']['candidate_storage']['options']) && is_array($config['elvo']['candidate_storage']['options'])) {
+                    $options = $config['elvo']['candidate_storage']['options'];
+                }
+                
+                $storage = new $storageClass($options);
+                
+                return $storage;
             },
             
             /*

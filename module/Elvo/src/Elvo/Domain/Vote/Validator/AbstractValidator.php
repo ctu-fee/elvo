@@ -17,12 +17,16 @@ abstract class AbstractValidator implements ValidatorInterface
     /**
      * Constructor.
      * 
-     * @param Options $options
+     * @param array|Options $options
      */
-    public function __construct(Options $options = null)
+    public function __construct($options = null)
     {
         if (null === $options) {
             $options = new Options();
+        }
+        
+        if (is_array($options)) {
+            $options = new Options($options);
         }
         
         $this->setOptions($options);

@@ -3,6 +3,7 @@
 namespace ElvoTest\Mvc\Authentication;
 
 use Elvo\Mvc\Authentication\IdentityFactory;
+use ZfcShib\Authentication\Identity\Data;
 
 
 class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
@@ -21,9 +22,9 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('Elvo\Mvc\Authentication\Exception\MissingUniqueIdException');
         
-        $this->factory->createIdentity(array(
+        $this->factory->createIdentity($this->getIdentityData(array(
             'foo' => 'bar'
-        ));
+        )));
     }
 
 
@@ -31,9 +32,9 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('Elvo\Mvc\Authentication\Exception\MissingUniqueIdException');
         
-        $this->factory->createIdentity(array(
+        $this->factory->createIdentity($this->getIdentityData(array(
             'voter_id' => ''
-        ));
+        )));
     }
 
 
@@ -41,18 +42,9 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException('Elvo\Mvc\Authentication\Exception\MissingRoleException');
         
-        $this->factory->createIdentity(array(
+        $this->factory->createIdentity($this->getIdentityData(array(
             'voter_id' => '123'
-        ));
-    }
-
-
-    /**
-     * @dataProvider createIdentityProvider
-     */
-    public function testDecodeRoles($encodedRoles, $decodedRoles)
-    {
-        $this->assertEquals($decodedRoles, $this->factory->decodeRoles($encodedRoles));
+        )));
     }
 
 
@@ -64,10 +56,17 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
             'academic'
         );
         
-        $identity = $this->factory->createIdentity(array(
+        $extractor = $this->getMock('Elvo\Mvc\Authentication\Role\RoleExtractorInterface');
+        $extractor->expects($this->once())
+            ->method('extractRoles')
+            ->with($encodedRoles)
+            ->will($this->returnValue($expectedRoles));
+        $this->factory->setRoleExtractor($extractor);
+        
+        $identity = $this->factory->createIdentity($this->getIdentityData(array(
             'voter_id' => $id,
             'voter_roles' => $encodedRoles
-        ));
+        )));
         
         $this->assertInstanceOf('Elvo\Mvc\Authentication\Identity', $identity);
         $this->assertSame($id, $identity->getId());
@@ -75,62 +74,8 @@ class IdentityFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function createIdentityProvider()
+    protected function getIdentityData($userData = array(), $systemData = array())
     {
-        return array(
-            array(
-                'encodedRoles' => - 1,
-                'decodedRoles' => array()
-            ),
-            array(
-                'encodedRoles' => 0,
-                'decodedRoles' => array()
-            ),
-            array(
-                'encodedRoles' => 1,
-                'decodedRoles' => array(
-                    'student'
-                )
-            ),
-            array(
-                'encodedRoles' => 2,
-                'decodedRoles' => array(
-                    'academic'
-                )
-            ),
-            array(
-                'encodedRoles' => 3,
-                'decodedRoles' => array(
-                    'student',
-                    'academic'
-                )
-            ),
-            array(
-                'encodedRoles' => 4,
-                'decodedRoles' => array(
-                    'academic'
-                )
-            ),
-            array(
-                'encodedRoles' => 5,
-                'decodedRoles' => array(
-                    'student',
-                    'academic'
-                )
-            ),
-            array(
-                'encodedRoles' => 6,
-                'decodedRoles' => array(
-                    'academic'
-                )
-            ),
-            array(
-                'encodedRoles' => 7,
-                'decodedRoles' => array(
-                    'student',
-                    'academic'
-                )
-            )
-        );
+        return new Data($userData, $systemData);
     }
 }

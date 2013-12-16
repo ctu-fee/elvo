@@ -134,7 +134,17 @@ return array(
             'options' => array(
                 'enabled' => true,
                 'start_time' => '2013-11-23 08:00:00',
-                'end_time' => '2013-11-28 14:00:00'
+                'end_time' => '2013-11-28 14:00:00',
+                'chamber_max_candidates' => array(
+                    'academic' => 3,
+                    'student' => 2
+                ),
+                'chamber_max_votes' => array(
+                    'academic' => 2,
+                    'student' => 1
+                ),
+                'electoral_name' => 'FEL',
+                'contact_email' => 'volby@example.cz'
             )
         ),
         
@@ -144,36 +154,30 @@ return array(
         ),
         
         'authentication' => array(
-            'adapter' => 'ZfcShib\Authentication\Adapter\Dummy',
-            'options' => array(
-                'user_data' => array(
-                    'voter_id' => '123456',
-                    'voter_roles' => 3
+            'adapter' => array(
+                'adapter' => 'ZfcShib\Authentication\Adapter\Dummy',
+                'options' => array(
+                    'user_data' => array(
+                        'voter_id' => '123456',
+                        'voter_roles' => 3
+                    )
                 )
+            ),
+            'role_extractor' => array(
+                'class' => 'Elvo\Mvc\Authentication\Role\FelRoleExtractor',
+                'options' => array()
             )
         ),
         
-        'candidates' => array(
+        'candidate_storage' => array(
+            'storage' => 'Elvo\Domain\Candidate\Storage\PhpArrayInFile',
             'options' => array(
-                'candidates' => __DIR__ . '/../data/candidates.php',
-                'chamber_count' => array(
-                    'academic' => 3,
-                    'student' => 2
-                )
+                'file_path' => __DIR__ . '/../data/candidates.php'
             )
         ),
         
         'vote_validator' => array(
             'validators' => array(
-                'candidate_count' => array(
-                    'validator' => 'Elvo\Domain\Vote\Validator\CandidateCountValidator',
-                    'options' => array(
-                        'chamber_count' => array(
-                            'academic' => 3,
-                            'student' => 2
-                        )
-                    )
-                ),
                 'voter_role' => array(
                     'validator' => 'Elvo\Domain\Vote\Validator\VoterRoleValidator',
                     'options' => array()
