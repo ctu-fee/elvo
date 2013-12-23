@@ -3,6 +3,7 @@
 namespace Elvo\Console\ServiceManager;
 
 use Zend\ServiceManager\Config;
+use Elvo\Console\Application;
 use Elvo\Console\Command;
 use Elvo\Domain;
 
@@ -22,6 +23,18 @@ class ServiceConfig extends Config
             'Elvo\VoteProcessor' => function ($sm)
             {
                 return new Domain\Vote\Processor\Processor();
+            },
+            
+            'Elvo\Console\Application' => function ($sm)
+            {
+                $application = new Application();
+                $application->addCommands(array(
+                    $sm->get('Elvo\Console\VoteCountCommand'),
+                    $sm->get('Elvo\Console\VoteResultCommand'),
+                    $sm->get('Elvo\Console\VoteExportCommand')
+                ));
+                
+                return $application;
             },
             
             /* 
