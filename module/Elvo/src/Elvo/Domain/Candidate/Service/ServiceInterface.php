@@ -39,6 +39,14 @@ interface ServiceInterface
 
 
     /**
+     * Returns the maximum votes per voter for the corresponding chamber.
+     * 
+     * @param Identity $identity
+     */
+    public function getVoteRestrictionForIdentity(Identity $identity);
+
+
+    /**
      * Checks, if the provided candidate count doesn't exceed the maximum value allowed.
      * 
      * @param Identity $identity

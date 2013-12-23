@@ -40,7 +40,9 @@ class VoteController extends AbstractController
     protected $voterFactory;
 
 
-    public function __construct(AuthenticationService $authService, Vote\VoteManager $voteManager, Vote\Service\ServiceInterface $voteService, Candidate\Service\ServiceInterface $candidateService, Translator $translator)
+    public function __construct(AuthenticationService $authService, Vote\VoteManager $voteManager, 
+        Vote\Service\ServiceInterface $voteService, Candidate\Service\ServiceInterface $candidateService, 
+        Translator $translator)
     {
         parent::__construct($authService, $voteManager);
         
@@ -205,7 +207,7 @@ class VoteController extends AbstractController
         
         $candidateService = $this->getCandidateService();
         $candidates = $candidateService->getCandidatesForIdentity($identity);
-        $countRestriction = $candidateService->getCountRestrictionForIdentity($identity);
+        $countRestriction = $candidateService->getVoteRestrictionForIdentity($identity);
         
         $view = $this->initView(array(
             'candidates' => $candidates,

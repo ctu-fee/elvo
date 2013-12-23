@@ -158,12 +158,24 @@ class Service implements ServiceInterface
 
 
     /**
+     * {@inhertidoc}
+     * @see \Elvo\Domain\Candidate\Service\ServiceInterface::getVoteRestrictionForIdentity()
+     */
+    public function getVoteRestrictionForIdentity(Identity $identity)
+    {
+        $chamber = new Chamber($identity->getPrimaryRole());
+        
+        return $this->getVoteManager()->getMaxVotesForChamber($chamber);
+    }
+
+
+    /**
      * {@inheritdoc}
      * @see \Elvo\Domain\Candidate\Service\ServiceInterface::isValidCandidateCount()
      */
     public function isValidCandidateCount(Identity $identity, CandidateCollection $candidates)
     {
-        $countRestriction = $this->getCountRestrictionForIdentity($identity);
+        $countRestriction = $this->getVoteRestrictionForIdentity($identity);
         if ($candidates->count() > $countRestriction) {
             return false;
         }
