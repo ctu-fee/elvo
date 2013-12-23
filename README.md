@@ -7,3 +7,11 @@
 - php5-intl
 
 
+## Instalace
+
+- git clone
+- composer install
+- config *.php.dist --> *.php
+- vytvorit kandidaty
+- inicializovat databazi
+

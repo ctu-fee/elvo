@@ -2,6 +2,7 @@
 
 namespace Elvo\Console\ServiceManager;
 
+use Elvo\Util\Exception\MissingConfigException;
 use Zend\ServiceManager\Config;
 use Elvo\Console\Application;
 use Elvo\Console\Command;
@@ -75,8 +76,12 @@ class ServiceConfig extends Config
             
             'Elvo\Console\DbInitCommand' => function ($sm)
             {
-                $command = new Command\DbInit();
-                $command->setDbAdapter($sm->get('Elvo\Db'));
+                $config = $sm->get('CliConfig');
+                if (! isset($config['db:init']) || ! is_array($config['db:init'])) {
+                    throw new MissingConfigException('Missing config "db:init/init_script"');
+                }
+                
+                $command = new Command\DbInit($sm->get('Elvo\Db'), $config['db:init']);
                 
                 return $command;
             }
