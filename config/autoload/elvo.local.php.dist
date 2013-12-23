@@ -4,7 +4,7 @@ return array(
     'elvo' => array(
         
         'environment' => array(
-            'mode' => 'devel'
+            'mode' => 'prod'
         ),
         
         'vote_manager' => array(
