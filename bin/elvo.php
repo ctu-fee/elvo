@@ -15,6 +15,7 @@ $consoleServiceConfig = new Console\ServiceManager\ServiceConfig();
 $consoleServiceConfig->configureServiceManager($serviceManager);
 
 $serviceManager->setService('Config', require __DIR__ . '/../config/autoload/elvo.local.php');
+$serviceManager->setService('CliConfig', require __DIR__ . '/../config/autoload/elvo-cli.local.php');
 
 $application = $serviceManager->get('Elvo\Console\Application');
 $application->run();

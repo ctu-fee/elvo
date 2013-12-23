@@ -27,11 +27,18 @@ class ServiceConfig extends Config
             
             'Elvo\Console\Application' => function ($sm)
             {
-                $application = new Application();
+                $name = null;
+                $config = $sm->get('CliConfig');
+                if (isset($config['application']['name'])) {
+                    $name = $config['application']['name'];
+                }
+                
+                $application = new Application($name);
                 $application->addCommands(array(
                     $sm->get('Elvo\Console\VoteCountCommand'),
                     $sm->get('Elvo\Console\VoteResultCommand'),
-                    $sm->get('Elvo\Console\VoteExportCommand')
+                    $sm->get('Elvo\Console\VoteExportCommand'),
+                    $sm->get('Elvo\Console\DbInitCommand')
                 ));
                 
                 return $application;
@@ -62,6 +69,14 @@ class ServiceConfig extends Config
             {
                 $command = new Command\VoteExportCommand();
                 $command->setVoteService($sm->get('Elvo\Domain\VoteService'));
+                
+                return $command;
+            },
+            
+            'Elvo\Console\DbInitCommand' => function ($sm)
+            {
+                $command = new Command\DbInit();
+                $command->setDbAdapter($sm->get('Elvo\Db'));
                 
                 return $command;
             }
