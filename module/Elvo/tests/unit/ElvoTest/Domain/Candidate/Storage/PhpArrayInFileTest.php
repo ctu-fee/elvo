@@ -100,6 +100,7 @@ class PhpArrayInFileTest extends \PHPUnit_Framework_TestCase
         ));
         
         $candidatesData = require $file;
+  
         $candidate1 = $this->createCandidateMock();
         $candidate2 = $this->createCandidateMock();
         

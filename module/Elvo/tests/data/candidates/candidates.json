@@ -1,0 +1,20 @@
+[
+    {
+        "id": 123,
+        "first_name": "Franta",
+        "last_name": "Vomacka",
+        "chamber": "student",
+        "email": "vomacka@cvut.cz",
+        "profile_url": "http://profile/url/vomacka",
+        "candidate_url": "http://candidate/url/vomacka"        
+    },
+    {
+        "id": 456,
+        "first_name": "Petr",
+        "last_name": "Novak",
+        "chamber": "academic",
+        "email": "novak@cvut.cz",
+        "profile_url": "http://profile/url/novak",
+        "candidate_url": "http://candidate/url/novak" 
+    }
+]

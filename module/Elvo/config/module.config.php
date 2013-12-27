@@ -170,9 +170,9 @@ return array(
         ),
         
         'candidate_storage' => array(
-            'storage' => 'Elvo\Domain\Candidate\Storage\PhpArrayInFile',
+            'storage' => 'Elvo\Domain\Candidate\Storage\JsonInFile',
             'options' => array(
-                'file_path' => __DIR__ . '/../data/candidates.php'
+                'file_path' => __DIR__ . '/../data/candidates.json'
             )
         ),
         
