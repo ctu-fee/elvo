@@ -164,8 +164,12 @@ return array(
                 )
             ),
             'role_extractor' => array(
-                'class' => 'Elvo\Mvc\Authentication\Role\FelRoleExtractor',
-                'options' => array()
+                'class' => 'Elvo\Mvc\Authentication\Role\CvutRoleExtractor',
+                'options' => array(
+                    'department_code' => array(
+                        '13000'
+                    )
+                )
             )
         ),
         

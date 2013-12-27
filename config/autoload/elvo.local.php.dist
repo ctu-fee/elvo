@@ -1,37 +1,95 @@
 <?php
 
+/*
+ * Main configuration file.
+ */
 return array(
     
     'elvo' => array(
         
+        /*
+         * Environment configuration
+         */
         'environment' => array(
-            'mode' => 'prod'
+            /*
+             * Application mode - 'devel' or 'prod'.
+             */
+            'mode' => 'devel'
         ),
         
+        /*
+         * Vote related settings
+         */
         'vote_manager' => array(
             'options' => array(
+                /*
+                 * If true, the voting is enabled. Otherwise voting is not possible 
+                 * and a special message is being shown.
+                 */
                 'enabled' => true,
-                'start_time' => '2013-11-23 08:00:00',
-                'end_time' => '2013-11-28 14:00:00'
+            
+                /*
+                 * The time the voting should start.
+                 */
+                'start_time' => '2013-12-23 08:00:00',
+            
+                /*
+                 * The time the voting should end.
+                 */
+                'end_time' => '2013-12-28 14:00:00',
+            
+                /*
+                 * The maximum candidates, that can be elected for each chamber -
+                 * the academic and the student.
+                 */
                 'chamber_max_candidates' => array(
                     'academic' => 3,
                     'student' => 2
                 ),
+            
+                /*
+                 * The maximum votes a voter can give (maximum number of candidates
+                 * a voter can select) per chamber.
+                 */
                 'chamber_max_votes' => array(
                     'academic' => 2,
                     'student' => 1
                 ),
+            
+                /*
+                 * The name of the electoral (volebni obvod).
+                 */
                 'electoral_name' => 'FEL',
-                'contact_email' => 'volby@example.cz'                
+            
+                /*
+                 * Contact for the voting committee
+                 */
+                'contact_email' => 'volby@example.cz'
             )
         ),
         
+        
+        /*
+         * Database configuration
+         */
         'db' => array(
+            /*
+             * Database driver
+             */
             'driver' => 'Pdo_Sqlite',
+            /*
+             * Path to the database
+             */
             'database' => '/tmp/elvo.sqlite'
         ),
         
+        /*
+         * Authentication settings
+         */
         'authentication' => array(
+            /*
+             * Dummy authentication adapter
+             */
             'adapter' => array(
                 'adapter' => 'ZfcShib\Authentication\Adapter\Dummy',
                 'options' => array(
@@ -41,25 +99,75 @@ return array(
                     )
                 )
             ),
+        
+            /*
+             * Shibboleth authentication adapter
+             */
+            /*
+            array(
+                'adapter' => 'ZfcShib\Authentication\Adapter\Shibboleth',
+                'options' => array(
+                    'id_attr_name' => 'voter_id',
+                    'user_attr_names' => array(
+                        'voter_id',
+                        'voter_roles'
+                    )
+                )
+            ),
+            */
+        
+            /*
+             * Role extractor - processes input user data and extracts his roles
+             * - 'student' and/or 'academic'
+             */
             'role_extractor' => array(
                 'class' => 'Elvo\Mvc\Authentication\Role\CvutRoleExtractor',
                 'options' => array(
-                    'department_code' => '13000'
+                    /*
+                     * The department (faculty) code(s) to extract roles for.
+                     */
+                    'department_code' => array(
+                        '13000'
+                    )
                 )
             )
         ),
         
+        /*
+         * Candidate storage - a data structure, where candidate data
+         * is being stored.
+         */
         'candidate_storage' => array(
-            'storage' => 'Elvo\Domain\Candidate\Storage\PhpArrayInFile',
+            /*
+             * The type of the storage.
+             */
+            'storage' => 'Elvo\Domain\Candidate\Storage\JsonInFile',
             'options' => array(
-                'file_path' => __DIR__ . '/../../data/candidates/candidates.php'
+                /*
+                 * The path to the storage file
+                 */
+                'file_path' => __DIR__ . '/../../data/candidates/candidates.json'
             )
         ),
-        
+          
+        /*
+         * Vote encryption settings.
+         */
         'vote_encryptor' => array(
+            /*
+             * The type of the encryptor.
+             */
             'encryptor' => 'Elvo\Domain\Vote\OpensslEncryptor',
             'options' => array(
+                /*
+                 * The path to the public key (certificate) used to
+                 * encrypt the votes.
+                 */
                 'certificate' => __DIR__ . '/../../data/ssl/crypt.crt',
+            
+                /*
+                 * The path to the private key used to decrypt the votes.
+                 */
                 'private_key' => __DIR__ . '/../../data/ssl/crypt.key'
             )
         ),
@@ -73,4 +181,5 @@ return array(
             )
         )
     )
-);
+)
+;
