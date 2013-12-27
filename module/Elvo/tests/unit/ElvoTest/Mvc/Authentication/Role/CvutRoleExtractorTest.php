@@ -105,7 +105,7 @@ class CvutRoleExtractorTest extends \PHPUnit_Framework_Testcase
             )
         );
         
-        $expectedRoles = array(
+        $expectedRoles1 = array(
             array(
                 'department_code' => '13000',
                 'role_name' => 'role3'
@@ -116,7 +116,29 @@ class CvutRoleExtractorTest extends \PHPUnit_Framework_Testcase
             )
         );
         
-        $this->assertEquals($expectedRoles, $this->extractor->filterRolesByDepartmentCode($roles, '13000'));
+        $expectedRoles2 = array(
+            array(
+                'department_code' => '11000',
+                'role_name' => 'role1'
+            ),
+            array(
+                'department_code' => '12000',
+                'role_name' => 'role2'
+            ),
+            array(
+                'department_code' => '11000',
+                'role_name' => 'role5'
+            )
+        );
+        
+        $this->assertEquals($expectedRoles1, $this->extractor->filterRolesByDepartmentCode($roles, array(
+            '13000'
+        )));
+        
+        $this->assertEquals($expectedRoles2, $this->extractor->filterRolesByDepartmentCode($roles, array(
+            '12000',
+            '11000'
+        )));
     }
 
 
@@ -254,6 +276,17 @@ class CvutRoleExtractorTest extends \PHPUnit_Framework_Testcase
             array(
                 'role_data' => 'B-11000-STUDENT:BLAH - BLAH;B-11000-ZAMESTNANEC-AKADEMICKY:BLAH - BLAH',
                 'department_code' => '11000',
+                'expected_role' => array(
+                    'student',
+                    'academic'
+                )
+            ),
+            array(
+                'role_data' => 'B-11000-STUDENT:BLAH - BLAH;B-12000-ZAMESTNANEC-AKADEMICKY:BLAH - BLAH',
+                'department_code' => array(
+                    '11000',
+                    '12000'
+                ),
                 'expected_role' => array(
                     'student',
                     'academic'

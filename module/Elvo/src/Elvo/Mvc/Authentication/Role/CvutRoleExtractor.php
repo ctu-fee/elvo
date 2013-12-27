@@ -162,15 +162,15 @@ class CvutRoleExtractor implements RoleExtractorInterface
      * @param string $departmentCode
      * @return array
      */
-    public function filterRolesByDepartmentCode(array $roles, $departmentCode = null)
+    public function filterRolesByDepartmentCode(array $roles, array $departmentCodes = null)
     {
-        if (null === $departmentCode) {
-            $departmentCode = $this->getDepartmentCode();
+        if (null === $departmentCodes) {
+            $departmentCodes = $this->getDepartmentCodes();
         }
         
         $filteredRoles = array();
         foreach ($roles as $roleInfo) {
-            if ($departmentCode === $roleInfo['department_code']) {
+            if (in_array($roleInfo['department_code'], $departmentCodes)) {
                 $filteredRoles[] = $roleInfo;
             }
         }
@@ -263,11 +263,17 @@ class CvutRoleExtractor implements RoleExtractorInterface
      * @throws MissingOptionException
      * @return string
      */
-    protected function getDepartmentCode()
+    protected function getDepartmentCodes()
     {
         $departmentCode = $this->options->get(self::OPT_DEPARTMENT_CODE);
         if (null === $departmentCode) {
             throw new MissingOptionException(sprintf("Missing required option '%s'", self::OPT_DEPARTMENT_CODE));
+        }
+        
+        if (! is_array($departmentCode)) {
+            $departmentCode = array(
+                $departmentCode
+            );
         }
         
         return $departmentCode;
