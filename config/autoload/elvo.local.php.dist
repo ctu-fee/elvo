@@ -94,7 +94,7 @@ return array(
                 'adapter' => 'ZfcShib\Authentication\Adapter\Dummy',
                 'options' => array(
                     'user_data' => array(
-                        'voter_id' => '123451',
+                        'voter_id' => uniqid(),
                         'voter_roles' => 'B-13000-STUDENT;B-13000-ZAMESTNANEC-AKADEMICKY'
                     )
                 )
