@@ -5,3 +5,4 @@ composer.lock
 vendor
 public/.htaccess
 data/candidates/candidates.php
+data/db/*.sqlite

@@ -80,7 +80,7 @@ return array(
             /*
              * Path to the database
              */
-            'database' => '/tmp/elvo.sqlite'
+            'database' => __DIR__ . '/../../data/db/elvo.sqlite'
         ),
         
         /*
