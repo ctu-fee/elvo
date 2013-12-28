@@ -52,7 +52,14 @@ class VoteExportCommand extends Command
             $candidates = $vote->getCandidates();
             $candidatesData = array();
             foreach ($candidates as $candidate) {
-                $candidatesData[] = sprintf("%s %s", $candidate->getFirstName(), $candidate->getLastname());
+                /* @var $candidate \Elvo\Domain\Entity\Candidate */
+                // $candidatesData[] = sprintf("%s %s", $candidate->getFirstName(), $candidate->getLastname());
+                $candidatesData[] = array(
+                    'id' => $candidate->getId(),
+                    'first_name' => $candidate->getFirstName(),
+                    'last_name' => $candidate->getLastName(),
+                    'chamber' => $candidate->getChamber()->getCode()
+                );
             }
             
             $data[] = array(
@@ -61,7 +68,8 @@ class VoteExportCommand extends Command
             );
         }
         
-        $jsonData = Json::encode($data);
+        // $jsonData = Json::encode($data, false, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $jsonData = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         $output->writeln($jsonData);
     }
 }
