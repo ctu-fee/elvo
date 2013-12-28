@@ -6,5 +6,5 @@ namespace Elvo\Util;
 class Version
 {
 
-    const VERSION = '0.2.0-pre1';
+    const VERSION = '0.2.0';
 }
