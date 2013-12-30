@@ -39,7 +39,7 @@ http://pki.cesnet.cz/cs/st-guide-tcs-server.html
 Zdrojové kódy lze získat klonováním GIT repozitáře aplikace. Zvolte vhodný adresář a použijte následující příkaz:
 
 ```
-$ git clone <repository>
+$ git clone https://github.com/ctu-fee/elvo.git
 ```
 
 Tento příkaz vytvoří lokální kopii zdrojových kodu v podadresáři `elvo/`. Pro pozdější referenci pojmenujeme tento adresář `ELVO_ROOT`. 
