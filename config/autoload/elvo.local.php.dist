@@ -14,7 +14,7 @@ return array(
             /*
              * Application mode - 'devel' or 'prod'.
              */
-            'mode' => 'devel'
+            'mode' => 'prod'
         ),
         
         /*
@@ -26,7 +26,7 @@ return array(
                  * If true, the voting is enabled. Otherwise voting is not possible 
                  * and a special message is being shown.
                  */
-                'enabled' => true,
+                'enabled' => false,
             
                 /*
                  * The time the voting should start.
@@ -104,7 +104,7 @@ return array(
              * Shibboleth authentication adapter
              */
             /*
-            array(
+            'adapter' => array(
                 'adapter' => 'ZfcShib\Authentication\Adapter\Shibboleth',
                 'options' => array(
                     'id_attr_name' => 'voter_id',
