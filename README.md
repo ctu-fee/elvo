@@ -2,7 +2,7 @@
 
 ## Úvod
 
-Elvo je aplikace na elektronické volby do Akademického senátu ČVUT. V současné době je potřeba zvláštní instance aplikace pro každý volební obvod (fakulta). Danou instanci aplikace provozuje volební komise příslušného volebního obvodu.
+Elvo je aplikace na elektronické volby do [Akademického senátu ČVUT](http://www.cvut.cz/akademicky-senat). V současné době je potřeba zvláštní instance aplikace pro každý volební obvod (fakulta). Danou instanci aplikace provozuje volební komise příslušného volebního obvodu.
 
 Aplikace ověřuje voliče pomocí autentizačního systému **cvutID**, který nabízí následující možnosti:
 
@@ -16,38 +16,33 @@ K aplikaci patří i utilita pro příkazovou řádku, která zjednodušuje prov
 
 ## Požadavky
 
-- PHP >= 5.3.3
-- PHP rozšíření - pdo, intl
+- OS Linux (doporučená distribuce Debian)
+- Apache 2.x
 - [Shibboleth Service Provider](http://shibboleth.net/products/service-provider.html)
 - [GIT](http://git-scm.com/)
+- PHP >= 5.3.3
+- PHP rozšíření - pdo, intl
 
-## Příprava prostředí
+## OS, hostname a SSL certifikát
 
-### OS, hostname a SSL certifikát
+Je potřeba mit k dispozici server s OS Linux. Doporučujeme, poslední verzi Debian Linux, ale v zásadě by neměl byt problém i s jinou distribuci. Server by měl mít vhodně nastavené jméno, například pro volební obvod FEL je to `volby.fel.cvut.cz`.
 
-Je potreba mit k dispozici server s OS Linux. Doporucujeme, posledni verzi Debian Linux, ale v zasade by nemel byt problem i s jinou distribuci. Server by mel mit vhodne nastavene jmeno, napriklad pro FEL je to volby.fel.cvut.cz.
-
-Je nezbytne, aby veskera komunikace probihala po SSL, takze pro dane jmeno serveru je potreba poridit SSL certifikat, ktery je overitelny v beznych prohlizecich. Informace o tom, jak zazadat o takovy certifikat najdete zde:
+Je nezbytné, aby aplikace byla přístupná pouze pod HTTPS, takže pro dané jméno serveru je potřeba pořídit SSL certifikát, který je ověřitelný v běžných prohlížečích. Informace o tom, jak zažádat o takový certifikát najdete zde:
 
 http://pki.cesnet.cz/cs/st-guide-tcs-server.html
 
-Zadost lze vyridit i velmi rychle, ale vzhledem k tomu, ze je potreba potvrzeni od dvou zodpovednych osob (na urovni FEL a na urovni CVUT) a dale zalezi na tom, jak rychle budou jednat zamestnanci CESNETu a jak rychle vubec vyhovi certifikacni autorita, je treba pocitat s tim, ze se to muze zdrzet. Obvykle to trva do dalsiho dne.
+Žádost lze vyřídit i velmi rychle, ale vzhledem k tomu, že je potřeba potvrzení od dvou zodpovědných osob (na úrovni FEL a na úrovni ČVUT) a dále záleží na tom, jak rychle budou jednat zaměstnanci CESNETu a jak rychle vůbec vyhoví certifikační autorita, je třeba počítat s tím, že se to může zdržet. Obvykle to trvá do dalšího dne.
 
-### Autentizace pomocí cvutID
 
-Volební aplikace využívá centralizovaný autentizační systém cvutID, který je postaven na systému [Shibboleth](http://shibboleth.net/). Tímto způsobem lze autentizovat uživatele (voliče) bez nutnosti implementovat vlastní způsob přihlášení. Uživatele musí zadat svoje ČVUT uživatelské jméno a heslo. Následně volební aplikace získá unikátní anonymní identifikátor uživatele a také jeho volební roli - student nebo učitel. 
+## Instalace aplikace
 
-Pro využití služeb cvutID je potřeba nainstalovat [Shibboleth Service Provider](http://shibboleth.net/products/service-provider.html). Pro instalaci a konfiguraci lze použít [informace a návody k systému FELid](https://wiki.fel.cvut.cz/net/admin/aai/index), který je na stejném principu.
-
-## Instalace
-
-Zdrojové kódy lze získat klonováním GIT repozitáře. Zvolte vhodný adresář a použijte následující příkaz:
+Zdrojové kódy lze získat klonováním GIT repozitáře aplikace. Zvolte vhodný adresář a použijte následující příkaz:
 
 ```
 $ git clone <repository>
 ```
 
-Tento příkaz vytvoří lokální kopii zdrojových kodu v podadresáři `elvo`. 
+Tento příkaz vytvoří lokální kopii zdrojových kodu v podadresáři `elvo/`. Pro pozdější referenci pojmenujeme tento adresář `ELVO_ROOT`. 
 
 Je potřeba doinstalovat knihovny, na kterém je aplikace závislá. Toto lze udělat jednoduše pomocí nástroje [Composer](http://getcomposer.org/). V kořenovém adresáři stačí spustit:
 
@@ -57,6 +52,73 @@ $ ./composer.phar --no-dev install
 ```
 
 Tento příkaz stahne a nainstaluje potřebné knihovny do podadresáře `vendor/`.
+
+## Konfigurace Apache
+
+Je potřeba vytvořit SSL virtuální host pro dané jméno serveru, který bude využívat SSL certifikát, který jsme získali v předchozím kroku. Obvyklá konfigurace virtuálu vypadá takto:
+
+```
+#
+# IP_ADDRESS - IP adresa serveru
+# HOSTNAME - jmeno serveru
+# ELVO_ROOT - korenovy adresar aplikace
+#
+<VirtualHost IP_ADDRESS:443>
+    ServerName HOSTNAME
+    
+    [..]
+    
+    DocumentRoot ELVO_ROOT
+    <Directory ELVO_ROOT/public>
+        Options -Indexes FollowSymLinks MultiViews
+        AllowOverride All
+    </Directory>
+    
+    [..]
+    
+    SSLEngine on
+    SSLCertificateFile    /etc/ssl/certs/HOSTNAME.crt.pem
+    SSLCertificateKeyFile /etc/ssl/private/HOSTNAME.key.pem
+    # Soubor tcs-ca-bundle.pem by mel obsahovat korenove certifikaty prislusne
+    # certifikacni autority.
+    SSLCertificateChainFile /etc/ssl/certs/tcs-ca-bundle.pem
+    
+    [..]
+</VirtualHost>
+```
+
+Výše uvedená konfigurace je pouze příklad, který neobsahuje celou konfiguraci daného virtuálního hostu. Zachycuje pouze direktivy, které jsou relevantní k aplikaci Elvo.
+
+V případě, že používáte SSL certifikát od **TERENA SSL CA** můžete použít pro direktivu _SSLCertificateChainFile_ soubor přiložený v adresáři `docs/apache/`.
+
+## Autentizace pomocí cvutID
+
+Volební aplikace využívá centralizovaný autentizační systém cvutID, který je postaven na systému [Shibboleth](http://shibboleth.net/). Tímto způsobem lze autentizovat uživatele (voliče) bez nutnosti implementovat vlastní způsob přihlášení. Uživatele musí zadat svoje ČVUT uživatelské jméno a heslo. Následně volební aplikace získá unikátní anonymní identifikátor uživatele a také jeho volební roli - student nebo učitel. 
+
+Pro využití služeb cvutID je potřeba nainstalovat [Shibboleth Service Provider](http://shibboleth.net/products/service-provider.html). Pro instalaci lze použít [informace a návody k systému FELid](https://wiki.fel.cvut.cz/net/admin/aai/index), který je na stejném principu.
+Oficiální dokumentaci k systému Shibboleth najdete [zde](https://wiki.shibboleth.net/confluence/display/SHIB2/Home).
+
+Pro konfiguraci použijte přiložené vzorové konfigurační soubory v adresáři `docs\auth\shibboleth`. Zkopírujte je do adresáře, kde se nachází konfigurace Shibboleth SP (obvykle je to adresář `/etc/shibboleth`). Soubor `attribute-map.xml` je možné použít rovnou beze změn. V souboru `shibboleth2.xml` je potřeba provést následující změny:
+
+- V elementu _ApplicationDefaults_ nastavte atribut _entityID_. Jde o unikátní ID v rámci systému **cvutID** a obvykle je ve tvaru `https://<hostname>/shibboleth`
+- V elementu _CredentialResolver_ nastavte atributy _key_ a _certificate_. Musí obsahovat cesty ke klíči a certifikátu, které se budou používat během interakce s příhlašovacím serverem (identity providerem). Lze použít stejný klíč a certifikát, které se používají v Apachi.
+
+V příslušném virtuálním hostu v Apachi je potřeba přidat následující konfiguraci:
+
+```
+<Location />
+    Order allow,deny
+    allow from all
+    AuthType shibboleth
+    require shibboleth
+</Location>
+<Location /vote>
+    AuthType shibboleth
+    ShibRequestSetting requireSession 1
+    require valid-user
+</Location>
+
+```
 
 ## Klíče pro šifrování volebních lístků
 
@@ -102,7 +164,7 @@ V sekci `authentication` je potřeba nastavit způsob autentizace pomocí tzv. a
 
 Je nezbytné, aby byl vždy aktivní pouze jeden autentizační adapter. Ten, ktery nepoužíváte, zakomentujte. Ve výchozím stavu se používá ten testovací.
 
-V sekci `authentication` je ještě podsekce `role_extractor`. Tam je potřeba nastavit kód konkrétní součásti (fakulty), pro které se provádí volby. Například pro FEL je to `13000`.
+V sekci `authentication` je ještě podsekce `role_extractor`. Tam je potřeba nastavit kód konkrétní součásti (fakulty), pro které se provádí volby. Například pro FEL je to `13000`. V případě, že volby probíhají pro více součástí zároveň, je potřeba uvest kódy všech součástí.
 
 Další konfigurační direktivy je nutné měnit pouze pokud potřebujete nastavit jiné, než výchozí hodnoty (umístění dat kandidátů, umístění SSL klíčů apod.).
 
@@ -167,7 +229,12 @@ Během instalace a konfigurace se můžou vyskytnout různé problémy:
 - chybějící soubor s kandidáty
 - ...
 
-Informace o chybách lze většinou získat z PHP error logu. Logování do souboru neni implicitně povolené v konfiguraci PHP, je potřeba ho zapnout.
+Informace o chybách lze většinou získat z PHP error logu. Logování do souboru neni implicitně povolené v konfiguraci PHP, je potřeba ho zapnout. Obvykle stačí v konfiguračním souboru `php.ini` nastavit následující direktivy:
+
+```
+log_errors = On
+error_log = /cesta/k/souboru
+```
 
 ## Průběh voleb 
 
