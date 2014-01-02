@@ -50,4 +50,22 @@ interface StorageInterface
      * @return integer
      */
     public function count();
+
+
+    /**
+     * Begins a transaction.
+     */
+    public function beginTransaction();
+
+
+    /**
+     * Commits the changes.
+     */
+    public function commit();
+
+
+    /**
+     * Performs a rollback.
+     */
+    public function rollback();
 }

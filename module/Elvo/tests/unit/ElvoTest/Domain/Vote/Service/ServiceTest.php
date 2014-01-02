@@ -4,6 +4,7 @@ namespace ElvoTest\Domain\Vote\Service;
 
 use Elvo\Domain\Vote\Service\Service;
 use Elvo\Domain\Entity\Collection\EncryptedVoteCollection;
+use Elvo\Domain\Vote\Service\Exception\VoteStorageException;
 
 
 class ServiceTest extends \PHPUnit_Framework_TestCase
@@ -302,8 +303,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             'createVote',
             'validateVote',
             'encryptVote',
-            'storeEncryptedVote',
-            'storeVoter'
+            'storeVote'
         ))
             ->getMock();
         
@@ -329,12 +329,8 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($encryptedVote));
         
         $service->expects($this->once())
-            ->method('storeEncryptedVote')
-            ->with($encryptedVote);
-        
-        $service->expects($this->once())
-            ->method('storeVoter')
-            ->with($voter);
+            ->method('storeVote')
+            ->with($voter, $encryptedVote);
         
         $service->saveVote($voter, $candidates);
     }
@@ -456,6 +452,101 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $this->service->setStorage($storage);
         
         $this->assertSame($count, $this->service->countVotes());
+    }
+
+
+    public function testStoreVoteWithStoreVoterException()
+    {
+        $this->setExpectedException('Elvo\Domain\Vote\Service\Exception\VoteStorageException', 'storage_error');
+        
+        $exception = new VoteStorageException('storage_error');
+        $voter = $this->getVoterMock();
+        $vote = $this->getEncryptedVoteMock();
+        
+        $service = $this->getMockBuilder('Elvo\Domain\Vote\Service\Service')
+            ->disableOriginalConstructor()
+            ->setMethods(array(
+            'storeVoter'
+        ))
+            ->getMock();
+        $service->expects($this->once())
+            ->method('storeVoter')
+            ->with($voter)
+            ->will($this->throwException($exception));
+        
+        $storage = $this->getStorageMock();
+        $storage->expects($this->once())
+            ->method('beginTransaction');
+        $storage->expects($this->once())
+            ->method('rollback');
+        
+        $service->setStorage($storage);
+        
+        $service->storeVote($voter, $vote);
+    }
+
+
+    public function testStoreVoteWithStoreEncryptedVoteException()
+    {
+        $this->setExpectedException('Elvo\Domain\Vote\Service\Exception\VoteStorageException', 'storage_error');
+        
+        $exception = new VoteStorageException('storage_error');
+        $voter = $this->getVoterMock();
+        $vote = $this->getEncryptedVoteMock();
+        
+        $service = $this->getMockBuilder('Elvo\Domain\Vote\Service\Service')
+            ->disableOriginalConstructor()
+            ->setMethods(array(
+            'storeEncryptedVote'
+        ))
+            ->getMock();
+        $service->expects($this->once())
+            ->method('storeEncryptedVote')
+            ->with($vote)
+            ->will($this->throwException($exception));
+        
+        $storage = $this->getStorageMock();
+        $storage->expects($this->once())
+            ->method('beginTransaction');
+        $storage->expects($this->once())
+            ->method('rollback');
+        
+        $service->setStorage($storage);
+        
+        $service->storeVote($voter, $vote);
+    }
+
+
+    public function testStoreVoteWithCommit()
+    {
+        $exception = new VoteStorageException('storage_error');
+        $voter = $this->getVoterMock();
+        $vote = $this->getEncryptedVoteMock();
+        
+        $service = $this->getMockBuilder('Elvo\Domain\Vote\Service\Service')
+            ->disableOriginalConstructor()
+            ->setMethods(array(
+            'storeVoter',
+            'storeEncryptedVote'
+        ))
+            ->getMock();
+        
+        $service->expects($this->once())
+            ->method('storeVoter')
+            ->with($voter);
+        $service->expects($this->once())
+            ->method('storeEncryptedVote')
+            ->with($vote);
+        
+        $storage = $this->getStorageMock();
+        $storage->expects($this->once())
+            ->method('beginTransaction');
+        $storage->expects($this->once())
+            ->method('commit');
+        
+        $service->setStorage($storage);
+        
+        $service->storeVote($voter, $vote);
     }
     
     /*

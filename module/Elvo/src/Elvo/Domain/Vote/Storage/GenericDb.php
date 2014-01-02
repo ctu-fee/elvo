@@ -53,7 +53,8 @@ class GenericDb implements StorageInterface
      */
     public function setDbAdapter(Db\Adapter\Adapter $dbAdapter)
     {
-        $this->sql = new Db\Sql\Sql($dbAdapter);
+        $this->dbAdapter = $dbAdapter;
+        $this->sql = new Db\Sql\Sql($this->dbAdapter);
     }
 
 
@@ -135,10 +136,11 @@ class GenericDb implements StorageInterface
         $encryptedVoteData = $this->dbEncdode($encryptedVote->getData());
         $encryptedVoteKey = $this->dbEncdode($encryptedVote->getKey());
         
-        $insert->values(array(
-            self::FIELD_ENCRYPTED_VOTE => $encryptedVoteData,
-            self::FIELD_ENVELOPE_KEY => $encryptedVoteKey
-        ));
+        $insert->values(
+            array(
+                self::FIELD_ENCRYPTED_VOTE => $encryptedVoteData,
+                self::FIELD_ENVELOPE_KEY => $encryptedVoteKey
+            ));
         
         $statement = $sql->prepareStatementForSqlObject($insert);
         $statement->execute();
@@ -173,6 +175,10 @@ class GenericDb implements StorageInterface
     }
 
 
+    /**
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Vote\Storage\StorageInterface::count()
+     */
     public function count()
     {
         $sql = $this->getSql();
@@ -187,6 +193,42 @@ class GenericDb implements StorageInterface
         $row = $result->current();
         
         return intval($row['num']);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Vote\Storage\StorageInterface::beginTransaction()
+     */
+    public function beginTransaction()
+    {
+        $this->dbAdapter->getDriver()
+            ->getConnection()
+            ->beginTransaction();
+    }
+
+
+    /**
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Vote\Storage\StorageInterface::commit()
+     */
+    public function commit()
+    {
+        $this->dbAdapter->getDriver()
+            ->getConnection()
+            ->commit();
+    }
+
+
+    /**
+     * {@inheritdoc}
+     * @see \Elvo\Domain\Vote\Storage\StorageInterface::rollback()
+     */
+    public function rollback()
+    {
+        $this->dbAdapter->getDriver()
+            ->getConnection()
+            ->rollback();
     }
 
 

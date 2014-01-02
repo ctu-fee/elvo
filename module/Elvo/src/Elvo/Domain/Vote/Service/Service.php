@@ -196,8 +196,9 @@ class Service implements ServiceInterface
         $encryptedVote = $this->encryptVote($vote);
         
         // FIXME - should be done in transaction
-        $this->storeVoter($voter);
-        $this->storeEncryptedVote($encryptedVote);
+        // $this->storeVoter($voter);
+        // $this->storeEncryptedVote($encryptedVote);
+        $this->storeVote($voter, $encryptedVote);
     }
 
 
@@ -250,7 +251,8 @@ class Service implements ServiceInterface
     public function checkHasAlreadyVoted(Entity\Voter $voter)
     {
         if ($this->hasAlreadyVoted($voter)) {
-            throw new Exception\VoterAlreadyVotedException(sprintf("Voter with ID '%s' has already voted", $voter->getId()));
+            throw new Exception\VoterAlreadyVotedException(
+                sprintf("Voter with ID '%s' has already voted", $voter->getId()));
         }
     }
 
@@ -286,7 +288,8 @@ class Service implements ServiceInterface
         try {
             $this->getValidator()->validate($vote);
         } catch (\Exception $e) {
-            throw new Exception\VoteValidationException($this->formatExceptionMessage($e, 'Vote validation exception'), null, $e);
+            throw new Exception\VoteValidationException($this->formatExceptionMessage($e, 'Vote validation exception'), 
+                null, $e);
         }
     }
 
@@ -303,7 +306,8 @@ class Service implements ServiceInterface
         try {
             $encryptedVote = $this->getEncryptor()->encryptVote($vote);
         } catch (\Exception $e) {
-            throw new Exception\VoteEncryptionException($this->formatExceptionMessage($e, 'Exception during vote encryption'), null, $e);
+            throw new Exception\VoteEncryptionException(
+                $this->formatExceptionMessage($e, 'Exception during vote encryption'), null, $e);
         }
         
         return $encryptedVote;
@@ -322,10 +326,40 @@ class Service implements ServiceInterface
         try {
             $vote = $this->getEncryptor()->decryptVote($encryptedVote);
         } catch (\Exception $e) {
-            throw new Exception\VoteEncryptionException($this->formatExceptionMessage($e, 'Exception during vote decryption'), null, $e);
+            throw new Exception\VoteEncryptionException(
+                $this->formatExceptionMessage($e, 'Exception during vote decryption'), null, $e);
         }
         
         return $vote;
+    }
+
+
+    /**
+     * Stores the encrypted vote and the corresponding voter in a transaction.
+     * 
+     * @param Entity\Voter $voter
+     * @param Entity\EncryptedVote $encryptedVote
+     */
+    public function storeVote(Entity\Voter $voter, Entity\EncryptedVote $encryptedVote)
+    {
+        $storage = $this->getStorage();
+        $storage->beginTransaction();
+        
+        try {
+            $this->storeVoter($voter);
+        } catch (\Exception $e) {
+            $storage->rollback();
+            throw $e;
+        }
+        
+        try {
+            $this->storeEncryptedVote($encryptedVote);
+        } catch (\Exception $e) {
+            $storage->rollback();
+            throw $e;
+        }
+        
+        $storage->commit();
     }
 
 
@@ -340,7 +374,9 @@ class Service implements ServiceInterface
         try {
             $this->getStorage()->saveVoterId($voter->getId());
         } catch (\Exception $e) {
-            throw new Exception\VoteStorageException($this->formatExceptionMessage($e, 'Exception while storing voter ID'), null, $e);
+            throw new Exception\VoteStorageException(
+                $this->formatExceptionMessage($e, sprintf("Exception while storing voter ID '%s'", $voter->getId())), 
+                null, $e);
         }
     }
 
@@ -356,7 +392,8 @@ class Service implements ServiceInterface
         try {
             $this->getStorage()->save($encryptedVote);
         } catch (\Exception $e) {
-            throw new Exception\VoteStorageException($this->formatExceptionMessage($e, 'Exception while storing encrypted vote'), null, $e);
+            throw new Exception\VoteStorageException(
+                $this->formatExceptionMessage($e, 'Exception while storing encrypted vote'), null, $e);
         }
     }
 
@@ -372,7 +409,8 @@ class Service implements ServiceInterface
         try {
             $encryptedVotes = $this->getStorage()->fetchAll();
         } catch (\Exception $e) {
-            throw new Exception\VoteStorageException($this->formatExceptionMessage($e, 'Exception while fetching encrypted votes'), null, $e);
+            throw new Exception\VoteStorageException(
+                $this->formatExceptionMessage($e, 'Exception while fetching encrypted votes'), null, $e);
         }
         
         return $encryptedVotes;
