@@ -178,6 +178,13 @@ $ bin/elvo.php db:init
 
 Tento příkaz vytvoří SQLite databázi v místě, které bylo nastavené v konfiguračním souboru (sekce `db/database`).
 
+**Tento soubor, stejně jako adresář, kde je umístěný, musí být zapisovatelný pro web server.** Doporučuje se nastavit jako vlastníka právě uživatele, pod kterým je spuštěn web server, například:
+
+```
+# chown www-data data/db
+# chown www-data data/db/elvo.sqlite
+```
+
 ## Data kandidátů
 
 Pro jednoduchost se data kandidátů ukládají do textového souboru, který můžete editovt ručně. Ve výchozím nastavení je to soubor v JSON formátu `data/candidates/candidates.json`. Jako vzor můžete použít příložený příklad `data/candidates/candidates.json.dist`.
