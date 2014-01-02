@@ -194,10 +194,7 @@ class Service implements ServiceInterface
         $this->validateVote($vote);
         
         $encryptedVote = $this->encryptVote($vote);
-        
-        // FIXME - should be done in transaction
-        // $this->storeVoter($voter);
-        // $this->storeEncryptedVote($encryptedVote);
+
         $this->storeVote($voter, $encryptedVote);
     }
 
