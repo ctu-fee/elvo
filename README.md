@@ -164,7 +164,7 @@ V sekci `authentication` je potřeba nastavit způsob autentizace pomocí tzv. a
 
 Je nezbytné, aby byl vždy aktivní pouze jeden autentizační adapter. Ten, ktery nepoužíváte, zakomentujte. Ve výchozím stavu se používá ten testovací.
 
-V sekci `authentication` je ještě podsekce `role_extractor`. Tam je potřeba nastavit kód konkrétní součásti (fakulty), pro které se provádí volby. Například pro FEL je to `13000`. V případě, že volby probíhají pro více součástí zároveň, je potřeba uvest kódy všech součástí.
+V sekci `authentication` je ještě podsekce `role_extractor`. Tam je potřeba nastavit kód konkrétní součásti (fakulty), pro které se provádí volby. Například pro FEL je to `13000`. V případě, že volby probíhají pro více součástí zároveň, je potřeba uvest kódy všech součástí. Více informací o rolích najdete ve [zvláštním dokumentu](docs/role.md).
 
 Další konfigurační direktivy je nutné měnit pouze pokud potřebujete nastavit jiné, než výchozí hodnoty (umístění dat kandidátů, umístění SSL klíčů apod.).
 
